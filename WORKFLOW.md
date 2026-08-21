@@ -16,3 +16,9 @@ dotnet test Source/Delta.Engine.slnx -c Release --no-build --no-restore \
 Use headless contract tests before native composition. Surface existing legacy
 warnings separately; do not mix dependency upgrades into an integration fix.
 Run the real editor window from [../DeltaEditor/WORKFLOW.md](../DeltaEditor/WORKFLOW.md).
+
+## Code metrics
+
+Run the manual GitHub Actions `Code metrics` workflow when maintainability
+evidence is needed. It enables CA1501/CA1502/CA1505/CA1506 as report-only
+diagnostics and uploads the SARIF, build log and exit summary as artifacts.
