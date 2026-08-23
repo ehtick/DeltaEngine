@@ -35,13 +35,15 @@ public static class ComponentSchemaBuilder
         return new ComponentSchema(componentType, BuildFields(componentType, string.Empty, []));
     }
 
-    private static IReadOnlyList<ComponentFieldSchema> BuildFields(
+    private static ComponentFieldSchema[] BuildFields(
         Type type,
         string parentPath,
         HashSet<Type> activeTypes)
     {
         if (!activeTypes.Add(type))
+        {
             return [];
+        }
 
         var fields = type
             .GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
@@ -51,7 +53,9 @@ public static class ComponentSchemaBuilder
                 string id = string.IsNullOrEmpty(parentPath) ? field.Name : $"{parentPath}.{field.Name}";
                 var access = ComponentFieldAccess.Read;
                 if (!field.IsInitOnly && !field.IsLiteral)
+                {
                     access |= ComponentFieldAccess.Write;
+                }
 
                 var attributes = field.GetCustomAttributes(inherit: false)
                     .Select(attribute => attribute.GetType().FullName ?? attribute.GetType().Name)

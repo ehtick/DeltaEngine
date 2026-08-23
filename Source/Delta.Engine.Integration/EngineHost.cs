@@ -30,7 +30,9 @@ public sealed class EngineHost(
     {
         ObjectDisposedException.ThrowIf(_isDisposed, this);
         if (_isRunning)
+        {
             return;
+        }
 
         AddStage(EngineLifecycleStage.InputInitialized, -1);
         _inputService.Initialize();
@@ -51,7 +53,9 @@ public sealed class EngineHost(
     {
         ValidateFrameCanRun();
         if (float.IsNaN(deltaSeconds) || float.IsInfinity(deltaSeconds) || deltaSeconds < 0)
+        {
             throw new ArgumentOutOfRangeException(nameof(deltaSeconds), "Delta time must be finite and non-negative.");
+        }
 
         var frameNumber = _nextFrameNumber++;
         _elapsedSeconds += deltaSeconds;
@@ -86,14 +90,18 @@ public sealed class EngineHost(
         _completedFrames++;
 
         if (input.ExitRequested)
+        {
             Shutdown();
+        }
     }
 
     public void Shutdown()
     {
         ObjectDisposedException.ThrowIf(_isDisposed, this);
         if (!_isRunning)
+        {
             return;
+        }
 
         _isRunning = false;
 
@@ -115,10 +123,14 @@ public sealed class EngineHost(
     public void Dispose()
     {
         if (_isDisposed)
+        {
             return;
+        }
 
         if (_isRunning)
+        {
             Shutdown();
+        }
 
         _isDisposed = true;
         AddStage(EngineLifecycleStage.HostDisposalStarted, -1);
@@ -141,7 +153,9 @@ public sealed class EngineHost(
     {
         ObjectDisposedException.ThrowIf(_isDisposed, this);
         if (!_isRunning)
+        {
             throw new InvalidOperationException("EngineHost must be started before frames are run.");
+        }
     }
 
     private void AddStage(EngineLifecycleStage stage, int frameNumber)

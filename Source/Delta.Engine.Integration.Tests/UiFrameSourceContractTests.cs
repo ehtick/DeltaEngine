@@ -9,9 +9,11 @@ public sealed class UiFrameSourceContractTests
     public void Optional_ui_frame_source_is_prepared_before_render()
     {
         var events = new List<string>();
-        var ui = new FakeUi(events);
-        var render = new FakeRender(events, ui);
-        using var host = new EngineHost(new FakeInput(), new FakeWorld(), render, ui);
+        using var input = new FakeInput();
+        using var world = new FakeWorld();
+        using var ui = new FakeUi(events);
+        using var render = new FakeRender(events, ui);
+        using var host = new EngineHost(input, world, render, ui);
 
         host.Start();
         host.RunFrame(0.016f);

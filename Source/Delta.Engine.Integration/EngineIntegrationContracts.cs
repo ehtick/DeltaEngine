@@ -226,7 +226,9 @@ public sealed class EngineFrameLoop(IEngineHost host, IEngineFrameClock clock) :
     {
         host.Start();
         while (host.IsRunning)
+        {
             host.RunFrame(clock.NextDeltaSeconds());
+        }
     }
 
     public void Dispose() => host.Dispose();

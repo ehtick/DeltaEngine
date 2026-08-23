@@ -160,7 +160,7 @@ public sealed class VerticalSliceContractTests
         }
     }
 
-    private static IReadOnlyList<IScriptReference> RuntimeReferences()
+    private static IScriptReference[] RuntimeReferences()
     {
         var paths = ((string)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES")!)
             .Split(Path.PathSeparator)

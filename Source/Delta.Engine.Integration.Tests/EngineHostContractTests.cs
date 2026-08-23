@@ -8,7 +8,11 @@ public sealed class EngineHostContractTests
     [Fact]
     public void Start_records_deterministic_initialization_order()
     {
-        var host = new EngineHost(new FakeInputService(), new FakeWorldService(), new FakeRenderService(), new FakeUiService());
+        using var input = new FakeInputService();
+        using var world = new FakeWorldService();
+        using var render = new FakeRenderService();
+        using var ui = new FakeUiService();
+        using var host = new EngineHost(input, world, render, ui);
 
         host.Start();
 
@@ -27,7 +31,11 @@ public sealed class EngineHostContractTests
     [Fact]
     public void Start_is_idempotent()
     {
-        var host = new EngineHost(new FakeInputService(), new FakeWorldService(), new FakeRenderService(), new FakeUiService());
+        using var input = new FakeInputService();
+        using var world = new FakeWorldService();
+        using var render = new FakeRenderService();
+        using var ui = new FakeUiService();
+        using var host = new EngineHost(input, world, render, ui);
 
         host.Start();
         host.Start();
@@ -38,7 +46,11 @@ public sealed class EngineHostContractTests
     [Fact]
     public void RunFrame_records_deterministic_stage_order()
     {
-        var host = new EngineHost(new FakeInputService(), new FakeWorldService(), new FakeRenderService(), new FakeUiService());
+        using var input = new FakeInputService();
+        using var world = new FakeWorldService();
+        using var render = new FakeRenderService();
+        using var ui = new FakeUiService();
+        using var host = new EngineHost(input, world, render, ui);
 
         host.Start();
         host.RunFrame(0.016f);
@@ -64,7 +76,11 @@ public sealed class EngineHostContractTests
     [Fact]
     public void Shutdown_records_expected_order()
     {
-        var host = new EngineHost(new FakeInputService(), new FakeWorldService(), new FakeRenderService(), new FakeUiService());
+        using var input = new FakeInputService();
+        using var world = new FakeWorldService();
+        using var render = new FakeRenderService();
+        using var ui = new FakeUiService();
+        using var host = new EngineHost(input, world, render, ui);
 
         host.Start();
         host.Shutdown();
@@ -89,8 +105,11 @@ public sealed class EngineHostContractTests
     [Fact]
     public void RunFrame_propagates_service_exception_without_swallowing()
     {
-        var world = new FakeWorldService { ThrowOnUpdate = true };
-        var host = new EngineHost(new FakeInputService(), world, new FakeRenderService(), new FakeUiService());
+        using var input = new FakeInputService();
+        using var world = new FakeWorldService { ThrowOnUpdate = true };
+        using var render = new FakeRenderService();
+        using var ui = new FakeUiService();
+        using var host = new EngineHost(input, world, render, ui);
 
         host.Start();
         var exception = Assert.Throws<InvalidOperationException>(() => host.RunFrame(0.016f));
@@ -114,7 +133,11 @@ public sealed class EngineHostContractTests
     [Fact]
     public void Shutdown_is_idempotent()
     {
-        var host = new EngineHost(new FakeInputService(), new FakeWorldService(), new FakeRenderService(), new FakeUiService());
+        using var input = new FakeInputService();
+        using var world = new FakeWorldService();
+        using var render = new FakeRenderService();
+        using var ui = new FakeUiService();
+        using var host = new EngineHost(input, world, render, ui);
 
         host.Start();
         host.Shutdown();
@@ -129,7 +152,11 @@ public sealed class EngineHostContractTests
     [Fact]
     public void RunFrame_rejects_invalid_delta_time()
     {
-        var host = new EngineHost(new FakeInputService(), new FakeWorldService(), new FakeRenderService(), new FakeUiService());
+        using var input = new FakeInputService();
+        using var world = new FakeWorldService();
+        using var render = new FakeRenderService();
+        using var ui = new FakeUiService();
+        using var host = new EngineHost(input, world, render, ui);
         host.Start();
 
         Assert.Throws<ArgumentOutOfRangeException>(() => host.RunFrame(float.NaN));
@@ -139,7 +166,11 @@ public sealed class EngineHostContractTests
     [Fact]
     public void Dispose_records_shutdown_and_disposal_order()
     {
-        var host = new EngineHost(new FakeInputService(), new FakeWorldService(), new FakeRenderService(), new FakeUiService());
+        using var input = new FakeInputService();
+        using var world = new FakeWorldService();
+        using var render = new FakeRenderService();
+        using var ui = new FakeUiService();
+        using var host = new EngineHost(input, world, render, ui);
         host.Start();
         host.Dispose();
         var stageCount = host.StageLog.Count;
@@ -192,7 +223,9 @@ public sealed class EngineHostContractTests
         public void Update(in EngineFrameContext context)
         {
             if (ThrowOnUpdate)
+            {
                 throw new InvalidOperationException("World update failure");
+            }
         }
 
         public void Shutdown() { }

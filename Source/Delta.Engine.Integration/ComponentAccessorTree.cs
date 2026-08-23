@@ -53,7 +53,9 @@ public sealed class ComponentAccessorTree
         if (component is null || !_componentType.IsInstanceOfType(component) ||
             !_accessors.TryGetValue(fieldId, out var accessor) || accessor.Setter == null ||
             !CanAssign(accessor.FieldType, value))
+        {
             return false;
+        }
 
         accessor.Setter(component, value);
         return true;
@@ -66,7 +68,9 @@ public sealed class ComponentAccessorTree
         Dictionary<string, FieldAccessor> accessors)
     {
         if (!activeTypes.Add(type))
+        {
             return;
+        }
 
         foreach (var field in GetFields(type))
         {
@@ -86,7 +90,9 @@ public sealed class ComponentAccessorTree
         Dictionary<string, FieldAccessor> accessors)
     {
         if (string.IsNullOrEmpty(parentPath))
+        {
             return [field];
+        }
 
         var parent = accessors[parentPath].Path;
         return [.. parent, field];
@@ -98,7 +104,9 @@ public sealed class ComponentAccessorTree
         var value = Expression.Parameter(typeof(object), "value");
         Expression current = Expression.Convert(component, path[0].DeclaringType!);
         foreach (var field in path)
+        {
             current = Expression.Field(current, field);
+        }
 
         var getter = Expression.Lambda<Func<object, object?>>(
             Expression.Convert(current, typeof(object)), component).Compile();
