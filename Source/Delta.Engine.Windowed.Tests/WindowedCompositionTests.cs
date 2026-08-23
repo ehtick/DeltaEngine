@@ -12,8 +12,14 @@ namespace Delta.Engine.Windowed.Tests;
 
 public sealed class WindowedCompositionTests
 {
+    private static readonly string[] ExpectedFrameOrder =
+    [
+        "input.init", "world.init", "render.init", "ui.init",
+        "input.poll", "world.update", "render.frame", "ui.update"
+    ];
+
     [Fact]
-    public void Sdf_uniforms_use_delta_maths_and_host_elapsed_time()
+    public void SdfUniformsUseDeltaMathsAndHostElapsedTime()
     {
         var uniforms = FullscreenSdfShaderFixture.CreateUniforms(new EngineSurfaceSnapshot(800, 600), 1.25f);
 
@@ -25,25 +31,25 @@ public sealed class WindowedCompositionTests
     }
 
     [Fact]
-    public void Host_orders_platform_poll_world_render_and_ui()
+    public void HostOrdersPlatformPollWorldRenderAndUi()
     {
         var calls = new List<string>();
-        var input = new FakeInput(calls);
-        var world = new FakeWorld(calls);
-        var render = new FakeRender(calls);
-        var ui = new FakeUi(calls);
+        using var input = new FakeInput(calls);
+        using var world = new FakeWorld(calls);
+        using var render = new FakeRender(calls);
+        using var ui = new FakeUi(calls);
         using var host = new EngineHost(input, world, render, ui);
 
         host.Start();
         host.RunFrame(0.5f);
 
-        Assert.Equal(new[] { "input.init", "world.init", "render.init", "ui.init", "input.poll", "world.update", "render.frame", "ui.update" }, calls);
+        Assert.Equal(ExpectedFrameOrder, calls);
         Assert.Equal(0.5f, render.ElapsedSeconds);
         Assert.Equal(new EngineSurfaceSnapshot(320, 200), render.Surface);
     }
 
     [Fact]
-    public void Renderer_has_no_input_polling_hook()
+    public void RendererHasNoInputPollingHook()
     {
         var renderMethods = typeof(IEngineRenderService).GetMethods().Select(static method => method.Name).ToArray();
 
@@ -51,7 +57,7 @@ public sealed class WindowedCompositionTests
     }
 
     [Fact]
-    public void Ui_provider_selects_generated_ui_pair_with_matching_push_constant_metadata()
+    public void UiProviderSelectsGeneratedUiPairWithMatchingPushConstantMetadata()
     {
         var fullscreen = WindowShaderArtifactSelection.For(false);
         var ui = WindowShaderArtifactSelection.For(true);

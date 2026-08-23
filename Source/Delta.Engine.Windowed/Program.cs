@@ -15,28 +15,30 @@ internal static class Program
             new Sdl3WindowFactory(),
             new WindowConfiguration("Delta Engine SDF", 960, 540, true, true));
         var renderer = new VulkanRenderer(new VulkanRendererOptions());
-        var renderService = new VulkanWindowRenderService(platform, renderer);
-        var host = new EngineHost(platform, new WindowedNoopWorld(), renderService, new WindowedNoopUi());
+        using var renderService = new VulkanWindowRenderService(platform, renderer);
+        using var world = new WindowedNoopWorld();
+        using var ui = new WindowedNoopUi();
+        using var host = new EngineHost(platform, world, renderService, ui);
 
         try
         {
-            using (host)
+            host.Start();
+            var clock = new Sdl3FrameClock();
+            while (host.IsRunning && (frameLimit is null || host.CompletedFrames < frameLimit.Value))
             {
-                host.Start();
-                var clock = new Sdl3FrameClock();
-                while (host.IsRunning && (frameLimit is null || host.CompletedFrames < frameLimit.Value))
-                {
-                    host.RunFrame(clock.NextDeltaSeconds());
-                }
-
-                return 0;
+                host.RunFrame(clock.NextDeltaSeconds());
             }
+
+            return 0;
         }
+        // The process boundary converts unexpected startup/runtime failures into a non-zero exit code.
+#pragma warning disable CA1031
         catch (Exception exception)
         {
             Console.Error.WriteLine(exception);
             return 1;
         }
+#pragma warning restore CA1031
     }
 
     private static int? ParseFrameLimit(string[] args)

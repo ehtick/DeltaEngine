@@ -10,6 +10,7 @@ using Delta.Render.Platform.SDL3;
 using Delta.Render.Vulkan;
 using Delta.Shader.Abstractions;
 using SDL3;
+using RenderGraphicsShaderProgram = Delta.Render.Core.GraphicsShaderProgram;
 
 namespace Delta.Engine.Windowed;
 
@@ -216,7 +217,7 @@ public sealed class VulkanWindowRenderService : IEngineRenderService
         var selection = WindowShaderArtifactSelection.For(_uiDrawListProvider is not null);
         var vertex = LoadShaderArtifact(selection.VertexName);
         var fragment = LoadShaderArtifact(selection.FragmentName);
-        var program = new GraphicsShaderProgram(vertex, fragment);
+        var program = new RenderGraphicsShaderProgram(vertex, fragment);
         _graphicsPipeline = _session.CreateGraphicsPipeline(in program);
         _lastSurface = _platform.Surface;
     }
