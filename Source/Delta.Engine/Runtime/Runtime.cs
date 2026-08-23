@@ -1,7 +1,6 @@
 using Arch.Core;
 using Delta.Engine.ECS;
 using System;
-using System.Diagnostics;
 using Schedulers;
 
 namespace Delta.Engine.Runtime;
@@ -9,16 +8,14 @@ namespace Delta.Engine.Runtime;
 public sealed class Runtime : IRuntime, IDisposable
 {
     public IRuntimeContext Context { get; }
-    private bool _disposed = false;
+    private bool _disposed;
 
     public Runtime(IProjectPath projectPath)
     {
         var path = projectPath;
         var assets = new GlobalAssetCollection();
         var sceneManager = new SceneManager();
-        var graphics = new Rendering.NullGraphicsModule("Delta Editor");
-
-        Context = new DefaultRuntimeContext(path, assets, sceneManager, graphics);
+        Context = new DefaultRuntimeContext(path, assets, sceneManager, new Rendering.NullGraphicsModule("Delta Editor"));
         IRuntimeContext.Current = Context;
 
     }
@@ -35,23 +32,16 @@ public sealed class Runtime : IRuntime, IDisposable
         {
             ThreadPrefixName = "Arch.Multithreading",
         });
-        try
-        {
-            IRuntimeContext.Current.SceneManager.CurrentScene.Run();
-            IRuntimeContext.Current.GraphicsModule.Execute();
-            DestroySystem.Execute();
-            DirtyFlagClearSystem.Execute();
-        }
-        catch (Exception e)
-        {
-            Debug.Assert(false, e.Message);
-        }
+        IRuntimeContext.Current.SceneManager.CurrentScene.Run();
+        IRuntimeContext.Current.GraphicsModule.Execute();
+        DestroySystem.Execute();
+        DirtyFlagClearSystem.Execute();
     }
 
     public void Dispose()
     {
         World.SharedJobScheduler?.Dispose();
-        World.SharedJobScheduler = null!;
+        World.SharedJobScheduler = null;
         _disposed = true;
     }
 }

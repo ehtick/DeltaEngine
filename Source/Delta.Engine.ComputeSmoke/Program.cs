@@ -18,17 +18,28 @@ internal static class Program
 
         var shaderPath = Path.Combine(AppContext.BaseDirectory, "fixtures", "compute_double.spv");
         var manifestPath = Path.Combine(AppContext.BaseDirectory, "fixtures", "compute_double.shader.json");
-        ShaderArtifact artifact = await GeneratedShaderArtifactLoader.LoadAsync(shaderPath, manifestPath);
+        ShaderArtifact artifact = await GeneratedShaderArtifactLoader.LoadAsync(shaderPath, manifestPath).ConfigureAwait(false);
 
-        await using var renderer = new VulkanRenderer(new VulkanRendererOptions());
-        await using IComputeDevice device = renderer.CreateComputeDevice();
-        await using IComputePipeline pipeline = device.CreateComputePipeline(artifact);
-        await using IComputeStorageBuffer buffer = device.CreateStorageBuffer((ulong)world.Values.Length * sizeof(uint));
+        var renderer = new VulkanRenderer(new VulkanRendererOptions());
+        await using (renderer.ConfigureAwait(false))
+        {
+            IComputeDevice device = renderer.CreateComputeDevice();
+            await using (device.ConfigureAwait(false))
+            {
+                IComputePipeline pipeline = device.CreateComputePipeline(artifact);
+                await using (pipeline.ConfigureAwait(false))
+                {
+                    IComputeStorageBuffer buffer = device.CreateStorageBuffer((ulong)world.Values.Length * sizeof(uint));
+                    await using (buffer.ConfigureAwait(false))
+                    {
+                        var computeRenderer = new ComputeRenderer(device, pipeline, buffer, world.Values);
+                        new EngineWorldChangeRenderAdapter().Render(default, renderSubscription, computeRenderer);
 
-        var computeRenderer = new ComputeRenderer(device, pipeline, buffer, world.Values);
-        new EngineWorldChangeRenderAdapter().Render(default, renderSubscription, computeRenderer);
-
-        return computeRenderer.Succeeded ? 0 : 1;
+                        return computeRenderer.Succeeded ? 0 : 1;
+                    }
+                }
+            }
+        }
     }
 
     private sealed class ComputeWorld

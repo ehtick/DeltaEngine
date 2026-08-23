@@ -125,8 +125,9 @@ public partial class InspectorControl : UserControl
 
     private void OnComponentAddRequest(Type type)
     {
-        var instance = Activator.CreateInstance(type);
-        SelectedEntity.Entity.Add(instance!);
+        var instance = Activator.CreateInstance(type) ??
+            throw new InvalidOperationException($"Unable to create component {type.FullName}.");
+        SelectedEntity.Entity.Add(instance);
     }
 
     private void OnComponentRemoveRequest(Type type)

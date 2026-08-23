@@ -20,7 +20,8 @@ public class RuntimeLoader
 
     private readonly IThreadGetter? _threadGetter;
 
-    public IAccessorsContainer Accessors => _compilerModule.Accessors!;
+    public IAccessorsContainer Accessors => _compilerModule.Accessors ??
+        throw new InvalidOperationException("Accessor container is unavailable before compiler initialization.");
     public List<Type> Components => _compilerModule.Components;
 
     public event Action OnLoop
@@ -53,7 +54,6 @@ public class RuntimeLoader
     public void ReloadRuntime()
     {
         _runtime.Dispose();
-        _runtime = null!;
 
         _compilerModule.Recompile();
 

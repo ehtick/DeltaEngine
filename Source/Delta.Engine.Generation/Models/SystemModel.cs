@@ -12,7 +12,7 @@ internal record SystemModel : Model
     {
         TypeSymbol = typeSymbol;
         SystemCalls = typeSymbol.GetMembers().OfType<IMethodSymbol>().
-            Where(x => x.GetAttributes().Any(a => a.AttributeClass!.Name == attributeSearch)).
+            Where(x => x.GetAttributes().Any(a => a.AttributeClass is { Name: var name } && name == attributeSearch)).
             Select(m => new SystemCallModel(m, this)).ToImmutableArray();
     }
     public ImmutableArray<SystemCallModel> SystemCalls { get; }

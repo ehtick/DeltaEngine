@@ -34,9 +34,9 @@ internal partial class GuidAssetNodeControl : InspectorNode
         if (!ClipVisible)
             return false;
         bool changed = _guidToSet.HasValue;
-        if (changed)
+        if (_guidToSet is { } guid)
         {
-            _guidData.SetData(ref entity, _guidToSet!.Value);
+            _guidData.SetData(ref entity, guid);
             _guidToSet = null;
         }
         GuidLabel.Content = _guidProxy.GetName(ref entity, _nodeData);
@@ -57,7 +57,8 @@ internal partial class GuidAssetNodeControl : InspectorNode
     private static IGuidAssetProxy CreateProxy(Type type)
     {
         var genericProxy = typeof(GenericGuidAssetProxy<>);
-        return (IGuidAssetProxy)Activator.CreateInstance(genericProxy.MakeGenericType(type))!;
+        return Activator.CreateInstance(genericProxy.MakeGenericType(type)) as IGuidAssetProxy ??
+            throw new InvalidOperationException($"Unable to create GUID asset proxy for {type.FullName}.");
     }
 
     private readonly struct GenericGuidAssetProxy<T> : IGuidAssetProxy where T : class, IAsset

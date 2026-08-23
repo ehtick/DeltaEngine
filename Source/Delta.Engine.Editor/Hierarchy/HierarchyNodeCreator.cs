@@ -47,10 +47,9 @@ namespace Delta.Engine.Editor.Hierarchy
 
         public HierarchyNodeControl GetOrCreateNode()
         {
-            HierarchyNodeControl node;
-            if (!_nodes.TryPop(out node!))
-                node = new HierarchyNodeControl(this);
-            return node;
+            return _nodes.TryPop(out var node)
+                ? node
+                : new HierarchyNodeControl(this);
         }
 
         public void ReturnNode(HierarchyNodeControl node)

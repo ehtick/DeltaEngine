@@ -8,7 +8,7 @@ using System.Text;
 using Delta.Engine.Generation.Core;
 public abstract class Template
 {
-    protected static string GetName([CallerMemberName] string name = default!) => name;
+    protected static string GetName([CallerMemberName] string name = "") => name;
     public virtual string Name => string.Empty;
     public abstract override string ToString();
 

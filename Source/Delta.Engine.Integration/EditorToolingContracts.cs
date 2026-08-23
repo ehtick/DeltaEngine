@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Delta.Engine.Integration;
 
-public enum EngineUiInputKind : byte
+public enum EngineUiInputKind
 {
     PointerMove,
     PointerDown,
@@ -71,7 +71,7 @@ public interface IEngineComponentCatalog
 public interface IEngineEntityComponentBinding
 {
     bool TryRead(EngineEntityId entity, string componentTypeId, string fieldId, out EngineComponentValue value);
-    bool TryWrite(EngineEntityId entity, in EngineComponentEdit edit, out string? error);
+    bool TryWrite(EngineEntityId entity, in EngineComponentEdit edit, out string? writeError);
 }
 
 public readonly record struct EngineEntitySelection(EngineEntityId Entity, long Version);

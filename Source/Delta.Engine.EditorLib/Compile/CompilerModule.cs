@@ -36,7 +36,8 @@ internal class CompilerModule : ICompilerModule
         Compile();
 
         _components.UnionWith(GetComponents());
-        Accessors = (Activator.CreateInstance(AccessorsContainerType()) as IAccessorsContainer)!;
+        Accessors = Activator.CreateInstance(AccessorsContainerType()) as IAccessorsContainer ??
+            throw new InvalidOperationException("Generated accessor container could not be created.");
     }
 
     private void Compile()
@@ -60,12 +61,14 @@ internal class CompilerModule : ICompilerModule
         using var assemblyStream = new MemoryStream(result.AssemblyBytes.ToArray(), writable: false);
         if (result.PdbBytes.IsEmpty)
         {
-            _context!.LoadFromStream(assemblyStream);
+            var context = _context ?? throw new InvalidOperationException("Script load context is unavailable.");
+            context.LoadFromStream(assemblyStream);
             return;
         }
 
         using var pdbStream = new MemoryStream(result.PdbBytes.ToArray(), writable: false);
-        _context!.LoadFromStream(assemblyStream, pdbStream);
+        var contextWithSymbols = _context ?? throw new InvalidOperationException("Script load context is unavailable.");
+        contextWithSymbols.LoadFromStream(assemblyStream, pdbStream);
     }
 
     private AssemblyLoadContext NewLoadContext()
@@ -93,15 +96,19 @@ internal class CompilerModule : ICompilerModule
 
     private static Type AccessorsContainerType()
     {
-        var contextAssemblies = AssemblyLoadContext.CurrentContextualReflectionContext!.Assemblies;
+        var context = AssemblyLoadContext.CurrentContextualReflectionContext ??
+            throw new InvalidOperationException("No contextual reflection context is active.");
+        var contextAssemblies = context.Assemblies;
         var contextTypes = contextAssemblies.SelectMany(x => x.GetTypes());
-        return contextTypes.Where(t => typeof(IAccessorsContainer).IsAssignableFrom(t)).FirstOrDefault()!;
+        return contextTypes.FirstOrDefault(t => typeof(IAccessorsContainer).IsAssignableFrom(t)) ??
+            throw new InvalidOperationException("Generated accessor container type was not found.");
     }
 
     private static IEnumerable<Type> GetComponents()
     {
-        var contextAssemblies = AssemblyLoadContext.CurrentContextualReflectionContext!.Assemblies;
-        var mainAssemblies = AssemblyLoadContext.Default.Assemblies;
+        var context = AssemblyLoadContext.CurrentContextualReflectionContext ??
+            throw new InvalidOperationException("No contextual reflection context is active.");
+        var contextAssemblies = context.Assemblies;
         return contextAssemblies.Select(GetComponents).
             Concat(AssemblyLoadContext.Default.Assemblies.Select(GetComponents)).
             SelectMany(type => type);

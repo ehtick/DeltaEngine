@@ -17,7 +17,7 @@ public sealed record ScriptCompilationRequest(
     IReadOnlyList<IScriptReference> References,
     string AssemblyName = "Scripts");
 
-public enum ScriptDiagnosticSeverity : byte
+public enum ScriptDiagnosticSeverity
 {
     Hidden,
     Info,

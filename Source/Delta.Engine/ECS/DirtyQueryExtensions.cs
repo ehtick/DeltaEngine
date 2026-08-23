@@ -79,11 +79,12 @@ public static class DirtyQueryExtensions
         if (!typeToDirtyFlag.TryGetValue(component, out var typeNflag))
         {
             var type = DirtyFlagGeneric.MakeGenericType(component);
-            var flag = Activator.CreateInstance(type);
-            typeToDirtyFlag[component] = typeNflag = (type, flag)!;
+            var flag = Activator.CreateInstance(type) ??
+                throw new InvalidOperationException($"Unable to create dirty flag for {component.FullName}.");
+            typeToDirtyFlag[component] = typeNflag = (type, flag);
         }
         if (!entity.Has(typeNflag.type))
-            entity.Add(typeNflag.flag!);
+            entity.Add(typeNflag.flag);
     }
 }
 

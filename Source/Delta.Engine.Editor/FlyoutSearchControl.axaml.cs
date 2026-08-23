@@ -21,7 +21,8 @@ public partial class FlyoutSearchControl : UserControl
     private IListWrapper<FlyoutSearchItem, Control> ChildrenNodes => new(ChildrenStackPanel.Children);
 
     private static FlyoutSearchControl? _instance;
-    public static FlyoutSearchControl Instance => _instance!;
+    public static FlyoutSearchControl Instance => _instance ??
+        throw new InvalidOperationException("FlyoutSearchControl is not initialized.");
 
     public FlyoutSearchControl()
     {

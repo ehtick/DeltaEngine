@@ -37,7 +37,7 @@ public readonly record struct EngineSurfaceSnapshot(int Width, int Height, bool 
     public bool IsValid => Width > 0 && Height > 0;
 }
 
-public enum EngineInputEventKind : byte
+public enum EngineInputEventKind
 {
     Unknown,
     Quit,
@@ -212,7 +212,7 @@ public readonly record struct EngineShaderId(string Value);
 
 public interface IEngineShaderModuleSource : IDisposable
 {
-    bool TryGetModule(EngineShaderId shader, out ReadOnlyMemory<byte> module);
+    bool TryGetModule(EngineShaderId shader, out ReadOnlyMemory<byte> shaderModule);
 }
 
 public interface IEngineFrameClock

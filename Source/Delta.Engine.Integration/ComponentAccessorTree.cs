@@ -102,7 +102,8 @@ public sealed class ComponentAccessorTree
     {
         var component = Expression.Parameter(typeof(object), "component");
         var value = Expression.Parameter(typeof(object), "value");
-        Expression current = Expression.Convert(component, path[0].DeclaringType!);
+        var declaringType = path[0].DeclaringType ?? throw new InvalidOperationException($"Field path '{fieldId}' has no declaring type.");
+        Expression current = Expression.Convert(component, declaringType);
         foreach (var field in path)
         {
             current = Expression.Field(current, field);

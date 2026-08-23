@@ -6,7 +6,7 @@ using System.Reflection;
 namespace Delta.Engine.Integration;
 
 [Flags]
-public enum ComponentFieldAccess : byte
+public enum ComponentFieldAccess
 {
     None = 0,
     Read = 1,

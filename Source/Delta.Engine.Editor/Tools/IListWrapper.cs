@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -13,8 +14,10 @@ internal readonly struct IListWrapper<T, K> : IList<T> where T : K
     public bool IsReadOnly => _list.IsReadOnly;
     public T this[int index]
     {
-        get => (T)_list[index]!;
-        set => _list[index] = value!;
+        get => _list[index] is T value
+            ? value
+            : throw new InvalidCastException($"List item at index {index} is not {typeof(T).Name}.");
+        set => _list[index] = value;
     }
 
     public int IndexOf(T item) => _list.IndexOf(item);
@@ -27,7 +30,9 @@ internal readonly struct IListWrapper<T, K> : IList<T> where T : K
     {
         int count = _list.Count;
         for (int i = 0; i < count; i++)
-            array[i] = (T)_list[i]!;
+            array[i] = _list[i] is T value
+                ? value
+                : throw new InvalidCastException($"List item at index {i} is not {typeof(T).Name}.");
     }
 
     public bool Remove(T item) => _list.Remove(item);
@@ -36,8 +41,10 @@ internal readonly struct IListWrapper<T, K> : IList<T> where T : K
 
     private readonly struct IEnumeratorWrapper(IEnumerator<K> enumerator) : IEnumerator<T>
     {
-        public readonly T Current => (T)enumerator.Current!;
-        readonly object IEnumerator.Current => enumerator.Current!;
+        public readonly T Current => enumerator.Current is T value
+            ? value
+            : throw new InvalidCastException($"Enumerator item is not {typeof(T).Name}.");
+        readonly object IEnumerator.Current => Current;
         public readonly void Dispose() => enumerator.Dispose();
         public readonly bool MoveNext() => enumerator.MoveNext();
         public readonly void Reset() => enumerator.Dispose();

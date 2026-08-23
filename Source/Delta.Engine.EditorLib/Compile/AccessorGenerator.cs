@@ -43,8 +43,11 @@ internal class AccessorGenerator
     {
         StringBuilder code = new();
         var fields = SelectFields(types.Select(t => t.GetFields()).SelectMany(f => f));
-        var namespaces = fields.Select(f => f.FieldType.Namespace).Concat(types.Select(t => t.Namespace)).ToHashSet();
-        GenerateUsings(code, namespaces!);
+        var namespaces = fields.Select(f => f.FieldType.Namespace).
+            Concat(types.Select(t => t.Namespace)).
+            OfType<string>().
+            ToHashSet();
+        GenerateUsings(code, namespaces);
         code.Append($"public class AccessorsContainer: {nameof(IAccessorsContainer)}").AppendLine().
             Append('{').AppendLine();
         code.Append($"public FrozenDictionary<Type, {nameof(IAccessor)}> AllAccessors ").

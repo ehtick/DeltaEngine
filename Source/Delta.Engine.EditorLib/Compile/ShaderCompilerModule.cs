@@ -86,7 +86,8 @@ internal unsafe class ShaderCompilerModule
     private static string PreprocessIncludes(string path)
     {
         const string IncludeKeyword = "#include";
-        string directory = Path.GetDirectoryName(path)!;
+        string directory = Path.GetDirectoryName(path) ??
+            throw new ArgumentException("Shader path must include a directory.", nameof(path));
         StringBuilder preprocessed = new();
         var shaderLines = File.ReadAllLines(path);
         HashSet<string> includes = [];

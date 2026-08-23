@@ -14,12 +14,12 @@ public interface IRuntimeContext : IDisposable
     private static IRuntimeContext? _current;
     public static IRuntimeContext Current
     {
-        get => _current!;
+        get => _current ?? throw new InvalidOperationException("No runtime context is active.");
         set
         {
+            ArgumentNullException.ThrowIfNull(value);
             value.PreviousContext = _current;
-            _current = value ??
-                throw new InvalidOperationException($"{nameof(IRuntimeContext)} can not be set to null");
+            _current = value;
         }
     }
     void IDisposable.Dispose()

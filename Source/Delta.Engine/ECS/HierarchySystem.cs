@@ -26,9 +26,8 @@ internal class HierarchySystem
 
         var parentNode = GetParentNode(entityRef);
         var search = _entityToNode[entityRef];
-        var node = parentNode.children.First!;
-        var count = parentNode.children.Count;
-        for (int i = 0; i < count; i++, node = node.Next!)
+        var node = parentNode.children.First;
+        for (int i = 0; node is not null; i++, node = node.Next)
             if (node.Value.Equals(search.Value))
                 return i;
         Debug.Assert(false);
@@ -44,9 +43,11 @@ internal class HierarchySystem
     {
         var children = Root.children;
         var count = children.Count;
-        var node = children.First!;
+        var node = children.First;
+        if (node is null)
+            return [];
         EntityReference[] references = new EntityReference[count];
-        for (int i = 0; i < count; i++, node = node.Next!)
+        for (int i = 0; node is not null; i++, node = node.Next)
             references[i] = node.Value.entityRef;
         return references;
     }
@@ -106,10 +107,10 @@ internal class HierarchySystem
         Debug.Assert(entityRef.Entity.Has<HierarchyFlag>());
 
         var parentNode = GetParentNode(entityRef);
-        var node = parentNode.children.First!;
+        var node = parentNode.children.First;
         var count = parentNode.children.Count;
         EntityReference[] siblings = new EntityReference[count];
-        for (int i = 0; i < count; i++, node = node.Next!)
+        for (int i = 0; node is not null; i++, node = node.Next)
             siblings[i] = node.Value.entityRef;
         return siblings;
     }
@@ -132,9 +133,8 @@ internal class HierarchySystem
 
     private static void UpdateOrders(LinkedList<TreeNode> children)
     {
-        var node = children.First!;
-        int count = children.Count;
-        for (int i = 0; i < count; i++, node = node.Next!)
+        var node = children.First;
+        for (int i = 0; node is not null; i++, node = node.Next)
         {
             node.Value.entityRef.Entity.Get<Order>().order = i;
             UpdateOrders(node.Value.children);
@@ -161,10 +161,12 @@ internal class HierarchySystem
 
     private void RemoveNode(TreeNode treeNode)
     {
-        var node = treeNode.children.First!;
-        int count = treeNode.children.Count;
-        for (int i = 0; i < count; i++, node = node.Next!)
+        var node = treeNode.children.First;
+        while (node is not null)
+        {
             _cachedNodes.Push(node);
+            node = node.Next;
+        }
         treeNode.children.Clear();
         treeNode.entityRef = EntityReference.Null;
         _cachedTreeNodes.Push(treeNode);

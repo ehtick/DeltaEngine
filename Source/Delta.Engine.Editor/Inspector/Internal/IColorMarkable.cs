@@ -16,11 +16,11 @@ namespace Delta.Engine.Editor.Inspector.Internal
             get => _markedNode;
             set
             {
-                if (MarkedNode != null)
+                if (MarkedNode is Control previousControl)
                 {
                     var labelBrush = Tools.Colors.DefaultLabelBrush;
                     var borderBrush = Tools.Colors.DefaultBorderBrush;
-                    foreach (var item in (MarkedNode as Control)!.GetSelfAndVisualAncestors())
+                    foreach (var item in previousControl.GetSelfAndVisualAncestors())
                         if (item is InspectorNode node)
                         {
                             node.SetLabelColor(labelBrush);
@@ -28,10 +28,10 @@ namespace Delta.Engine.Editor.Inspector.Internal
                         }
                 }
                 _markedNode = value;
-                if (MarkedNode != null)
+                if (MarkedNode is Control currentControl)
                 {
                     var brush = Tools.Colors.DefaultBorderFocusBrush;
-                    foreach (var item in (MarkedNode as Control)!.GetSelfAndVisualAncestors())
+                    foreach (var item in currentControl.GetSelfAndVisualAncestors())
                         if (item is InspectorNode node)
                         {
                             node.SetLabelColor(brush);

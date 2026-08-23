@@ -36,7 +36,9 @@ internal class Enums
             {
                 var item = fields[i];
                 obsoletes[i] = item.IsDefined(typeof(ObsoleteAttribute), false);
-                values[i] = (T)item.GetValue(null)!;
+                values[i] = item.GetValue(null) is T value
+                    ? value
+                    : throw new InvalidOperationException($"Enum field '{item.Name}' did not return {typeof(T).Name}.");
                 names[i] = item.Name;
 
                 if (!obsoletes[i] && !valueToName.ContainsKey(values[i]))
