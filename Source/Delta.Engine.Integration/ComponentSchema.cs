@@ -21,6 +21,15 @@ public sealed record ComponentFieldSchema(
     IReadOnlyList<string> Attributes,
     IReadOnlyList<ComponentFieldSchema> Children);
 
+/// <summary>
+/// Describes a component type for the reflection/tooling adapter.
+/// </summary>
+/// <remarks>
+/// Runtime consumers should exchange <see cref="EngineComponentSchema"/>
+/// records and <see cref="IEngineEntityComponentBinding"/> values instead of
+/// passing <see cref="Type"/> instances or ECS storage through the engine
+/// boundary.
+/// </remarks>
 public sealed record ComponentSchema(
     Type ComponentType,
     IReadOnlyList<ComponentFieldSchema> Fields);

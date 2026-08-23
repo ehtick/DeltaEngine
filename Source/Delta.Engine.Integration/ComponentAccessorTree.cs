@@ -7,10 +7,14 @@ using System.Reflection;
 namespace Delta.Engine.Integration;
 
 /// <summary>
-/// A safe value-level accessor boundary backed by generated delegates. The
-/// backend can later replace expression delegates with source-generated ref
-/// accessors without changing the UI-facing contract.
+/// Reflection/expression adapter that materializes value-level component access.
 /// </summary>
+/// <remarks>
+/// The tree is an editor/tooling backend, not an engine runtime storage API.
+/// Engine-facing code should depend on <see cref="IEngineEntityComponentBinding"/>
+/// and neutral value records; this adapter must not expose raw ECS storage,
+/// pointers, or foreign entity models across that boundary.
+/// </remarks>
 public sealed class ComponentAccessorTree
 {
     private readonly Type _componentType;

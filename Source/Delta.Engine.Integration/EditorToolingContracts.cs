@@ -5,13 +5,14 @@ namespace Delta.Engine.Integration;
 
 public enum EngineUiInputKind
 {
-    PointerMove,
-    PointerDown,
-    PointerUp,
-    Wheel,
-    KeyDown,
-    KeyUp,
-    TextInput,
+    Unknown = 0,
+    PointerMove = 1,
+    PointerDown = 2,
+    PointerUp = 3,
+    Wheel = 4,
+    KeyDown = 5,
+    KeyUp = 6,
+    TextInput = 7,
 }
 
 public readonly record struct EngineUiInputPacket(

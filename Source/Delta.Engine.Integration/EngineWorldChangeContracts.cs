@@ -4,9 +4,10 @@ namespace Delta.Engine.Integration;
 
 public enum EngineWorldChangeKind
 {
-    ComponentChanged,
-    TopologyChanged,
-    EntityDestroyed,
+    Unknown = 0,
+    ComponentChanged = 1,
+    TopologyChanged = 2,
+    EntityDestroyed = 3,
 }
 
 /// <summary>
