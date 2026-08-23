@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Frozen;
 
 namespace Delta.Engine.EditorLib.Scripting;

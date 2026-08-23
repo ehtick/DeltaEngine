@@ -1,4 +1,4 @@
-﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis;
 using System;
 using System.Diagnostics;
 
@@ -12,7 +12,7 @@ public abstract class GeneratorBase : IIncrementalGenerator
         {
             Generate(context);
         }
-        catch(Exception e)
+        catch (Exception e)
         {
             Debug.Assert(false, e.Message);
         }

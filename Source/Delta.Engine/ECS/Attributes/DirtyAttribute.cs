@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Delta.Engine.ECS.Attributes;
 

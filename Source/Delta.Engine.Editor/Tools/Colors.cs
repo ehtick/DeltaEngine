@@ -1,4 +1,4 @@
-﻿using Avalonia.Media;
+using Avalonia.Media;
 
 namespace Delta.Engine.Editor.Tools
 {

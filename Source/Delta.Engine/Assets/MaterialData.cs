@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Delta.Maths;
 using System.Text.Json.Serialization;
 

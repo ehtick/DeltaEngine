@@ -1,4 +1,4 @@
-﻿
+
 using Delta.Engine.ECS.Components;
 /// <summary>
 /// Stores information about order of entity in hierarchy.

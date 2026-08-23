@@ -1,4 +1,4 @@
-﻿using Arch.Core;
+using Arch.Core;
 using Delta.Engine.Runtime;
 using System;
 using System.Collections.Generic;

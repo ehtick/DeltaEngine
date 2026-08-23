@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 using Delta.Engine.Utilities;
@@ -11,6 +11,7 @@ internal static class Extensions
     public static void Dispose<T>(this Queue<T> queue)
     {
         foreach (var item in queue)
-            using (item as IDisposable) { };
+            using (item as IDisposable) { }
+        ;
     }
 }

@@ -35,7 +35,7 @@ file static class {{Model.TypeName}}File
 
     public void Update(World world)
     {
-        {{LoopSelect(Model.SystemCalls,m => new SystemCallInvokeTemplate(m, "world"))}}
+        {{LoopSelect(Model.SystemCalls, m => new SystemCallInvokeTemplate(m, "world"))}}
     }
     {{LoopSelect(Model.SystemCalls, m => new SystemCallTemplate(m))}}
 }

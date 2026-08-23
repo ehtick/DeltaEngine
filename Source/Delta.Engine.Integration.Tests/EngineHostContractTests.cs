@@ -171,23 +171,23 @@ public sealed class EngineHostContractTests
 
     private sealed class FakeInputService : IEngineInputService
     {
-        public void Initialize() {}
+        public void Initialize() { }
 
         public InputSnapshot PollInput(int frameNumber, float deltaSeconds)
         {
             return new InputSnapshot(frameNumber);
         }
 
-        public void Shutdown() {}
+        public void Shutdown() { }
 
-        public void Dispose() {}
+        public void Dispose() { }
     }
 
     private sealed class FakeWorldService : IEngineWorldService
     {
         public bool ThrowOnUpdate { get; init; }
 
-        public void Initialize() {}
+        public void Initialize() { }
 
         public void Update(in EngineFrameContext context)
         {
@@ -195,30 +195,30 @@ public sealed class EngineHostContractTests
                 throw new InvalidOperationException("World update failure");
         }
 
-        public void Shutdown() {}
+        public void Shutdown() { }
 
-        public void Dispose() {}
+        public void Dispose() { }
     }
 
     private sealed class FakeRenderService : IEngineRenderService
     {
-        public void Initialize() {}
+        public void Initialize() { }
 
-        public void Render(in EngineFrameContext context) {}
+        public void Render(in EngineFrameContext context) { }
 
-        public void Shutdown() {}
+        public void Shutdown() { }
 
-        public void Dispose() {}
+        public void Dispose() { }
     }
 
     private sealed class FakeUiService : IEngineUiService
     {
-        public void Initialize() {}
+        public void Initialize() { }
 
-        public void Update(in EngineFrameContext context) {}
+        public void Update(in EngineFrameContext context) { }
 
-        public void Shutdown() {}
+        public void Shutdown() { }
 
-        public void Dispose() {}
+        public void Dispose() { }
     }
 }

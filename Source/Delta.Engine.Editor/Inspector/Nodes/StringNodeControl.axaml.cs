@@ -14,7 +14,7 @@ internal partial class StringNodeControl : InspectorNode
         Field.FieldName = (_nodeData = nodeData).FieldName;
     }
 
-    public override void SetLabelColor(IBrush brush) {}
+    public override void SetLabelColor(IBrush brush) { }
 
     public override bool UpdateData(ref EntityReference entity)
     {

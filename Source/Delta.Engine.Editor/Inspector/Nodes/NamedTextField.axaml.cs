@@ -74,7 +74,7 @@ internal partial class NamedTextField : InspectorNode
 
     public TextBox FieldData => DataTextBox;
 
-    public NamedTextField()=> InitializeComponent();
+    public NamedTextField() => InitializeComponent();
 
     private void DataTextBox_GotFocus(object? sender, GotFocusEventArgs e)
     {

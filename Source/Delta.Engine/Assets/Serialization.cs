@@ -1,4 +1,4 @@
-﻿using Arch.Core;
+using Arch.Core;
 using System;
 using System.IO;
 using System.Reflection;

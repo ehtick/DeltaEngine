@@ -1,4 +1,4 @@
-﻿using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Attributes;
 using System.Runtime.CompilerServices;
 
 namespace Delta.Engine.Benchmarks

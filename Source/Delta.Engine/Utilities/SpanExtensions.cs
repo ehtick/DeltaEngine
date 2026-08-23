@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.HighPerformance.Helpers;
+using CommunityToolkit.HighPerformance.Helpers;
 using System;
 using System.Buffers;
 using System.Collections.Generic;

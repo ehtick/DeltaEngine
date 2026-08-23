@@ -1,4 +1,4 @@
-﻿using Delta.Engine.Rendering;
+using Delta.Engine.Rendering;
 using Delta.Engine.Runtime;
 public static class RuntimeContextFactory
 {

@@ -5,7 +5,7 @@ namespace Delta.Engine.Editor
         public string GetName { get; }
     }
 
-    internal readonly struct SearchFlyoutViewModel<T>:ISearchFlyoutViewModel
+    internal readonly struct SearchFlyoutViewModel<T> : ISearchFlyoutViewModel
     {
         public readonly T Data;
         public readonly string Name;

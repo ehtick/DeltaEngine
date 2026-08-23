@@ -30,7 +30,7 @@ internal partial class FloatNodeControl : InspectorNode
         Field.OnDrag += x => _nodeData.DragFloat(Field.FieldData, x, 0.01f);
     }
 
-    public override void SetLabelColor(IBrush brush) {}
+    public override void SetLabelColor(IBrush brush) { }
 
     public override bool UpdateData(ref EntityReference entity)
     {

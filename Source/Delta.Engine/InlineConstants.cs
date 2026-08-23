@@ -1,4 +1,4 @@
-﻿global using Imp = System.Runtime.CompilerServices.MethodImplAttribute;
+global using Imp = System.Runtime.CompilerServices.MethodImplAttribute;
 using System.Runtime.CompilerServices;
 
 namespace Delta.Engine;

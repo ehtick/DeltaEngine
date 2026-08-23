@@ -1,4 +1,4 @@
-﻿using Arch.Core;
+using Arch.Core;
 using Delta.Engine.Assets;
 using Delta.Engine.ECS;
 using Delta.Engine.ECS.Components;

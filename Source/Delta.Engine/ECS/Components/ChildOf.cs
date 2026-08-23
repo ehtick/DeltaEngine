@@ -1,4 +1,4 @@
-﻿using Arch.Core;
+using Arch.Core;
 
 namespace Delta.Engine.ECS.Components;
 

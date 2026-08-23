@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 using Delta.Engine.Utilities;
 public class NullSafeComparer<T> : IComparer<T>

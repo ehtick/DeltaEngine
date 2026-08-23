@@ -1,4 +1,4 @@
-﻿using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Attributes;
 using Collections.Pooled;
 using System.Buffers;
 using System.Runtime.CompilerServices;

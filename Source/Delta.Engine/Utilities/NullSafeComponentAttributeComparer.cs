@@ -1,4 +1,4 @@
-﻿using Arch.Core.Utils;
+using Arch.Core.Utils;
 using System;
 using System.Collections.Generic;
 

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using Delta.Engine.Runtime;
 internal class SceneManager : ISceneManager

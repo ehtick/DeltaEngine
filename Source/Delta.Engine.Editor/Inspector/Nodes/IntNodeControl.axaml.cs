@@ -15,7 +15,7 @@ internal partial class IntNodeControl : InspectorNode
         Field.OnDrag += x => _nodeData.DragInt(Field.FieldData, x);
     }
 
-    public override void SetLabelColor(IBrush brush) {}
+    public override void SetLabelColor(IBrush brush) { }
 
     public override bool UpdateData(ref EntityReference entity)
     {

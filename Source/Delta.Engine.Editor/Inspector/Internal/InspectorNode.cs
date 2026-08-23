@@ -1,4 +1,4 @@
-﻿using Arch.Core;
+using Arch.Core;
 using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.VisualTree;

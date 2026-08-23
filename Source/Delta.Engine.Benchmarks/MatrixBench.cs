@@ -1,4 +1,4 @@
-﻿using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Attributes;
 using Delta.Maths;
 using Matrix4x4 = Delta.Maths.float4x4;
 using Quaternion = Delta.Maths.quaternion;
@@ -374,12 +374,12 @@ public class MatrixBench
     const float sqrt2 = 1.4142135623730951f;
     private static readonly Vector4 sqrt2Vec = new(sqrt2);
 
-    [MethodImpl( MethodImplOptions.AggressiveInlining)]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static Matrix4x4 ModelMatrixOldVectorizedSqrt2V2(Vector3 translation, Quaternion rotation, Vector3 scale)
     {
         //const float sqrt2 = 1.4142135623730951f; // every element in matrix except of translation
-                                                 // ends up being multiplied by 2, so we multiply whole vector by sqrt2
-                                                 // to skip multiplication at the end
+        // ends up being multiplied by 2, so we multiply whole vector by sqrt2
+        // to skip multiplication at the end
 
         var rot = Unsafe.As<Quaternion, Vector4>(ref rotation) * sqrt2Vec;
         float x = rot.x;

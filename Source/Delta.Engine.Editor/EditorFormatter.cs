@@ -1,4 +1,4 @@
-﻿using Arch.Core;
+using Arch.Core;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -20,7 +20,7 @@ internal static class EditorFormatter
         _editorCulture.NumberFormat.NumberDecimalSeparator = ".";
     }
 
-    public static string ParseToString(this float value)=> value.ToString(FloatFormat, _editorCulture);
+    public static string ParseToString(this float value) => value.ToString(FloatFormat, _editorCulture);
     public static string ParseToStringHighRes(this float value) => value.ToString("F", _editorCulture);
 
     public static bool ParseToFloat(this string? value, out float parsed)

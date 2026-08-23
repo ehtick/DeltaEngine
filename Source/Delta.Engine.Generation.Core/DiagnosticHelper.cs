@@ -1,4 +1,4 @@
-﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis;
 
 using Delta.Engine.Generation.Core;
 public static class DiagnosticHelper

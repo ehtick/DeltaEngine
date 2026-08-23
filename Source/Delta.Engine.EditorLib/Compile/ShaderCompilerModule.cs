@@ -41,7 +41,7 @@ internal unsafe class ShaderCompilerModule
             var fragBytes = Compile(item.Value[FragmentExtension], ShaderKind.FragmentShader);
 
             //ShaderData shaderData = new(null, null);
-            var vertexFlags= SpirvCrossHelper.GetInputAttributes(vertBytes);
+            var vertexFlags = SpirvCrossHelper.GetInputAttributes(vertBytes);
             ShaderData shaderData = new(vertBytes, fragBytes, vertexFlags);
             var shaderAsset = IRuntimeContext.Current.AssetImporter.CreateAsset(shaderData, item.Key + ".shader");
             MaterialData materialData = new(shaderAsset);

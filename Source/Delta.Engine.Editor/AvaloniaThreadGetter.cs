@@ -1,4 +1,4 @@
-﻿using Avalonia.Threading;
+using Avalonia.Threading;
 using Delta.Engine.EditorLib.Loader;
 using System;
 using System.Threading.Tasks;

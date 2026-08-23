@@ -113,7 +113,7 @@ public partial class InspectorControl : UserControl
         }
     }
 
-    private void AddComponentButtonClick(object? sender, RoutedEventArgs e)=> OpenFlyout();
+    private void AddComponentButtonClick(object? sender, RoutedEventArgs e) => OpenFlyout();
     private void OpenFlyout()
     {
         ISearchFlyoutViewModel[] vms = new ISearchFlyoutViewModel[_notUsedComponentTypes.Count];

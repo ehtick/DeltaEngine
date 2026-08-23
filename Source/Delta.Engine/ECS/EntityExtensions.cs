@@ -1,4 +1,4 @@
-﻿using Arch.Core;
+using Arch.Core;
 using Arch.Core.Extensions.Dangerous;
 using Arch.Core.Utils;
 using Delta.Engine.Runtime;
@@ -72,7 +72,7 @@ public static class EntityExtensions
     public static ref byte GetComponentByteRef(this EntityReference entityReference, ComponentType componentType)
     {
         var world = IRuntimeContext.Current.SceneManager.CurrentScene._world;
-        ref readonly var chunk =ref world.GetChunk(entityReference.Entity);
+        ref readonly var chunk = ref world.GetChunk(entityReference.Entity);
         (var componentIndex, var _) = world.GetSlot(entityReference.Entity);
         ref byte startRef = ref MemoryMarshal.GetArrayDataReference(chunk.GetArray(componentType));
         return ref Unsafe.AddByteOffset(ref startRef, componentType.ByteSize * componentIndex);

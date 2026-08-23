@@ -1,4 +1,4 @@
-﻿using Arch.Core;
+using Arch.Core;
 using Avalonia.Controls;
 using Delta.Engine.EditorLib.Scripting;
 using System;
@@ -49,7 +49,7 @@ public class NodeData(RootData root, PathData path)
     {
         if (!fieldData.IsFocused)
             fieldData.Focus();
-        if(int.TryParse(fieldData.Text, out int value))
+        if (int.TryParse(fieldData.Text, out int value))
             value += MathF.Sign(delta);
         fieldData.Text = value.ParseToString();
     }
