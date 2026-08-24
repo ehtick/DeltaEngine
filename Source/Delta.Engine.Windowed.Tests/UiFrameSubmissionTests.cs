@@ -149,6 +149,52 @@ public sealed class UiFrameSubmissionTests
         Assert.Equal(1, session.DisposeCount);
     }
 
+    [Fact]
+    public void FailedInitializationRollsBackPublishedResourcesAndCanRetry()
+    {
+        var shouldFail = true;
+        var sessions = new List<FakeSession>();
+        var resources = new RetriableResourceLifetime(() =>
+        {
+            var session = new FakeSession { ThrowOnGraphicsPipeline = shouldFail };
+            sessions.Add(session);
+            return session;
+        });
+        var platform = new Sdl3PlatformShell(new NullWindowFactory(), new WindowConfiguration("test"));
+        using var service = new VulkanWindowRenderService(platform, resources, null);
+
+        Assert.Throws<InvalidOperationException>(() => service.Initialize());
+        Assert.Equal(1, resources.InitializeCount);
+        Assert.Equal(1, resources.RollbackCount);
+        Assert.Equal(1, sessions[0].DisposeCount);
+
+        shouldFail = false;
+        service.Initialize();
+        service.Initialize();
+
+        Assert.Equal(2, resources.InitializeCount);
+        Assert.Equal(1, resources.RollbackCount);
+        service.Dispose();
+        Assert.Equal(1, resources.DisposeCount);
+        Assert.Equal(1, sessions[1].DisposeCount);
+    }
+
+    [Fact]
+    public void ResourceInitializationFailureRollsBackWithoutPublishing()
+    {
+        var resources = new RetriableResourceLifetime(
+            () => new FakeSession(),
+            throwOnInitialize: true);
+        var platform = new Sdl3PlatformShell(new NullWindowFactory(), new WindowConfiguration("test"));
+        using var service = new VulkanWindowRenderService(platform, resources, null);
+
+        Assert.Throws<InvalidOperationException>(() => service.Initialize());
+        Assert.Equal(1, resources.InitializeCount);
+        Assert.Equal(1, resources.RollbackCount);
+        service.Dispose();
+        Assert.Equal(1, resources.DisposeCount);
+    }
+
     private sealed class FakeSource : IUiRenderFrameSource, IDisposable
     {
         private readonly UiRenderBatchAdapter _adapter = new();
@@ -215,6 +261,7 @@ public sealed class UiFrameSubmissionTests
         public int DisposeCount { get; private set; }
         public bool TextPipelineSeen { get; private set; }
         public Action? PipelineDisposed { get; init; }
+        public bool ThrowOnGraphicsPipeline { get; init; }
         public RenderWindowId WindowId => RenderWindowId.New();
         public RenderFrameState BeginFrame()
         {
@@ -235,7 +282,15 @@ public sealed class UiFrameSubmissionTests
         public bool SubmitFrame(IGraphicsPipeline uiPipeline, in GraphicsFrameParameters uiParameters, in UiDrawList uiDrawList, IGraphicsPipeline textPipeline, in TextFrameParameters textParameters, ReadOnlySpan<ITextAtlasPage> atlasPages, in TextDrawList textDrawList, ReadOnlySpan<RenderRecordChange> dirtyRecords) => false;
         public bool SubmitFrame(IGraphicsPipeline uiPipeline, in GraphicsFrameParameters uiParameters, in UiDrawList uiDrawList, IGraphicsPipeline textPipeline, in TextFrameParameters textParameters, in TextDrawList textDrawList, ReadOnlySpan<RenderRecordChange> dirtyRecords) => false;
         public IGraphicsPipeline CreateTextPipeline(in GraphicsShaderProgram shaderProgram) => new FakePipeline(PipelineDisposed);
-        public IGraphicsPipeline CreateGraphicsPipeline(in GraphicsShaderProgram shaderProgram) => new FakePipeline(PipelineDisposed);
+        public IGraphicsPipeline CreateGraphicsPipeline(in GraphicsShaderProgram shaderProgram)
+        {
+            if (ThrowOnGraphicsPipeline)
+            {
+                throw new InvalidOperationException("graphics pipeline fault");
+            }
+
+            return new FakePipeline(PipelineDisposed);
+        }
         public ITextAtlasDevice CreateTextAtlasDevice() => throw new NotSupportedException();
         public bool DrawFullscreenTriangle(IGraphicsPipeline pipeline, in GraphicsFrameParameters parameters) => false;
         public bool Resize(WindowMetrics metrics) => false;
@@ -250,10 +305,52 @@ public sealed class UiFrameSubmissionTests
     {
         public IRenderWindowFrameSession Session { get; } = session;
         public void Initialize(Sdl3PlatformShell platform) { }
+        public void RollbackInitialization() { }
         public void Dispose()
         {
             session.DisposeAsync().AsTask().GetAwaiter().GetResult();
             onDispose();
+        }
+    }
+
+    private sealed class RetriableResourceLifetime(
+        Func<FakeSession> sessionFactory,
+        bool throwOnInitialize = false) : VulkanWindowRenderService.IWindowedResourceLifetime
+    {
+        private readonly Func<FakeSession> _sessionFactory = sessionFactory;
+        private readonly bool _throwOnInitialize = throwOnInitialize;
+        private FakeSession? _session;
+
+        public int InitializeCount { get; private set; }
+        public int RollbackCount { get; private set; }
+        public int DisposeCount { get; private set; }
+        public IRenderWindowFrameSession Session => _session ?? throw new InvalidOperationException("session not initialized");
+
+        public void Initialize(Sdl3PlatformShell platform)
+        {
+            InitializeCount++;
+            if (_throwOnInitialize)
+            {
+                throw new InvalidOperationException("resource initialization fault");
+            }
+
+            _session = _sessionFactory();
+        }
+
+        public void RollbackInitialization()
+        {
+            RollbackCount++;
+            if (_session is not null)
+            {
+                _session.DisposeAsync().AsTask().GetAwaiter().GetResult();
+                _session = null;
+            }
+        }
+
+        public void Dispose()
+        {
+            DisposeCount++;
+            RollbackInitialization();
         }
     }
 

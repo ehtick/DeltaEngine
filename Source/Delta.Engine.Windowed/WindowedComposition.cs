@@ -276,12 +276,14 @@ public sealed class VulkanWindowRenderService : IEngineRenderService
     {
         IRenderWindowFrameSession Session { get; }
         void Initialize(Sdl3PlatformShell platform);
+        void RollbackInitialization();
     }
 
     private sealed class BorrowedResourceLifetime(IRenderWindowFrameSession session) : IWindowedResourceLifetime
     {
         public IRenderWindowFrameSession Session { get; } = session ?? throw new ArgumentNullException(nameof(session));
         public void Initialize(Sdl3PlatformShell platform) { }
+        public void RollbackInitialization() { }
         public void Dispose() { }
     }
 
@@ -301,6 +303,15 @@ public sealed class VulkanWindowRenderService : IEngineRenderService
             }
 
             _session = _renderer.CreateWindowSession(platform.Window);
+        }
+
+        public void RollbackInitialization()
+        {
+            if (_session is not null)
+            {
+                _session.DisposeAsync().AsTask().GetAwaiter().GetResult();
+                _session = null;
+            }
         }
 
         public void Dispose()
@@ -361,24 +372,39 @@ public sealed class VulkanWindowRenderService : IEngineRenderService
             return;
         }
 
-        _resources.Initialize(_platform);
-        _session = _resources.Session;
-        var selection = WindowShaderArtifactSelection.For(_uiRenderFrameSource is not null);
-        var vertex = LoadShaderArtifact(selection.VertexName);
-        var fragment = LoadShaderArtifact(selection.FragmentName);
-        var program = new GraphicsShaderProgram(vertex, fragment);
-        _graphicsPipeline = _session.CreateGraphicsPipeline(in program);
-        if (_uiRenderFrameSource is not null)
+        IRenderWindowFrameSession? session = null;
+        IGraphicsPipeline? graphicsPipeline = null;
+        IGraphicsPipeline? textPipeline = null;
+        try
         {
-            var textVertex = LoadSpirv("SdfTextVertex.vert");
-            var textFragment = LoadSpirv("SdfTextFragment.frag");
-            var textProgram = SdfTextGraphicsShaderProgram.CreateProgram(
-                textVertex,
-                textFragment);
-            _textPipeline = _session.CreateTextPipeline(in textProgram);
+            _resources.Initialize(_platform);
+            session = _resources.Session;
+            var selection = WindowShaderArtifactSelection.For(_uiRenderFrameSource is not null);
+            var vertex = LoadShaderArtifact(selection.VertexName);
+            var fragment = LoadShaderArtifact(selection.FragmentName);
+            var program = new GraphicsShaderProgram(vertex, fragment);
+            graphicsPipeline = session.CreateGraphicsPipeline(in program);
+            if (_uiRenderFrameSource is not null)
+            {
+                var textVertex = LoadSpirv("SdfTextVertex.vert");
+                var textFragment = LoadSpirv("SdfTextFragment.frag");
+                var textProgram = SdfTextGraphicsShaderProgram.CreateProgram(
+                    textVertex,
+                    textFragment);
+                textPipeline = session.CreateTextPipeline(in textProgram);
+            }
+
+            _session = session;
+            _graphicsPipeline = graphicsPipeline;
+            _textPipeline = textPipeline;
+            _lastSurface = _platform.Surface;
+            _initialized = true;
         }
-        _lastSurface = _platform.Surface;
-        _initialized = true;
+        catch
+        {
+            DisposeInitializationFailure(textPipeline, graphicsPipeline, _resources);
+            throw;
+        }
     }
 
     public void Render(in EngineFrameContext context)
@@ -481,6 +507,28 @@ public sealed class VulkanWindowRenderService : IEngineRenderService
             finally
             {
                 resources.Dispose();
+            }
+        }
+    }
+
+    private static void DisposeInitializationFailure(
+        IGraphicsPipeline? textPipeline,
+        IGraphicsPipeline? graphicsPipeline,
+        IWindowedResourceLifetime resources)
+    {
+        try
+        {
+            textPipeline?.DisposeAsync().AsTask().GetAwaiter().GetResult();
+        }
+        finally
+        {
+            try
+            {
+                graphicsPipeline?.DisposeAsync().AsTask().GetAwaiter().GetResult();
+            }
+            finally
+            {
+                resources.RollbackInitialization();
             }
         }
     }
