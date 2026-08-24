@@ -121,6 +121,34 @@ public sealed class UiFrameSubmissionTests
         Assert.Equal(1, session.DisposeCount);
     }
 
+    [Fact]
+    public void OwnedResourceDisposalAttemptsEveryStageAndPreservesLastFailure()
+    {
+        var order = new List<string>();
+        var session = new FakeSession();
+        var resources = new FakeOwnedLifetime(session, () => order.Add("session"));
+        var textPipeline = new FakePipeline(() =>
+        {
+            order.Add("text");
+            throw new InvalidOperationException("text dispose failure");
+        });
+        var graphicsPipeline = new FakePipeline(() =>
+        {
+            order.Add("ui");
+            throw new InvalidOperationException("ui dispose failure");
+        });
+
+        var exception = Assert.Throws<InvalidOperationException>(() =>
+            VulkanWindowRenderService.DisposeOwnedResources(textPipeline, graphicsPipeline, resources));
+
+        Assert.Equal("ui dispose failure", exception.Message);
+        Assert.Equal(3, order.Count);
+        Assert.Equal("text", order[0]);
+        Assert.Equal("ui", order[1]);
+        Assert.Equal("session", order[2]);
+        Assert.Equal(1, session.DisposeCount);
+    }
+
     private sealed class FakeSource : IUiRenderFrameSource, IDisposable
     {
         private readonly UiRenderBatchAdapter _adapter = new();

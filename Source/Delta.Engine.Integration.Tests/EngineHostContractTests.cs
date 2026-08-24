@@ -44,6 +44,24 @@ public sealed class EngineHostContractTests
     }
 
     [Fact]
+    public void RestartAfterShutdownKeepsRenderResourceInitializationIdempotent()
+    {
+        using var input = new FakeInputService();
+        using var world = new FakeWorldService();
+        using var render = new FakeRenderService();
+        using var ui = new FakeUiService();
+        using var host = new EngineHost(input, world, render, ui);
+
+        host.Start();
+        host.Shutdown();
+        host.Start();
+        host.Dispose();
+
+        Assert.Equal(1, render.InitializeCount);
+        Assert.Equal(1, render.DisposeCount);
+    }
+
+    [Fact]
     public void RunFrameRecordsDeterministicStageOrder()
     {
         using var input = new FakeInputService();
@@ -235,13 +253,27 @@ public sealed class EngineHostContractTests
 
     private sealed class FakeRenderService : IEngineRenderService
     {
-        public void Initialize() { }
+        private bool _initialized;
+
+        public int InitializeCount { get; private set; }
+        public int DisposeCount { get; private set; }
+
+        public void Initialize()
+        {
+            if (_initialized)
+            {
+                return;
+            }
+
+            _initialized = true;
+            InitializeCount++;
+        }
 
         public void Render(in EngineFrameContext context) { }
 
         public void Shutdown() { }
 
-        public void Dispose() { }
+        public void Dispose() => DisposeCount++;
     }
 
     private sealed class FakeUiService : IEngineUiService

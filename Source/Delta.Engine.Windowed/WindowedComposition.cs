@@ -324,6 +324,7 @@ public sealed class VulkanWindowRenderService : IEngineRenderService
     private TextGlyphInstance[] _textGlyphScratch = [];
     private TextBatchRange[] _textBatchScratch = [];
     private EngineSurfaceSnapshot _lastSurface;
+    private bool _initialized;
     private bool _disposed;
 
     public VulkanWindowRenderService(
@@ -355,6 +356,11 @@ public sealed class VulkanWindowRenderService : IEngineRenderService
     public void Initialize()
     {
         ThrowIfDisposed();
+        if (_initialized)
+        {
+            return;
+        }
+
         _resources.Initialize(_platform);
         _session = _resources.Session;
         var selection = WindowShaderArtifactSelection.For(_uiRenderFrameSource is not null);
@@ -372,6 +378,7 @@ public sealed class VulkanWindowRenderService : IEngineRenderService
             _textPipeline = _session.CreateTextPipeline(in textProgram);
         }
         _lastSurface = _platform.Surface;
+        _initialized = true;
     }
 
     public void Render(in EngineFrameContext context)
@@ -452,6 +459,7 @@ public sealed class VulkanWindowRenderService : IEngineRenderService
         _textGlyphScratch = [];
         _textBatchScratch = [];
         _session = null;
+        _initialized = false;
     }
 
     internal static void DisposeOwnedResources(
@@ -460,9 +468,21 @@ public sealed class VulkanWindowRenderService : IEngineRenderService
         IWindowedResourceLifetime resources)
     {
         ArgumentNullException.ThrowIfNull(resources);
-        textPipeline?.DisposeAsync().AsTask().GetAwaiter().GetResult();
-        graphicsPipeline?.DisposeAsync().AsTask().GetAwaiter().GetResult();
-        resources.Dispose();
+        try
+        {
+            textPipeline?.DisposeAsync().AsTask().GetAwaiter().GetResult();
+        }
+        finally
+        {
+            try
+            {
+                graphicsPipeline?.DisposeAsync().AsTask().GetAwaiter().GetResult();
+            }
+            finally
+            {
+                resources.Dispose();
+            }
+        }
     }
 
     private void ThrowIfDisposed() => ObjectDisposedException.ThrowIf(_disposed, this);
