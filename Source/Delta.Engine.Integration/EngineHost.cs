@@ -73,18 +73,15 @@ public sealed class EngineHost(
         {
             AddStage(EngineLifecycleStage.UiUpdated, frameNumber);
             frameSource.PrepareFrame(context);
-
-            AddStage(EngineLifecycleStage.RenderUpdated, frameNumber);
-            _renderService.Render(context);
         }
         else
         {
-            AddStage(EngineLifecycleStage.RenderUpdated, frameNumber);
-            _renderService.Render(context);
-
             AddStage(EngineLifecycleStage.UiUpdated, frameNumber);
             _uiService.Update(context);
         }
+
+        AddStage(EngineLifecycleStage.RenderUpdated, frameNumber);
+        _renderService.Render(context);
 
         AddStage(EngineLifecycleStage.FrameCompleted, frameNumber);
         _completedFrames++;
@@ -107,17 +104,17 @@ public sealed class EngineHost(
 
         AddStage(EngineLifecycleStage.ShutdownStarted, -1);
 
-        AddStage(EngineLifecycleStage.InputShutdown, -1);
-        _inputService.Shutdown();
-
-        AddStage(EngineLifecycleStage.WorldShutdown, -1);
-        _worldService.Shutdown();
+        AddStage(EngineLifecycleStage.UiShutdown, -1);
+        _uiService.Shutdown();
 
         AddStage(EngineLifecycleStage.RenderShutdown, -1);
         _renderService.Shutdown();
 
-        AddStage(EngineLifecycleStage.UiShutdown, -1);
-        _uiService.Shutdown();
+        AddStage(EngineLifecycleStage.WorldShutdown, -1);
+        _worldService.Shutdown();
+
+        AddStage(EngineLifecycleStage.InputShutdown, -1);
+        _inputService.Shutdown();
     }
 
     public void Dispose()

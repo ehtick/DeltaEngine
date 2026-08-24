@@ -15,7 +15,7 @@ public sealed class WindowedCompositionTests
     private static readonly string[] ExpectedFrameOrder =
     [
         "input.init", "world.init", "render.init", "ui.init",
-        "input.poll", "world.update", "render.frame", "ui.update"
+        "input.poll", "world.update", "ui.update", "render.frame"
     ];
 
     [Fact]

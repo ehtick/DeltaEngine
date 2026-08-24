@@ -12,14 +12,14 @@ public sealed class EngineGlueContractTests
         EngineLifecycleStage.FrameStarted,
         EngineLifecycleStage.InputPolled,
         EngineLifecycleStage.WorldUpdated,
-        EngineLifecycleStage.RenderUpdated,
         EngineLifecycleStage.UiUpdated,
+        EngineLifecycleStage.RenderUpdated,
         EngineLifecycleStage.FrameCompleted,
         EngineLifecycleStage.ShutdownStarted,
-        EngineLifecycleStage.InputShutdown,
-        EngineLifecycleStage.WorldShutdown,
-        EngineLifecycleStage.RenderShutdown,
         EngineLifecycleStage.UiShutdown,
+        EngineLifecycleStage.RenderShutdown,
+        EngineLifecycleStage.WorldShutdown,
+        EngineLifecycleStage.InputShutdown,
     ];
 
     [Fact]
