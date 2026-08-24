@@ -394,10 +394,11 @@ public sealed class VulkanWindowRenderService : IEngineRenderService
                 textPipeline = session.CreateTextPipeline(in textProgram);
             }
 
+            var lastSurface = _platform.Surface;
             _session = session;
             _graphicsPipeline = graphicsPipeline;
             _textPipeline = textPipeline;
-            _lastSurface = _platform.Surface;
+            _lastSurface = lastSurface;
             _initialized = true;
         }
         catch
