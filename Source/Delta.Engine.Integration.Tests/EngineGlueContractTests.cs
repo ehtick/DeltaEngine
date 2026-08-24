@@ -30,7 +30,7 @@ public sealed class EngineGlueContractTests
         var input = new InputSnapshot(7, Surface: new EngineSurfaceSnapshot(1280, 720));
 
         adapter.Initialize();
-        adapter.Render(new EngineFrameContext(7, 1f / 60f, input));
+        adapter.Render(new EngineRenderFrame(7, input.Surface));
 
         Assert.Equal(ResizeThenRender, sink.Calls);
     }
@@ -43,8 +43,8 @@ public sealed class EngineGlueContractTests
         var input = new InputSnapshot(7, Surface: new EngineSurfaceSnapshot(1280, 720));
 
         adapter.Initialize();
-        adapter.Render(new EngineFrameContext(7, 1f / 60f, input));
-        adapter.Render(new EngineFrameContext(8, 1f / 60f, input));
+        adapter.Render(new EngineRenderFrame(7, input.Surface));
+        adapter.Render(new EngineRenderFrame(8, input.Surface));
 
         Assert.Equal(ResizeOnceThenRender, sink.Calls);
     }
@@ -86,7 +86,7 @@ public sealed class EngineGlueContractTests
 
         public void Initialize() => Calls.Add("initialize");
         public void Resize(EngineSurfaceSnapshot surface) => Calls.Add("resize");
-        public void Render(in EngineFrameContext context) => Calls.Add("render");
+        public void Render(in EngineRenderFrame frame) => Calls.Add("render");
         public void Shutdown() => Calls.Add("shutdown");
         public void Dispose() => Calls.Add("dispose");
     }
@@ -118,7 +118,7 @@ public sealed class EngineGlueContractTests
     private sealed class NoopRender : IEngineRenderService
     {
         public void Initialize() { }
-        public void Render(in EngineFrameContext context) { }
+        public void Render(in EngineRenderFrame frame) { }
         public void Shutdown() { }
         public void Dispose() { }
     }

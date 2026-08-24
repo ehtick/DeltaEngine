@@ -81,7 +81,8 @@ public sealed class EngineHost(
         }
 
         AddStage(EngineLifecycleStage.RenderUpdated, frameNumber);
-        _renderService.Render(context);
+        var renderFrame = new EngineRenderFrame(frameNumber, context.Surface);
+        _renderService.Render(renderFrame);
 
         AddStage(EngineLifecycleStage.FrameCompleted, frameNumber);
         _completedFrames++;

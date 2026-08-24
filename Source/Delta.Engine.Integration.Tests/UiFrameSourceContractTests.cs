@@ -51,7 +51,7 @@ public sealed class UiFrameSourceContractTests
     private sealed class FakeRender(List<string> events) : IEngineRenderService
     {
         public void Initialize() { }
-        public void Render(in EngineFrameContext context) => events.Add("render");
+        public void Render(in EngineRenderFrame frame) => events.Add("render");
         public void Shutdown() { }
         public void Dispose() { }
     }

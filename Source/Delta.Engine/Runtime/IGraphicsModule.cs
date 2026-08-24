@@ -11,5 +11,5 @@ public interface IGraphicsModule : IDisposable
 
     void Resize(int width, int height);
 
-    void Execute(float deltaSeconds = 0);
+    void Execute();
 }

@@ -1,21 +1,16 @@
 namespace Delta.Engine.Integration;
 
-public readonly record struct EngineRenderSurface(
-    int Width,
-    int Height,
-    bool IsValid = true)
-{
-    public static EngineRenderSurface Empty => new(0, 0, false);
-}
-
+/// <summary>
+/// Time-free renderer input. Engine-owned clocks are extracted into explicit
+/// feature or shader data before submission.
+/// </summary>
 public readonly record struct EngineRenderFrame(
     long FrameNumber,
-    float DeltaSeconds,
-    EngineRenderSurface Surface);
+    EngineSurfaceSnapshot Surface);
 
 public interface IRenderFrameSink : IDisposable
 {
-    void Resize(in EngineRenderSurface surface);
+    void Resize(in EngineSurfaceSnapshot surface);
 
     void Render(in EngineRenderFrame frame);
 }
@@ -38,7 +33,7 @@ public sealed class NullRenderer : IRenderer
 
     public bool IsDisposed => _disposed;
 
-    public EngineRenderSurface LastSurface { get; private set; } = EngineRenderSurface.Empty;
+    public EngineSurfaceSnapshot LastSurface { get; private set; }
 
     public EngineRenderFrame? LastFrame { get; private set; }
 
@@ -46,7 +41,7 @@ public sealed class NullRenderer : IRenderer
 
     public int RenderCount { get; private set; }
 
-    public void Resize(in EngineRenderSurface surface)
+    public void Resize(in EngineSurfaceSnapshot surface)
     {
         ThrowIfDisposed();
         LastSurface = surface;

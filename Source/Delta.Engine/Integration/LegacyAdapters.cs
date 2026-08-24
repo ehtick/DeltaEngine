@@ -29,7 +29,7 @@ public sealed class LegacyRenderAdapter(IGraphicsModule graphicsModule) : IEngin
     {
     }
 
-    public void Render(in EngineFrameContext context)
+    public void Render(in EngineRenderFrame frame)
     {
         graphicsModule.Execute();
     }

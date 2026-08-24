@@ -408,7 +408,7 @@ public sealed class VulkanWindowRenderService : IEngineRenderService
         }
     }
 
-    public void Render(in EngineFrameContext context)
+    public void Render(in EngineRenderFrame frame)
     {
         ThrowIfDisposed();
         if (_session is null)
@@ -416,14 +416,14 @@ public sealed class VulkanWindowRenderService : IEngineRenderService
             throw new InvalidOperationException("Window render service must be initialized before rendering.");
         }
 
-        if (context.Surface.IsValid && _lastSurface != context.Surface)
+        if (frame.Surface.IsValid && _lastSurface != frame.Surface)
         {
-            if (!_session.Resize(new WindowMetrics((uint)context.Surface.Width, (uint)context.Surface.Height, 1.0f)))
+            if (!_session.Resize(new WindowMetrics((uint)frame.Surface.Width, (uint)frame.Surface.Height, 1.0f)))
             {
                 throw new InvalidOperationException("Vulkan swapchain resize failed.");
             }
 
-            _lastSurface = context.Surface;
+            _lastSurface = frame.Surface;
         }
 
         var frameState = _session.BeginFrame();
@@ -437,7 +437,7 @@ public sealed class VulkanWindowRenderService : IEngineRenderService
             throw new InvalidOperationException("Fullscreen graphics pipeline is not initialized.");
         }
 
-        var uniforms = FullscreenSdfShaderFixture.CreateUniforms(context.Surface, context.ElapsedSeconds);
+        var uniforms = FullscreenSdfShaderFixture.CreateUniforms(frame.Surface);
         var parameters = new GraphicsFrameParameters(uniforms.Resolution.x, uniforms.Resolution.y, uniforms.TimeSeconds);
 
         if (_uiRenderFrameSource is not null)
@@ -582,6 +582,6 @@ public readonly record struct SdfFrameUniforms(float2 Resolution, float TimeSeco
 
 public static class FullscreenSdfShaderFixture
 {
-    public static SdfFrameUniforms CreateUniforms(EngineSurfaceSnapshot surface, float elapsedSeconds)
-        => new(new float2(surface.Width, surface.Height), elapsedSeconds);
+    public static SdfFrameUniforms CreateUniforms(EngineSurfaceSnapshot surface)
+        => new(new float2(surface.Width, surface.Height), 0);
 }

@@ -107,9 +107,9 @@ public interface IEngineRenderService : IDisposable
 {
     void Initialize();
 
-    // Temporary adapter boundary. The permanent renderer input will be RenderPacket.
-    // Render services must not poll or own input; input is supplied by the host.
-    void Render(in EngineFrameContext context);
+    // Render services receive identity and surface only. Time domains, input and
+    // simulation state remain owned by the host and feature extractors.
+    void Render(in EngineRenderFrame frame);
     void Shutdown();
 }
 
@@ -165,7 +165,7 @@ public interface IEngineRenderFrameSink : IDisposable
 {
     void Initialize();
     void Resize(EngineSurfaceSnapshot surface);
-    void Render(in EngineFrameContext context);
+    void Render(in EngineRenderFrame frame);
     void Shutdown();
 }
 
@@ -175,15 +175,15 @@ public sealed class EngineRenderServiceAdapter(IEngineRenderFrameSink sink) : IE
 
     public void Initialize() => sink.Initialize();
 
-    public void Render(in EngineFrameContext context)
+    public void Render(in EngineRenderFrame frame)
     {
-        if (context.Surface.IsValid && context.Surface != _lastSurface)
+        if (frame.Surface.IsValid && frame.Surface != _lastSurface)
         {
-            sink.Resize(context.Surface);
-            _lastSurface = context.Surface;
+            sink.Resize(frame.Surface);
+            _lastSurface = frame.Surface;
         }
 
-        sink.Render(context);
+        sink.Render(frame);
     }
 
     public void Shutdown() => sink.Shutdown();

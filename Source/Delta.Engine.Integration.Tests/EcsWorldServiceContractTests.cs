@@ -39,7 +39,7 @@ public sealed class EcsWorldServiceContractTests
         public Stamp Stamp => default;
         public ComponentCatalog Catalog => new(ReadOnlyMemory<ComponentDescriptor>.Empty, default);
         public void Initialize() => InitializeCount++;
-        public void Update(float deltaSeconds) => UpdateCount++;
+        public void Update() => UpdateCount++;
         public void Shutdown() => ShutdownCount++;
         public bool IsAlive(Entity entity) => false;
         public Entity Create(ReadOnlySpan<ComponentId> components) => Entity.Null;

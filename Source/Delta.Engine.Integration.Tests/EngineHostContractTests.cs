@@ -269,7 +269,7 @@ public sealed class EngineHostContractTests
             InitializeCount++;
         }
 
-        public void Render(in EngineFrameContext context) { }
+        public void Render(in EngineRenderFrame frame) { }
 
         public void Shutdown() { }
 

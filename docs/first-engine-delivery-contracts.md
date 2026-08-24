@@ -144,28 +144,31 @@ produce a completed frame.
 
 ## Contracts requested from ECS owner
 
-`DeltaECS` must provide an adapter that can satisfy `IEngineWorldService` without leaking ECS types:
+`DeltaECS` exposes the time-free `Delta.ECS.Integration.IEcsWorld` lifecycle:
 
 - `void Initialize()`
-- `void Update(in EngineFrameContext context)`
+- `void Update()`
 - `void Shutdown()`
 - `void Dispose()`
 
-The adapter is expected to consume `EngineFrameContext.FrameNumber` and
-`EngineFrameContext.DeltaSeconds` for deterministic simulation steps.
+`EcsWorldService` adapts that world to the Engine-owned `IEngineWorldService`.
+DeltaEngine schedules systems and selects their fixed-step, scaled, unscaled
+or editor-time inputs explicitly; it does not forward a clock into
+`IEcsWorld.Update`. The parameterless ECS `Update` remains a lifecycle safe
+point.
 
 ## Contracts requested from renderer owner
 
 `DeltaRender` must provide an adapter that can satisfy `IEngineRenderService`:
 
 - `void Initialize()`
-- `void Render(in EngineFrameContext context)`
+- `void Render(in EngineRenderFrame frame)`
 - `void Shutdown()`
 - `void Dispose()`
 
-The interface may be implemented by `DeltaRender` hosts that map
-`EngineFrameContext` to frame extraction/buffering, as long as contract stage order
-is preserved.
+`EngineRenderFrame` carries only frame identity and surface state. It does not
+carry delta/elapsed time or input. Animated render features receive the chosen
+Engine time domain as explicit extracted shader/feature data before submission.
 
 ## Coexistence adapters
 
@@ -189,8 +192,9 @@ These adapters are intentionally minimal and are only used as migration bridges 
   and reports `EngineSurfaceSnapshot`; SDL types must not cross this boundary.
 - `EngineFrameLoop` owns only the deterministic clock-driven loop and delegates lifecycle
   and frame execution to `IEngineHost`.
-- `EngineFrameContext.Surface` carries resize/surface observations to the renderer. The
-  renderer never polls or owns input.
+- `EngineFrameContext.Surface` is observed by the host and projected into the
+  time-free `EngineRenderFrame`. The renderer never polls or owns input or a
+  clock.
 - `EngineRenderServiceAdapter` forwards the first valid surface change to an
   `IEngineRenderFrameSink` before forwarding the frame. This is still an adapter boundary;
   it is not the permanent `RenderPacket` API.

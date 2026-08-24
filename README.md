@@ -4,6 +4,12 @@ Runtime composition layer for the Furnace stack. It owns frame timing, SDL
 event polling and input translation, close/resize handling, scene/runtime
 orchestration and neutral subsystem adapters.
 
+Time is an Engine-owned scheduling input. ECS lifecycle contracts are
+parameterless, and renderer-facing frames contain frame identity and surface
+state only. Fixed-step, scaled, unscaled and editor clocks are selected by the
+host or a feature extractor and passed as explicit system/shader data; neither
+DeltaECS nor DeltaRender owns a global `DeltaTime`.
+
 ```text
 Engine host -> SDL input -> DeltaECS/user update -> DeltaXAML update/layout
   -> canonical UI/render submission -> DeltaRender present

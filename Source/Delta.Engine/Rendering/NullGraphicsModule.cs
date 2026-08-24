@@ -28,15 +28,15 @@ public sealed class NullGraphicsModule : Delta.Engine.Runtime.IGraphicsModule
     {
         ThrowIfDisposed();
         _size = (width, height);
-        var surface = new EngineRenderSurface(width, height, width > 0 && height > 0);
+        var surface = new EngineSurfaceSnapshot(width, height, IsResized: true);
         _renderer.Resize(in surface);
     }
 
-    public void Execute(float deltaSeconds = 0)
+    public void Execute()
     {
         ThrowIfDisposed();
-        var surface = new EngineRenderSurface(_size.width, _size.height, _size.width > 0 && _size.height > 0);
-        var frame = new EngineRenderFrame(_frameNumber++, deltaSeconds, surface);
+        var surface = new EngineSurfaceSnapshot(_size.width, _size.height, IsResized: true);
+        var frame = new EngineRenderFrame(_frameNumber++, surface);
         _renderer.Render(in frame);
     }
 

@@ -19,13 +19,13 @@ public sealed class WindowedCompositionTests
     ];
 
     [Fact]
-    public void SdfUniformsUseDeltaMathsAndHostElapsedTime()
+    public void SdfUniformsUseDeltaMathsWithoutOwningAClock()
     {
-        var uniforms = FullscreenSdfShaderFixture.CreateUniforms(new EngineSurfaceSnapshot(800, 600), 1.25f);
+        var uniforms = FullscreenSdfShaderFixture.CreateUniforms(new EngineSurfaceSnapshot(800, 600));
 
         Assert.Equal(800, uniforms.Resolution.x);
         Assert.Equal(600, uniforms.Resolution.y);
-        Assert.Equal(1.25f, uniforms.TimeSeconds);
+        Assert.Equal(0, uniforms.TimeSeconds);
         Assert.Contains(nameof(IRenderWindowFrameSession.DrawFullscreenTriangle),
             typeof(IRenderWindowFrameSession).GetMethods().Select(static method => method.Name));
     }
@@ -44,7 +44,7 @@ public sealed class WindowedCompositionTests
         host.RunFrame(0.5f);
 
         Assert.Equal(ExpectedFrameOrder, calls);
-        Assert.Equal(0.5f, render.ElapsedSeconds);
+        Assert.Equal(0, render.FrameNumber);
         Assert.Equal(new EngineSurfaceSnapshot(320, 200), render.Surface);
     }
 
@@ -111,14 +111,14 @@ public sealed class WindowedCompositionTests
 
     private sealed class FakeRender(List<string> calls) : IEngineRenderService
     {
-        public float ElapsedSeconds { get; private set; }
+        public long FrameNumber { get; private set; }
         public EngineSurfaceSnapshot Surface { get; private set; }
         public void Initialize() => calls.Add("render.init");
-        public void Render(in EngineFrameContext context)
+        public void Render(in EngineRenderFrame frame)
         {
             calls.Add("render.frame");
-            ElapsedSeconds = context.ElapsedSeconds;
-            Surface = context.Surface;
+            FrameNumber = frame.FrameNumber;
+            Surface = frame.Surface;
         }
         public void Shutdown() { }
         public void Dispose() { }
