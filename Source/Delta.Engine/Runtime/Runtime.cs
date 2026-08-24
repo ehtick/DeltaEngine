@@ -1,15 +1,22 @@
 using Arch.Core;
-using Delta.Engine.ECS;
 using System;
 using Schedulers;
 
 namespace Delta.Engine.Runtime;
 
+[System.Diagnostics.CodeAnalysis.SuppressMessage(
+    "Naming",
+    "CA1724:Type names should not conflict with namespaces",
+    Justification = "Runtime is the established public engine host type.")]
 public sealed class Runtime : IRuntime, IDisposable
 {
     public IRuntimeContext Context { get; }
     private bool _disposed;
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage(
+        "Reliability",
+        "CA2000:Dispose objects before losing scope",
+        Justification = "DefaultRuntimeContext takes ownership of the scene manager and graphics module and disposes both.")]
     public Runtime(IProjectPath projectPath)
     {
         var path = projectPath;
@@ -40,6 +47,12 @@ public sealed class Runtime : IRuntime, IDisposable
 
     public void Dispose()
     {
+        if (_disposed)
+        {
+            return;
+        }
+
+        Context.Dispose();
         World.SharedJobScheduler?.Dispose();
         World.SharedJobScheduler = null;
         _disposed = true;

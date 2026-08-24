@@ -9,17 +9,20 @@ public static class AttributeCache
 {
     private static readonly ConditionalWeakTable<Type, Dictionary<Type, object?>> _typeToAttributesCache = [];
     private static Dictionary<Type, object?> GetDictionaryOfAttributes(Type type) => _typeToAttributesCache.GetOrCreateValue(type);
-    public static A? GetAttribute<A>(this Type type) where A : Attribute
+    public static TAttribute? GetAttribute<TAttribute>(this Type type) where TAttribute : Attribute
     {
-        var attributeType = typeof(A);
+        var attributeType = typeof(TAttribute);
         var dictionary = GetDictionaryOfAttributes(type);
         if (!dictionary.TryGetValue(attributeType, out var attribute))
-            dictionary[attributeType] = attribute = AttributeGetter<A>(type);
-        return attribute as A;
-    }
-    public static A? GetAttribute<A, T>() where A : Attribute => typeof(T).GetAttribute<A>();
-    public static bool HasAttribute<A, T>() where A : Attribute => typeof(T).GetAttribute<A>() != null;
-    public static bool HasAttribute<A>(this Type type) where A : Attribute => type.GetAttribute<A>() != null;
+        {
+            dictionary[attributeType] = attribute = AttributeGetter<TAttribute>(type);
+        }
 
-    private static A? AttributeGetter<A>(Type objectType) where A : Attribute => objectType.GetCustomAttribute<A>(false);
+        return attribute as TAttribute;
+    }
+    public static TAttribute? GetAttribute<TAttribute, T>() where TAttribute : Attribute => typeof(T).GetAttribute<TAttribute>();
+    public static bool HasAttribute<TAttribute, T>() where TAttribute : Attribute => typeof(T).GetAttribute<TAttribute>() != null;
+    public static bool HasAttribute<TAttribute>(this Type type) where TAttribute : Attribute => type.GetAttribute<TAttribute>() != null;
+
+    private static TAttribute? AttributeGetter<TAttribute>(Type objectType) where TAttribute : Attribute => objectType.GetCustomAttribute<TAttribute>(false);
 }

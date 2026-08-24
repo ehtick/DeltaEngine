@@ -10,20 +10,24 @@ public class DelegateVsFuncPointer
     private const int N = 10000;
     private readonly int[] _items = new int[N];
     private static readonly EqualityComparer<int> comparer = EqualityComparer<int>.Default;
-    private static readonly Random rnd = new(11);
+    private static readonly BenchmarkRandom rnd = new(11);
     private Span<int> Items => _items;
 
     public DelegateVsFuncPointer()
     {
         for (int i = 0; i < N; i++)
+        {
             _items[i] = rnd.Next(0, N);
+        }
     }
 
     [IterationSetup]
     public void Setup()
     {
         for (int i = 0; i < N; i++)
+        {
             _items[i] = rnd.Next(0, N);
+        }
     }
 
     [Benchmark]
@@ -90,11 +94,13 @@ public class DelegateVsFuncPointer
         for (int i = 0; i < count; i++)
         {
             for (int j = 0; j < i; j++)
+            {
                 if (comparer.Invoke(items[i], items[j]))
                 {
                     duplicateCount++;
                     break;
                 }
+            }
         }
         return duplicateCount;
     }
@@ -107,11 +113,13 @@ public class DelegateVsFuncPointer
         for (int i = 0; i < count; i++)
         {
             for (int j = 0; j < i; j++)
+            {
                 if (comparer(items[i], items[j]))
                 {
                     duplicateCount++;
                     break;
                 }
+            }
         }
         return duplicateCount;
     }

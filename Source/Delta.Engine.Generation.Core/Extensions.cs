@@ -50,7 +50,10 @@ public static class Extensions
         while (current != null)
         {
             if (!symbol.ToFullDisplayName().Contains("partial "))
+            {
                 return false;
+            }
+
             current = symbol.ContainingType;
         }
         return true;
@@ -62,7 +65,9 @@ public static class Extensions
         while (nonPartial != null)
         {
             if (!nonPartial.Modifiers.Any(x => x.IsKind(SyntaxKind.PartialKeyword)))
+            {
                 return false;
+            }
 
             var parent = syntax.Parent as BaseTypeDeclarationSyntax;
             nonPartial = parent == nonPartial ? null : parent;

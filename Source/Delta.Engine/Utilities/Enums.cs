@@ -1,55 +1,59 @@
 using System;
-using System.Buffers;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 
 namespace Delta.Engine.Utilities;
 
-internal class Enums
+internal static class Enums
 {
     private readonly struct EnumBakedValues<T> where T : struct, Enum
     {
-        public static readonly T[] values;
-        public static readonly int count;
-        public static readonly bool hasFlagsAttribute;
-        static EnumBakedValues()
+        public static readonly T[] values = CreateValues();
+        public static readonly int count = values.Length;
+        public static readonly bool hasFlagsAttribute = typeof(T).IsDefined(typeof(FlagsAttribute), false);
+
+        private static T[] CreateValues()
         {
-            values = Enum.GetValues<T>();
-            count = SpanExtensions.Distinct<T>(values);
-            values = values[..count];
-            hasFlagsAttribute = typeof(T).IsDefined(typeof(FlagsAttribute), false);
+            var result = Enum.GetValues<T>();
+            int count = SpanExtensions.Distinct<T>(result);
+            return result[..count];
         }
     }
 
     private readonly struct EnumBakedNames<T> where T : unmanaged, Enum
     {
-        public static readonly Dictionary<T, string> valueToName = [];
-        static EnumBakedNames()
-        {
-            var fields = typeof(T).GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static);
-            int length = fields.Length;
-            Span<bool> obsoletes = stackalloc bool[length];
-            Span<T> values = stackalloc T[length];
-            string[] names = ArrayPool<string>.Shared.Rent(length);
-            for (int i = 0; i < length; i++)
-            {
-                var item = fields[i];
-                obsoletes[i] = item.IsDefined(typeof(ObsoleteAttribute), false);
-                values[i] = item.GetValue(null) is T value
-                    ? value
-                    : throw new InvalidOperationException($"Enum field '{item.Name}' did not return {typeof(T).Name}.");
-                names[i] = item.Name;
+        public static readonly Dictionary<T, string> valueToName = CreateValueToName();
 
-                if (!obsoletes[i] && !valueToName.ContainsKey(values[i]))
-                    valueToName[values[i]] = names[i];
+        private static Dictionary<T, string> CreateValueToName()
+        {
+            Dictionary<T, string> result = [];
+            var fields = typeof(T).GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static);
+            List<(T Value, string Name, bool Obsolete)> entries = new(fields.Length);
+            foreach (var field in fields)
+            {
+                if (field.GetValue(null) is not T value)
+                {
+                    continue;
+                }
+
+                bool obsolete = field.IsDefined(typeof(ObsoleteAttribute), false);
+                entries.Add((value, field.Name, obsolete));
+                if (!obsolete && !result.ContainsKey(value))
+                {
+                    result[value] = field.Name;
+                }
             }
 
-            for (int i = 0; i < length; i++)
-                if (obsoletes[i] && !valueToName.ContainsKey(values[i]))
-                    valueToName[values[i]] = names[i];
+            foreach (var entry in entries)
+            {
+                if (entry.Obsolete && !result.ContainsKey(entry.Value))
+                {
+                    result[entry.Value] = entry.Name;
+                }
+            }
 
-            ArrayPool<string>.Shared.Return(names);
+            return result;
         }
     }
 
@@ -74,14 +78,20 @@ internal class Enums
             StringBuilder sb = new();
 
             foreach (var item in EnumBakedValues<T>.values)
+            {
                 if (value.HasFlag(item))
+                {
                     sb.Append(valueToName[item]).Append(Splitter);
+                }
+            }
 
             sb.Length -= Splitter.Length;
 
             return sb.ToString();
         }
         else
+        {
             return valueToName[value];
+        }
     }
 }

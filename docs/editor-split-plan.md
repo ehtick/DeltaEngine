@@ -1,85 +1,72 @@
-# DeltaEngine and DeltaEditor split
+# DeltaEngine and DeltaEditor migration inventory
 
-The current workspace does not contain a separate `DeltaEditor` repository yet.
-The boundary is nevertheless already visible in the project graph:
+DeltaEditor is already a separate sibling repository in the Furnace workspace.
+This document records the remaining ownership/migration boundary; it is not a
+future repository-creation plan and contains no transient worktree status.
 
-| Current project | Future owner | Current status |
-| --- | --- | --- |
-| `Delta.Engine.Integration` | DeltaEngine | Neutral lifecycle, render, world, script DTO and accessor contracts; no Roslyn, Avalonia, Arch or backend references |
-| `Delta.Engine` | DeltaEngine | Legacy runtime and Arch migration host; references Integration and Delta.Maths, but not editor packages |
-| `Delta.Engine.Windowed` | DeltaEngine composition | Optional SDL3/Delta.Render/Delta.Shader/MoltenVK composition; headless core stays independent |
-| `Delta.Editor.Scripting` | DeltaEditor | Roslyn compiler backend, diagnostics, byte/PDB result and collectible compilation implementation |
-| `Delta.Engine.EditorLib` | DeltaEditor adapter | Transitional project scanner, hot-reload host, generated Arch accessor backend, shader/model import helpers |
-| `Delta.Engine.Editor` | DeltaEditor | Legacy Avalonia shell and current hierarchy/inspector UI; hierarchy is intentionally not part of the first extraction |
-| `Delta.Engine.Runner` | DeltaEngine or DeltaEditor, decision pending | Current executable directly references EditorLib and is therefore not a clean runtime entry point |
-| `Delta.Engine.ConsoleModelImporter` | DeltaEditor tools | Current importer directly references EditorLib and editor import dependencies |
+## Current ownership
 
-## Target dependency direction
+| Project | Owner | Boundary |
+|---|---|---|
+| `Delta.Engine.Integration` | DeltaEngine | neutral lifecycle, scheduling, input, render and module contracts |
+| `Delta.Engine` | DeltaEngine | runtime host, scenes/assets and legacy migration adapters |
+| `Delta.Engine.Windowed` | DeltaEngine | SDL input/window composition and DeltaRender adapter |
+| `Delta.Editor.Scripting` | DeltaEditor | Roslyn compile/diagnostics and collectible load contexts |
+| `Delta.Editor.Tooling` | DeltaEditor | project discovery, schema/value adapters and reload policy |
+| `DeltaEditorShell` | DeltaEditor workstream | editor controls/views and explicit XAML registry |
+| `Delta.Editor.UiHost` | DeltaEditor | adapter from shell/DeltaXAML output to Engine/Render |
+| `Delta.Editor.App` | DeltaEditor | only editor composition root |
+| legacy `Delta.Engine.Editor*` projects | migration-only | Avalonia/Arch-era source; not a target contract |
+
+## Dependency direction
 
 ```text
-DeltaEngine.Integration contracts
-        ^
-        |
-DeltaEngine runtime  <-  DeltaEngine windowed composition -> Delta.Render / Delta.Shader / SDL3
-        ^
-        |
-DeltaEditor host -> Roslyn, project scanning, collectible reload, accessors backend, importers, future XAML UI
+DeltaEngine neutral contracts
+          ^
+          |
+DeltaEngine runtime/windowed
+          ^
+          |
+DeltaEditor.App
+  +-> DeltaEditor.Tooling/Scripting
+  +-> DeltaEditorShell -> DeltaXAML
+  +-> Delta.Editor.UiHost -> DeltaEngine/DeltaRender
 ```
 
-The arrow is dependency direction. DeltaEngine must never reference
-DeltaEditor. DeltaEditor may reference the published Integration contracts and,
-where needed during migration, the runtime assembly. The reverse reference is
-the legacy coupling that must be removed before a physical repository split.
+DeltaEngine never references DeltaEditor, Roslyn or editor control types.
+DeltaEditor may reference published Engine contracts and, where necessary
+during migration, runtime adapters. DeltaXAML sees only neutral schema/value
+records; ECS/reflection objects stay in DeltaEditor.
 
-## Safe extraction order
+## Remaining migration
 
-1. Freeze `Delta.Engine.Integration` public contracts and keep the boundary test
-   green. These types are the only API that a new DeltaEditor repository may
-   consume initially.
-2. Extract `Delta.Editor.Scripting` first, preserving assembly and namespace
-   identity in the first external commit. Its only engine dependency should be
-   the Integration contract package/project reference. Move its tests with it.
-3. Extract the compiler host from `Delta.Engine.EditorLib`: project scanning,
-   `AssemblyLoadContext` lifecycle, diagnostics presentation and reload policy.
-   Keep a small compatibility adapter in the old EditorLib until the new host
-   has a green compile/reload gate.
-4. Extract generated accessor implementation and inspector metadata binding.
-   Keep `ComponentSchema`/`ComponentAccessorTree` as engine-facing value-level
-   contracts; do not expose Arch `EntityReference`, raw pointers or Avalonia
-   types through them. Generated accessors can remain a DeltaEditor backend.
-5. Move model/shader import tools and the Avalonia shell to DeltaEditor. Do not
-   move the old hierarchy as an architectural contract; replace it later with
-   a producer-facing UI draw list and a future DeltaECS adapter.
-6. Reclassify or replace `Delta.Engine.Runner` and
-   `Delta.Engine.ConsoleModelImporter`. They are currently editor-bound
-   executables, not evidence that DeltaEngine runtime owns editor dependencies.
-7. Only after the external repository builds against the published contracts,
-   remove the transitional EditorLib references and delete the old Avalonia
-   projects from this repository. Preserve history with a file-preserving move
-   or subtree extraction, not a simultaneous namespace/API rewrite.
+1. Consolidate the Engine render lifecycle before adding another editor
+   adapter. The host-facing contract is `IEngineRenderService); lower sink
+   contracts are implementation adapters, not competing public lifecycles.
+2. Migrate production UI through the canonical
+   `IUiDrawList -> UiRenderBatchAdapter -> UiRenderBatch` chain and retire
+   `EngineUiQuad` after its consumers move.
+3. Reference `DeltaEditorShell` from `Delta.Editor.App`, register
+   `EditorShellLoader`, and use `Delta.Editor.UiHost` only as the
+   engine/render bridge.
+4. Replace production `EditorInspectableFixtureSource` with the
+   DeltaEditor-owned tooling/ECS adapter. Keep fixture sources in tests.
+5. Remove remaining legacy editor/runtime reverse references only after the
+   replacement path passes headless and bounded native acceptance.
 
-## Current blockers and decisions
+Do not preserve old assembly or namespace identity by copying contracts into a
+new owner. Add a temporary adapter only when it is named migration-only and has
+a removal condition.
 
-- `Delta.Engine.EditorLib` still uses `Delta.Engine.Runtime`, Arch component
-  attributes and legacy accessor interfaces. Removing that edge now would be a
-  rewrite, so it remains an explicit adapter boundary.
-- `Delta.Engine.Runner` and `Delta.Engine.ConsoleModelImporter` still pull
-  EditorLib into executable graphs. They should be migrated after the new
-  DeltaEditor host has a replacement entry point.
-- Delta.Render currently exposes the graphics session needed by the windowed
-  adapter, but its worktree is dirty at review time. Engine should consume the
-  checked/stable contract, not copy or pin intermediate implementation details.
-- DeltaShader has corresponding dirty graphics frontend/compiler changes. The
-  Engine project currently consumes only its abstractions and checked shader
-  artifacts; runtime Roslyn/MSBuild remains forbidden.
-- Delta.Maths is the stable clean producer at the time of this plan and remains
-  the engine math dependency.
-- Avalonia and the old hierarchy remain migration-only. They are not added to
-  neutral runtime contracts and are not expanded by this split.
+## Acceptance
 
-This plan intentionally does not create a fake `DeltaEditor` project inside
-DeltaEngine. The first physical extraction should happen as a separate sibling
-repository once the contract package/version and dependency checkout strategy
-are agreed; until then, the project graph and tests above provide a reversible
-proof of direction.
+- architecture tests prove Engine has no Editor/Roslyn/Avalonia dependency;
+- the same shell and inspector are instantiated by headless and native app
+  paths;
+- script reload releases collectible contexts and stale delegates/types;
+- close, resize, submission failure and disposal use one lifecycle;
+- legacy adapters are listed explicitly and do not appear in stable README API.
 
+The ordered cross-project source of truth is
+[../../HIGH_PRIORITY_TODO.md](../../HIGH_PRIORITY_TODO.md); the executable UI
+gate is [../../EDITOR_UI_TODO.md](../../EDITOR_UI_TODO.md).

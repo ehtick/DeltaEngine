@@ -7,8 +7,6 @@ using Delta.Engine.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-
-using Delta.Engine.ECS;
 internal static class DirtyFlagClearSystem
 {
     private static readonly Dictionary<Type, IGenericRemoveWrapper> _removers = [];
@@ -17,10 +15,18 @@ internal static class DirtyFlagClearSystem
         foreach (var type in ComponentRegistry.Types)
         {
             if (type == null || !AttributeCache.HasAttribute<DirtyAttribute>(type))
+            {
                 continue;
+            }
+
             if (!_removers.TryGetValue(type, out var remover))
+            {
                 if (Activator.CreateInstance(typeof(GenericRemoveWrapper<>).MakeGenericType(type)) is IGenericRemoveWrapper iRemover)
+                {
                     _removers[type] = remover = iRemover;
+                }
+            }
+
             Debug.Assert(remover != null);
             remover.Remove();
         }

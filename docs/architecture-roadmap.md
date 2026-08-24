@@ -20,29 +20,36 @@ rewrite.
 ## Dependency direction
 
 ```text
-Delta.Maths
-     ^
-DeltaShader ----------> SPIR-V + manifest
-                    |
-DeltaECS       DeltaRender
-      \          /
-       Delta.Engine
-            |
-       Game / Editor host
+MathsGen -> Delta.Maths -> DeltaShader -> SPIR-V + manifest
+                                      \          /
+DeltaXAML -> IUiDrawList --------------> DeltaRender
+DeltaText -> positioned glyph data ----/
+DeltaECS ---------------------------> Delta.Engine
+                                           ^
+                         DeltaEditorShell -> DeltaEditor
 ```
 
-Delta.Engine may depend on DeltaECS, DeltaRender, DeltaShader runtime contracts, and
-Delta.Maths. Those standalone projects must not depend on Delta.Engine.
+Delta.Engine may depend on DeltaECS, DeltaRender, DeltaShader runtime
+contracts, DeltaXAML/DeltaText neutral contracts and Delta.Maths. Those
+standalone projects must not depend on Delta.Engine. DeltaEditor owns the
+application composition and may depend on Engine; the reverse edge is
+forbidden.
 
 ## Workstream ownership
 
-- `DeltaECS/`: storage, queries, events, scheduling, ECS code generation, and
-  benchmarks.
-- `DeltaRender/`: SDL3 platform layer, Vulkan/MoltenVK, render graph, UI runtime,
-  and XAML.
+- `DeltaECS/`: storage, queries, structural changes and measured ECS
+  performance work.
+- `DeltaXAML/`: XAML dialect, retained controls/tree, properties, layout,
+  focus/input and renderer-neutral draw lists.
+- `DeltaText/`: shaping, positioned glyphs, outlines and CPU SDF/MSDF data.
+- `DeltaRender/`: SDL3 surface/window integration, Vulkan/MoltenVK, render
+  graph, GPU UI/text resources and submission.
 - `DeltaShader/`: shader compiler, analyzers, SPIR-V artifacts, and reflection manifest.
 - `Delta.Engine/`: runtime composition, scenes, assets, serialization, module
-  lifecycle, editor/game hosts, and migration adapters.
+  lifecycle, SDL input translation, scheduling and migration adapters.
+- `DeltaEditorShell/`: editor controls/views and XAML registry.
+- `DeltaEditor/`: Roslyn tooling, ECS inspection, UiHost adapters and the
+  editor application composition root.
 
 Do not edit another workstream's new project to unblock local work. Define a
 small interface or fixture and report the required contract to its owner.
@@ -55,8 +62,9 @@ The engine owns:
 - deterministic update stages and service composition;
 - scene/prefab/asset identities and serialization;
 - asset import/build/cache pipeline;
-- user assembly compilation/loading boundaries;
-- editor and game host configuration;
+- neutral user assembly/module loading boundaries; Roslyn compilation remains
+  in DeltaEditor;
+- game host configuration and editor-facing runtime services;
 - adapters during migration from Arch, Avalonia, and the current renderer;
 - diagnostics, logging, crash context, and performance telemetry.
 

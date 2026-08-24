@@ -9,7 +9,7 @@ using System.Reflection;
 
 namespace Delta.Engine.EditorLib.Compile;
 
-internal class CompileHelper(IProjectPath projectPath)
+internal sealed class CompileHelper(IProjectPath projectPath)
 {
     private const string CsSearch = "*.cs";
     private const string Scripts = "Scripts";
@@ -17,7 +17,7 @@ internal class CompileHelper(IProjectPath projectPath)
 
     private readonly IProjectPath _projectPath = projectPath;
 
-    private readonly IScriptCompiler _compiler = new RoslynScriptCompiler();
+    private readonly RoslynScriptCompiler _compiler = new();
     private IReadOnlyList<IScriptReference>? _references;
 
     public ScriptCompilationResult CompileScripts()
@@ -41,18 +41,28 @@ internal class CompileHelper(IProjectPath projectPath)
     private IReadOnlyList<IScriptReference> GetReferences()
     {
         if (_references != null)
+        {
             return _references;
+        }
 
         var paths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         var trustedPlatformAssemblies = AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES") as string;
         if (trustedPlatformAssemblies != null)
+        {
             foreach (var path in trustedPlatformAssemblies.Split(Path.PathSeparator))
+            {
                 paths.Add(path);
+            }
+        }
 
         paths.Add(typeof(IRuntime).Assembly.Location);
         foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+        {
             if (!string.IsNullOrEmpty(assembly.Location))
+            {
                 paths.Add(assembly.Location);
+            }
+        }
 
         _references = paths
             .Where(File.Exists)

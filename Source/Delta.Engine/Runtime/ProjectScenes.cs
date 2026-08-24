@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace Delta.Engine.Runtime;
 
-internal class ProjectScenes
+internal static class ProjectScenes
 {
-    public readonly List<string> scenesIds = [];
+    public static readonly List<string> scenesIds = [];
 }

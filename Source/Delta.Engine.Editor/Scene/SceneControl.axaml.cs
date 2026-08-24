@@ -6,7 +6,7 @@ using Delta.Engine.Runtime;
 
 namespace Delta.Engine.Editor;
 
-public partial class SceneControl : UserControl
+public partial class SceneControl : UserControl, System.IDisposable
 {
     private WriteableBitmap? _bitmap;
     public SceneControl()
@@ -33,7 +33,7 @@ public partial class SceneControl : UserControl
             IRuntimeContext.Current.GraphicsModule.Size = (w, h);
         }
 
-        Render.InvalidateVisual();
+        RenderImage.InvalidateVisual();
         PanelHeader.StopDebug();
     }
 
@@ -52,9 +52,24 @@ public partial class SceneControl : UserControl
             var aFormat = AlphaFormat.Opaque;
             _bitmap?.Dispose();
             _bitmap = new WriteableBitmap(size, dpi, pFormat, aFormat);
-            Render.Source = _bitmap;
+            RenderImage.Source = _bitmap;
             return true;
         }
         return false;
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            _bitmap?.Dispose();
+            _bitmap = null;
+        }
+    }
+
+    public void Dispose()
+    {
+        Dispose(true);
+        System.GC.SuppressFinalize(this);
     }
 }

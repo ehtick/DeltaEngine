@@ -1,3 +1,4 @@
+#pragma warning disable CS8618 // Avalonia initializes XAML-bound controls during InitializeComponent.
 using Arch.Core;
 using Arch.Core.Utils;
 using Avalonia.Controls;
@@ -23,7 +24,7 @@ public partial class InspectorControl : UserControl
     private IListWrapper<ComponentNodeControl, Control> ChildrenNodes => new(InspectorStack.Children);
 
     private EntityReference SelectedEntity = EntityReference.Null;
-    private ComponentType[] PrevComponents;
+    private ComponentType[]? PrevComponents;
 
     private readonly IAccessorsContainer? _accessors;
     private readonly ImmutableArray<Type> _components;
@@ -34,7 +35,9 @@ public partial class InspectorControl : UserControl
         InitializeComponent();
 
         if (Design.IsDesignMode)
+        {
             return;
+        }
 
         _accessors = Program.RuntimeLoader.Accessors;
         _components = [.. Program.RuntimeLoader.Components];
@@ -68,8 +71,12 @@ public partial class InspectorControl : UserControl
         }
         UpdateName();
         foreach (var item in ChildrenNodes)
+        {
             if (item.UpdateData(ref SelectedEntity))
+            {
                 SelectedEntity.Entity.MarkDirty(item.ComponentType);
+            }
+        }
 
         PanelHeader.StopDebug();
     }
@@ -82,15 +89,21 @@ public partial class InspectorControl : UserControl
         if (editing)
         {
             if (!string.IsNullOrEmpty(name))
+            {
                 SelectedEntity.Entity.AddOrGet<EntityName>().name = name;
+            }
             else if (SelectedEntity.Entity.Has<EntityName>())
+            {
                 SelectedEntity.Entity.Remove<EntityName>();
+            }
         }
         else
+        {
             EntityNameTextBox.Text =
                 SelectedEntity.Entity.Has<EntityName>() ?
                 SelectedEntity.Entity.Get<EntityName>().name :
                 string.Empty;
+        }
     }
 
     private void RebuildInspectorComponents()
@@ -107,7 +120,10 @@ public partial class InspectorControl : UserControl
         {
             _notUsedComponentTypes.Remove(type);
             if (!_accessors.AllAccessors.ContainsKey(type) || typeof(EntityName) == type.Type)
+            {
                 continue;
+            }
+
             var componentInspector = GetOrCreateInspector(type);
             ChildrenNodes.Add(componentInspector);
         }
@@ -119,7 +135,10 @@ public partial class InspectorControl : UserControl
         ISearchFlyoutViewModel[] vms = new ISearchFlyoutViewModel[_notUsedComponentTypes.Count];
         int i = 0;
         foreach (var item in _notUsedComponentTypes)
+        {
             vms[i++] = new SearchFlyoutViewModel<Type>(item, item.ToString());
+        }
+
         FlyoutSearchControl.Instance.OpenAssetSearch(AddComponentButton, vms, x => OnComponentAddRequest(((SearchFlyoutViewModel<Type>)x).Data));
     }
 
@@ -155,14 +174,21 @@ public partial class InspectorControl : UserControl
     private void InspectorControlKeyUp(object? sender, Avalonia.Input.KeyEventArgs e)
     {
         if (SelectedEntity.IsAlive() && e.Key == Avalonia.Input.Key.C && e.KeyModifiers.HasFlag(Avalonia.Input.KeyModifiers.Shift))
+        {
             OpenFlyout();
+        }
+
         if (SelectedEntity.IsAlive() && e.Key == Avalonia.Input.Key.R && e.KeyModifiers.HasFlag(Avalonia.Input.KeyModifiers.Shift))
+        {
             EntityNameTextBox.Focus();
+        }
     }
     private void EntityNameTextBoxKeyUp(object? sender, Avalonia.Input.KeyEventArgs e)
     {
         if (EntityNameTextBox.IsFocused && (e.Key == Avalonia.Input.Key.Escape || e.Key == Avalonia.Input.Key.Enter))
+        {
             Focus();
+        }
     }
 
     private void UserControl_GotFocus(object? sender, Avalonia.Input.GotFocusEventArgs e) => IColorMarkable.Unmark();

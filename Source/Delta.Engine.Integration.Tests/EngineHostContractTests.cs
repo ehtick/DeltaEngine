@@ -6,7 +6,7 @@ namespace Delta.Engine.Integration.Tests;
 public sealed class EngineHostContractTests
 {
     [Fact]
-    public void Start_records_deterministic_initialization_order()
+    public void StartRecordsDeterministicInitializationOrder()
     {
         using var input = new FakeInputService();
         using var world = new FakeWorldService();
@@ -29,7 +29,7 @@ public sealed class EngineHostContractTests
     }
 
     [Fact]
-    public void Start_is_idempotent()
+    public void StartIsIdempotent()
     {
         using var input = new FakeInputService();
         using var world = new FakeWorldService();
@@ -44,7 +44,7 @@ public sealed class EngineHostContractTests
     }
 
     [Fact]
-    public void RunFrame_records_deterministic_stage_order()
+    public void RunFrameRecordsDeterministicStageOrder()
     {
         using var input = new FakeInputService();
         using var world = new FakeWorldService();
@@ -74,7 +74,7 @@ public sealed class EngineHostContractTests
     }
 
     [Fact]
-    public void Shutdown_records_expected_order()
+    public void ShutdownRecordsExpectedOrder()
     {
         using var input = new FakeInputService();
         using var world = new FakeWorldService();
@@ -103,7 +103,7 @@ public sealed class EngineHostContractTests
     }
 
     [Fact]
-    public void RunFrame_propagates_service_exception_without_swallowing()
+    public void RunFramePropagatesServiceExceptionWithoutSwallowing()
     {
         using var input = new FakeInputService();
         using var world = new FakeWorldService { ThrowOnUpdate = true };
@@ -131,7 +131,7 @@ public sealed class EngineHostContractTests
     }
 
     [Fact]
-    public void Shutdown_is_idempotent()
+    public void ShutdownIsIdempotent()
     {
         using var input = new FakeInputService();
         using var world = new FakeWorldService();
@@ -150,7 +150,7 @@ public sealed class EngineHostContractTests
     }
 
     [Fact]
-    public void RunFrame_rejects_invalid_delta_time()
+    public void RunFrameRejectsInvalidDeltaTime()
     {
         using var input = new FakeInputService();
         using var world = new FakeWorldService();
@@ -164,7 +164,7 @@ public sealed class EngineHostContractTests
     }
 
     [Fact]
-    public void Dispose_records_shutdown_and_disposal_order()
+    public void DisposeRecordsShutdownAndDisposalOrder()
     {
         using var input = new FakeInputService();
         using var world = new FakeWorldService();

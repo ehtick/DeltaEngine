@@ -12,7 +12,7 @@ try
     string directoryPath = ProjectCreator.GetExecutableDirectory();
     var projectPath = new EditorPaths(directoryPath);
     ProjectCreator.CreateProject(projectPath);
-    var ctx = RuntimeContextFactory.CreateWindowedContext(projectPath);
+    using var ctx = RuntimeContextFactory.CreateWindowedContext(projectPath);
     using var eng = new Runtime(ctx);
 
     //VCShader.Init();
@@ -52,17 +52,13 @@ try
 
     eng.Context.Running = true;
 
-    Stopwatch sw = new();
-    TimeSpan ms = TimeSpan.Zero;
-    TimeSpan timer = TimeSpan.Zero;
-
     while (true)
     {
         eng.Run();
         Thread.Yield();
     }
 }
-catch (Exception e)
+catch (Exception e) when (e is IOException or InvalidOperationException or UnauthorizedAccessException or DllNotFoundException)
 {
     Console.WriteLine(e);
 }

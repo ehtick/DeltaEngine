@@ -2,7 +2,6 @@ using Arch.Core;
 using Delta.Engine.Assets;
 using Delta.Engine.ECS;
 using Delta.Engine.ECS.Components;
-using Delta.Engine.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -10,6 +9,10 @@ using System.Text.Json.Serialization;
 
 namespace Delta.Engine.Runtime;
 
+[System.Diagnostics.CodeAnalysis.SuppressMessage(
+    "Reliability",
+    "CA2213:Disposable fields should be disposed",
+    Justification = "Arch.Core requires World.Destroy(World); calling World.Dispose directly is not the supported ownership path.")]
 public sealed class Scene : IDisposable, IAsset
 {
     internal readonly World _world;
@@ -38,10 +41,14 @@ public sealed class Scene : IDisposable, IAsset
         {
             _deltaTime = deltaTime;
             foreach (var item in _jobs)
+            {
                 item.Execute();
+            }
         }
         foreach (var item in _defaultJobs)
+        {
             item.Execute();
+        }
     }
 
     public void Run()
@@ -73,8 +80,13 @@ public sealed class Scene : IDisposable, IAsset
     {
         return _hierarchySystem.GetRootEntities();
     }
+    [System.Diagnostics.CodeAnalysis.SuppressMessage(
+        "Design",
+        "CA1002:Do not expose generic lists",
+        Justification = "Hierarchy adapters reuse a caller-owned list to avoid per-frame allocations.")]
     public void GetFirstChildren(EntityReference entityRef, List<EntityReference> children)
     {
+        ArgumentNullException.ThrowIfNull(children);
         _hierarchySystem.GetFirstChildren(entityRef, children);
     }
     public int GetFirstChildrenCount(EntityReference entityRef)
@@ -86,8 +98,13 @@ public sealed class Scene : IDisposable, IAsset
     {
         World.Destroy(_world);
         foreach (var item in _jobs)
+        {
             if (item is IDisposable disposable)
+            {
                 disposable.Dispose();
+            }
+        }
+
         _jobs.Clear();
     }
 }

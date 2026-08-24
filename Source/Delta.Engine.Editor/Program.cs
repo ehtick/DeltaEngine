@@ -5,10 +5,15 @@ using System;
 
 namespace Delta.Engine.Editor;
 
-internal class Program
+internal static class Program
 {
-    public static IProjectPath ProjectPath { get; private set; }
-    public static RuntimeLoader RuntimeLoader { get; private set; }
+    private static IProjectPath? _projectPath;
+    private static RuntimeLoader? _runtimeLoader;
+
+    public static IProjectPath ProjectPath => _projectPath ??
+        throw new InvalidOperationException("Project path is not initialized before the editor application starts.");
+    public static RuntimeLoader RuntimeLoader => _runtimeLoader ??
+        throw new InvalidOperationException("Runtime loader is not initialized before the editor application starts.");
 
     // Initialization code. Don't use any Avalonia, third-party APIs or any
     // SynchronizationContext-reliant code before AppMain is called: things aren't initialized
@@ -17,10 +22,10 @@ internal class Program
     public static void Main(string[] args)
     {
         string directoryPath = ProjectCreator.GetExecutableDirectory();
-        ProjectPath = new EditorPaths(directoryPath);
+        _projectPath = new EditorPaths(directoryPath);
         ProjectCreator.CreateProject(ProjectPath);
         IThreadGetter uiThreadGetter = new AvaloniaThreadGetter();
-        RuntimeLoader = new RuntimeLoader(ProjectPath, uiThreadGetter);
+        _runtimeLoader = new RuntimeLoader(ProjectPath, uiThreadGetter);
 
         BuildAvaloniaApp()
         .StartWithClassicDesktopLifetime(args);

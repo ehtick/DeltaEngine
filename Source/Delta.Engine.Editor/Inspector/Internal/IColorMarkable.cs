@@ -21,22 +21,26 @@ namespace Delta.Engine.Editor.Inspector.Internal
                     var labelBrush = Tools.Colors.DefaultLabelBrush;
                     var borderBrush = Tools.Colors.DefaultBorderBrush;
                     foreach (var item in previousControl.GetSelfAndVisualAncestors())
+                    {
                         if (item is InspectorNode node)
                         {
                             node.SetLabelColor(labelBrush);
                             node.SetBorderColor(borderBrush);
                         }
+                    }
                 }
                 _markedNode = value;
                 if (MarkedNode is Control currentControl)
                 {
                     var brush = Tools.Colors.DefaultBorderFocusBrush;
                     foreach (var item in currentControl.GetSelfAndVisualAncestors())
+                    {
                         if (item is InspectorNode node)
                         {
                             node.SetLabelColor(brush);
                             node.SetBorderColor(brush);
                         }
+                    }
                 }
             }
         }
@@ -44,11 +48,13 @@ namespace Delta.Engine.Editor.Inspector.Internal
         public static void TryMark(Control control)
         {
             foreach (var item in control.GetSelfAndVisualAncestors())
+            {
                 if (item is IColorMarkable node)
                 {
                     MarkedNode = node;
                     break;
                 }
+            }
         }
 
         public static void Unmark()

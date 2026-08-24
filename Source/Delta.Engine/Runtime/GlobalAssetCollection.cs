@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Delta.Engine.Runtime;
 
-internal class GlobalAssetCollection : IAssetCollection
+internal sealed class GlobalAssetCollection : IAssetCollection
 {
     private readonly Dictionary<Type, object> _typedAssetCollections = new()
     {
@@ -41,7 +41,10 @@ internal class GlobalAssetCollection : IAssetCollection
     {
         var type = typeof(T);
         if (!_typedAssetCollections.TryGetValue(type, out var collection))
+        {
             _typedAssetCollections[type] = collection = new DefaultAssetCollection<T>();
+        }
+
         return (IAssetCollection<T>)collection;
     }
 }

@@ -5,8 +5,11 @@ namespace Delta.Engine.Integration.Tests;
 
 public sealed class UiFrameSourceContractTests
 {
+    private static readonly EngineUiQuad[] DrawList = [new EngineUiQuad(0, 0, 1, 1, 1, 1, 1, 1)];
+    private static readonly string[] ExpectedEvents = ["ui", "render:1"];
+
     [Fact]
-    public void Optional_ui_frame_source_is_prepared_before_render()
+    public void OptionalUiFrameSourceIsPreparedBeforeRender()
     {
         var events = new List<string>();
         using var input = new FakeInput();
@@ -18,7 +21,7 @@ public sealed class UiFrameSourceContractTests
         host.Start();
         host.RunFrame(0.016f);
 
-        Assert.Equal(new[] { "ui", "render:1" }, events);
+        Assert.Equal(ExpectedEvents, events);
     }
 
     private sealed class FakeInput : IEngineInputService
@@ -39,7 +42,7 @@ public sealed class UiFrameSourceContractTests
 
     private sealed class FakeUi(List<string> events) : IEngineUiFrameSource
     {
-        public ReadOnlyMemory<EngineUiQuad> CurrentDrawList => new[] { new EngineUiQuad(0, 0, 1, 1, 1, 1, 1, 1) };
+        public ReadOnlyMemory<EngineUiQuad> CurrentDrawList => DrawList;
         public void Initialize() { }
         public void PrepareFrame(in EngineFrameContext context) => events.Add("ui");
         public void Update(in EngineFrameContext context) => throw new InvalidOperationException("Host should use PrepareFrame.");

@@ -13,5 +13,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Delta.Engine.Generation\Delta.Engine.Generation.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Delta.Engine.Generation.Core\Delta.Engine.Generation.Core.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
 </Project>

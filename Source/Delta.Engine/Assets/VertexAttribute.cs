@@ -4,6 +4,10 @@ using System.Numerics;
 namespace Delta.Engine.Assets;
 
 [Flags]
+[System.Diagnostics.CodeAnalysis.SuppressMessage(
+    "Naming",
+    "CA1711:Identifiers should not have incorrect suffix",
+    Justification = "VertexAttribute is the established public graphics-data enum name.")]
 public enum VertexAttribute : int
 {
     Pos3 = 1 << 0,
@@ -42,7 +46,9 @@ internal static class VertexAttributeExtensions
         for (var location = 0; location < AttributeCount; location++)
         {
             if ((mask & (VertexAttribute)(1 << location)) != 0)
+            {
                 size += GetAttributeSize(location);
+            }
         }
 
         return size;
@@ -59,7 +65,10 @@ internal static class VertexAttributeExtensions
         {
             _position++;
             while (_position < AttributeCount && (_mask & (VertexAttribute)(1 << _position)) == 0)
+            {
                 _position++;
+            }
+
             return _position < AttributeCount;
         }
 

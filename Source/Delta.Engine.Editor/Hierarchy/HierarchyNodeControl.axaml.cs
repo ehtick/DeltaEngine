@@ -1,3 +1,4 @@
+#pragma warning disable CS8618 // Avalonia initializes XAML-bound controls during InitializeComponent.
 using Arch.Core;
 using Arch.Core.Extensions;
 using Avalonia;
@@ -21,7 +22,7 @@ public sealed partial class HierarchyNodeControl : UserControl, IDisposable
     public static readonly StyledProperty<Controls?> ChildrenProperty =
         AvaloniaProperty.Register<ComponentNodeControl, Controls?>(nameof(ContentChildren));
 
-    private readonly HierarchyNodeCreator _creator;
+    private readonly HierarchyNodeCreator? _creator;
     private IListWrapper<HierarchyNodeControl, Control> ChildrenNodes => new(ChildrenStack.Children);
 
     private const string CollapsedSvgPath = "/Assets/Icons/collapsed.svg";
@@ -44,7 +45,10 @@ public sealed partial class HierarchyNodeControl : UserControl, IDisposable
         set
         {
             if (GetValue(SelectedProperty) == value)
+            {
                 return;
+            }
+
             SetValue(SelectedProperty, value);
             Background = new SolidColorBrush(value ? Colors.Cyan : Colors.Magenta);
         }
@@ -68,24 +72,38 @@ public sealed partial class HierarchyNodeControl : UserControl, IDisposable
     {
         _entity = entityReference;
         NodeName.Content = EntityString(_entity);
-        var count = _creator.GetChildrenCount(_entity);
+        var count = _creator?.GetChildrenCount(_entity) ?? 0;
         Collapsed |= count == 0;
         CollapseButton.IsVisible = count != 0;
         if (!Collapsed)
+        {
             UpdateChildren();
+        }
     }
 
     private void UpdateChildren()
     {
+        if (_creator is null)
+        {
+            return;
+        }
+
         var children = _creator.GetChildren(_entity);
         var count = children.Length;
         UpdateChildrenCount(count);
         for (int i = 0; i < count; i++)
+        {
             ChildrenNodes[i].UpdateEntity(children[i]);
+        }
     }
 
     private void UpdateChildrenCount(int neededNodesCount)
     {
+        if (_creator is null)
+        {
+            return;
+        }
+
         var currentNodesCount = ChildrenNodes.Count;
         var delta = currentNodesCount - neededNodesCount;
         if (delta > 0)
@@ -109,17 +127,26 @@ public sealed partial class HierarchyNodeControl : UserControl, IDisposable
     public void Dispose()
     {
         foreach (var item in ChildrenNodes)
+        {
             item.Dispose();
-        _creator.ReturnNode(this);
+        }
+
+        _creator?.ReturnNode(this);
     }
 
     private static string EntityString(EntityReference entityReference)
     {
         if (!entityReference.IsAlive())
+        {
             return string.Empty;
+        }
+
         var entity = entityReference.Entity;
         if (entity.TryGet<EntityName>(out var entityName) && !string.IsNullOrEmpty(entityName.name))
+        {
             return entityName.name;
+        }
+
         return entityReference.LookupString();
     }
 

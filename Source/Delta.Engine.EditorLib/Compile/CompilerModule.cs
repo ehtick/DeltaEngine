@@ -12,7 +12,7 @@ using System.Runtime.Loader;
 
 namespace Delta.Engine.EditorLib.Compile;
 
-internal class CompilerModule : ICompilerModule
+internal sealed class CompilerModule : ICompilerModule
 {
     private readonly CompileHelper _compileHelper;
 
@@ -88,7 +88,10 @@ internal class CompilerModule : ICompilerModule
         _scope = default;
         _context?.Unload();
         if (_context != null)
+        {
             _oldAlcs.Add(new WeakReference<AssemblyLoadContext>(_context, false));
+        }
+
         _context = null;
         _oldAlcs.RemoveWhere(r => !r.TryGetTarget(out _));
     }

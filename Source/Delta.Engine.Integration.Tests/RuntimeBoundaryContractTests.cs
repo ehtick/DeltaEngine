@@ -9,7 +9,7 @@ namespace Delta.Engine.Integration.Tests;
 public sealed class RuntimeBoundaryContractTests
 {
     [Fact]
-    public void Integration_runtime_does_not_reference_editor_or_backend_assemblies()
+    public void IntegrationRuntimeDoesNotReferenceEditorOrBackendAssemblies()
     {
         var references = typeof(EngineHost)
             .Assembly
@@ -26,7 +26,7 @@ public sealed class RuntimeBoundaryContractTests
     }
 
     [Fact]
-    public void Roslyn_compiler_backend_depends_on_neutral_contracts_in_one_direction()
+    public void RoslynCompilerBackendDependsOnNeutralContractsInOneDirection()
     {
         var references = typeof(RoslynScriptCompiler)
             .Assembly

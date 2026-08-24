@@ -1,4 +1,5 @@
 using Arch.Core;
+using System;
 
 namespace Delta.Engine.ECS.Components;
 
@@ -7,7 +8,11 @@ namespace Delta.Engine.ECS.Components;
 /// Can be used for world TRS calculations for rendering
 /// or other child/parent dependencies
 /// </summary>
-public readonly struct ChildOf
+[System.Diagnostics.CodeAnalysis.SuppressMessage(
+    "Design",
+    "CA1051:Do not declare visible instance fields",
+    Justification = "ECS component fields are public by design for generated ref access.")]
+public readonly struct ChildOf : IEquatable<ChildOf>
 {
     /// <summary>
     /// Parent of entity, containing <see cref="ChildOf"/> component
@@ -18,4 +23,14 @@ public readonly struct ChildOf
     {
         this.parent = parent;
     }
+
+    public bool Equals(ChildOf other) => parent.Equals(other.parent);
+
+    public override bool Equals(object? obj) => obj is ChildOf other && Equals(other);
+
+    public override int GetHashCode() => parent.GetHashCode();
+
+    public static bool operator ==(ChildOf left, ChildOf right) => left.Equals(right);
+
+    public static bool operator !=(ChildOf left, ChildOf right) => !left.Equals(right);
 }

@@ -1,3 +1,4 @@
+#pragma warning disable CS8618 // Avalonia initializes XAML-bound controls during InitializeComponent.
 using Arch.Core;
 using Avalonia;
 using Avalonia.Controls;
@@ -11,7 +12,7 @@ using System;
 
 namespace Delta.Engine.Editor;
 
-internal partial class ComponentNodeControl : InspectorNode
+internal sealed partial class ComponentNodeControl : InspectorNode
 {
     public static readonly StyledProperty<Controls?> ComponentGridChildrenProperty =
         AvaloniaProperty.Register<ComponentNodeControl, Controls?>(nameof(Children));
@@ -63,8 +64,12 @@ internal partial class ComponentNodeControl : InspectorNode
 
         bool changed = false;
         if (ClipVisible && !Collapsed)
+        {
             foreach (var node in ChildrenNodes)
+            {
                 changed |= node.UpdateData(ref entity);
+            }
+        }
 
         DebugTimer.StopDebug();
         return changed;

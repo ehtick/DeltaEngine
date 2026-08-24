@@ -5,7 +5,7 @@ namespace Delta.Engine.Benchmarks
 {
     public class RefGetBench
     {
-        public struct ContainerGetAgr
+        private struct ContainerGetAgr : IEquatable<ContainerGetAgr>
         {
             public float Value;
             public float Value1
@@ -29,9 +29,19 @@ namespace Delta.Engine.Benchmarks
                 [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
                 set => Value2 = value;
             }
+
+            public bool Equals(ContainerGetAgr other) => Value.Equals(other.Value);
+
+            public override bool Equals(object? obj) => obj is ContainerGetAgr other && Equals(other);
+
+            public override int GetHashCode() => Value.GetHashCode();
+
+            public static bool operator ==(ContainerGetAgr left, ContainerGetAgr right) => left.Equals(right);
+
+            public static bool operator !=(ContainerGetAgr left, ContainerGetAgr right) => !left.Equals(right);
         }
 
-        public struct ContainerGet
+        private struct ContainerGet : IEquatable<ContainerGet>
         {
             public float Value;
             public float Value1
@@ -49,6 +59,16 @@ namespace Delta.Engine.Benchmarks
                 readonly get => Value2;
                 set => Value2 = value;
             }
+
+            public bool Equals(ContainerGet other) => Value.Equals(other.Value);
+
+            public override bool Equals(object? obj) => obj is ContainerGet other && Equals(other);
+
+            public override int GetHashCode() => Value.GetHashCode();
+
+            public static bool operator ==(ContainerGet left, ContainerGet right) => left.Equals(right);
+
+            public static bool operator !=(ContainerGet left, ContainerGet right) => !left.Equals(right);
         }
 
         private ContainerGet g0;

@@ -12,47 +12,68 @@ public static class AccessorContainerExtensions
 {
     public static Type GetFieldType(this IAccessorsContainer container, Type type, ReadOnlySpan<string> path)
     {
+        ArgumentNullException.ThrowIfNull(container);
+        ArgumentNullException.ThrowIfNull(type);
         foreach (var fieldName in path)
+        {
             type = container.AllAccessors[type].GetFieldType(fieldName);
+        }
+
         return type;
     }
 
-    public static unsafe K GetComponentFieldValue<K>(this IAccessorsContainer container, EntityReference entityReference, Type componentType, ReadOnlySpan<string> path)
+    public static unsafe TValue GetComponentFieldValue<TValue>(this IAccessorsContainer container, EntityReference entityReference, Type componentType, ReadOnlySpan<string> path)
     {
+        ArgumentNullException.ThrowIfNull(container);
+        ArgumentNullException.ThrowIfNull(componentType);
         ref byte cmpRef = ref entityReference.GetComponentByteRef(componentType);
-        return container.GetFieldValue<K>(componentType, new(Unsafe.AsPointer(ref cmpRef)), path);
+        return container.GetFieldValue<TValue>(componentType, new(Unsafe.AsPointer(ref cmpRef)), path);
     }
 
-    public static unsafe void SetComponentFieldValue<K>(this IAccessorsContainer container, EntityReference entityReference, Type componentType, ReadOnlySpan<string> path, K value)
+    public static unsafe void SetComponentFieldValue<TValue>(this IAccessorsContainer container, EntityReference entityReference, Type componentType, ReadOnlySpan<string> path, TValue value)
     {
+        ArgumentNullException.ThrowIfNull(container);
+        ArgumentNullException.ThrowIfNull(componentType);
         ref byte cmpRef = ref entityReference.GetComponentByteRef(componentType);
         container.SetFieldValue(componentType, new(Unsafe.AsPointer(ref cmpRef)), path, value);
     }
 
-    public static unsafe K GetFieldValue<K>(this IAccessorsContainer container, Type type, nint ptr, ReadOnlySpan<string> path)
+    public static unsafe TValue GetFieldValue<TValue>(this IAccessorsContainer container, Type type, nint address, ReadOnlySpan<string> path)
     {
+        ArgumentNullException.ThrowIfNull(container);
+        ArgumentNullException.ThrowIfNull(type);
         foreach (var fieldName in path)
         {
             var accessor = container.AllAccessors[type];
-            ptr = accessor.GetFieldPtr(ptr, fieldName);
+            address = accessor.GetFieldPtr(address, fieldName);
             type = accessor.GetFieldType(fieldName);
         }
 
-        if (typeof(K) == type)
-            return Unsafe.AsRef<K>(ptr.ToPointer());
-        throw new InvalidOperationException();
+        if (typeof(TValue) == type)
+        {
+            return Unsafe.AsRef<TValue>(address.ToPointer());
+        }
+
+        throw new InvalidOperationException($"Accessor type {type} does not match requested value type {typeof(TValue)}.");
     }
 
-    public static unsafe void SetFieldValue<K>(this IAccessorsContainer container, Type type, nint ptr, ReadOnlySpan<string> path, K value)
+    public static unsafe void SetFieldValue<TValue>(this IAccessorsContainer container, Type type, nint address, ReadOnlySpan<string> path, TValue value)
     {
+        ArgumentNullException.ThrowIfNull(container);
+        ArgumentNullException.ThrowIfNull(type);
         foreach (var fieldName in path)
         {
             var accessor = container.AllAccessors[type];
-            ptr = accessor.GetFieldPtr(ptr, fieldName);
+            address = accessor.GetFieldPtr(address, fieldName);
             type = accessor.GetFieldType(fieldName);
         }
 
-        if (typeof(K) == type)
-            Unsafe.AsRef<K>(ptr.ToPointer()) = value;
+        if (typeof(TValue) == type)
+        {
+            Unsafe.AsRef<TValue>(address.ToPointer()) = value;
+            return;
+        }
+
+        throw new InvalidOperationException($"Accessor type {type} does not match requested value type {typeof(TValue)}.");
     }
 }

@@ -1,3 +1,4 @@
+#pragma warning disable CS8618 // Avalonia initializes XAML-bound controls during InitializeComponent.
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -17,7 +18,7 @@ public partial class FlyoutSearchControl : UserControl
 
     private readonly List<ISearchFlyoutViewModel> _vms = [];
     private readonly Stack<FlyoutSearchItem> _cachedNodes = [];
-    private readonly Flyout _parentFlyout;
+    private readonly Flyout _parentFlyout = new();
     private IListWrapper<FlyoutSearchItem, Control> ChildrenNodes => new(ChildrenStackPanel.Children);
 
     private static FlyoutSearchControl? _instance;
@@ -28,8 +29,10 @@ public partial class FlyoutSearchControl : UserControl
     {
         InitializeComponent();
         if (Design.IsDesignMode)
+        {
             return;
-        _parentFlyout = new();
+        }
+
         _parentFlyout.Content = this;
         _instance = this;
     }
@@ -62,14 +65,24 @@ public partial class FlyoutSearchControl : UserControl
     {
         _selectedNodeIndex = 0;
         foreach (var item in ChildrenNodes)
+        {
             _cachedNodes.Push(item);
+        }
+
         ChildrenNodes.Clear();
 
         foreach (var vm in _vms)
+        {
             if (string.IsNullOrEmpty(_searchString) || vm.GetName.Contains(_searchString, StringComparison.InvariantCultureIgnoreCase))
+            {
                 ChildrenNodes.Add(GetOrCreateNode(vm));
+            }
+        }
+
         if (ChildrenNodes.Count != 0)
+        {
             ChildrenNodes[_selectedNodeIndex].Selected = true;
+        }
     }
 
 
@@ -95,9 +108,14 @@ public partial class FlyoutSearchControl : UserControl
     private void UpdateSelection()
     {
         foreach (var item in ChildrenNodes)
+        {
             item.Selected = false;
+        }
+
         if (ChildrenNodes.Count != 0)
+        {
             ChildrenNodes[_selectedNodeIndex].Selected = true;
+        }
     }
 
     private void SearchTextChanged(object? sender, TextChangedEventArgs e)
@@ -111,7 +129,10 @@ public partial class FlyoutSearchControl : UserControl
     private FlyoutSearchItem GetOrCreateNode(ISearchFlyoutViewModel vm)
     {
         if (!_cachedNodes.TryPop(out var item))
+        {
             item = new(this);
+        }
+
         item.Selected = false;
         item.VM = vm;
         return item;

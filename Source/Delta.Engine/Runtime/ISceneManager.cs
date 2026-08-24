@@ -1,9 +1,14 @@
 using System;
+namespace Delta.Engine.Runtime;
 
-using Delta.Engine.Runtime;
-public interface ISceneManager
+public sealed class SceneChangedEventArgs(Scene scene) : EventArgs
 {
-    public event Action<Scene>? OnSceneChanged;
+    public Scene Scene { get; } = scene;
+}
+
+public interface ISceneManager : IDisposable
+{
+    public event EventHandler<SceneChangedEventArgs>? OnSceneChanged;
     public Scene CurrentScene { get; }
     public void LoadScene(string path);
     public void SaveScene(string name);

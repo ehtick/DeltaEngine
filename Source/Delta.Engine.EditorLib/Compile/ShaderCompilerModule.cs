@@ -8,7 +8,7 @@ using System.IO;
 using System.Text;
 
 using Delta.Engine.EditorLib.Compile;
-internal unsafe class ShaderCompilerModule
+internal sealed unsafe class ShaderCompilerModule
 {
     const string VertexExtension = ".vert";
     const string FragmentExtension = ".frag";
@@ -26,16 +26,24 @@ internal unsafe class ShaderCompilerModule
             var ext = Path.GetExtension(path);
             var name = Path.GetFileNameWithoutExtension(path);
             if (!shaderNameToShaderModules.TryGetValue(name, out var dict))
+            {
                 shaderNameToShaderModules[name] = dict = [];
+            }
+
             dict.Add(ext, path);
         }
 
         foreach (var item in shaderNameToShaderModules)
         {
             if (item.Value.Count != 2)
+            {
                 continue;
+            }
+
             if (!(item.Value.ContainsKey(VertexExtension) && item.Value.ContainsKey(FragmentExtension)))
+            {
                 continue;
+            }
 
             var vertBytes = Compile(item.Value[VertexExtension], ShaderKind.VertexShader);
             var fragBytes = Compile(item.Value[FragmentExtension], ShaderKind.FragmentShader);
@@ -94,12 +102,14 @@ internal unsafe class ShaderCompilerModule
         for (int i = 0; i < shaderLines.Length; i++)
         {
             string? line = shaderLines[i];
-            if (!line.StartsWith(IncludeKeyword))
+            if (!line.StartsWith(IncludeKeyword, StringComparison.Ordinal))
             {
                 preprocessed.AppendLine(line);
                 continue;
             }
-            var includePath = line[IncludeKeyword.Length..].Replace(" ", string.Empty).Replace("\"", string.Empty);
+            var includePath = line[IncludeKeyword.Length..]
+                .Replace(" ", string.Empty, StringComparison.Ordinal)
+                .Replace("\"", string.Empty, StringComparison.Ordinal);
             if (!includes.Contains(includePath))
             {
                 var includeCode = File.ReadAllText(Path.Combine(directory, includePath));

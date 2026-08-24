@@ -18,7 +18,9 @@ public partial class EditorBar : UserControl
     {
         var value = PlayButton.IsChecked ?? default;
         if (!value)
+        {
             PauseButton.IsChecked = false;
+        }
 
         UpdateRuntimeState();
     }
@@ -36,7 +38,9 @@ public partial class EditorBar : UserControl
     private void UpdateRuntimeState()
     {
         if (Design.IsDesignMode)
+        {
             return;
+        }
 
         var running = PlayButton.IsChecked ?? default;
         var pausing = PauseButton.IsChecked ?? default;

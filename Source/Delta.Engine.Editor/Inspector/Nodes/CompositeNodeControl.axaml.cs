@@ -8,7 +8,7 @@ using Delta.Engine.Editor.Inspector.Internal;
 
 namespace Delta.Engine.Editor;
 
-internal partial class CompositeNodeControl : InspectorNode
+internal sealed partial class CompositeNodeControl : InspectorNode
 {
     private IListWrapper<InspectorNode, Control> ChildrenNodes => new(ChildrenStack.Children);
     public CompositeNodeControl() => InitializeComponent();
@@ -27,12 +27,15 @@ internal partial class CompositeNodeControl : InspectorNode
     public override bool UpdateData(ref EntityReference entity)
     {
         if (!ClipVisible)
+        {
             return false;
+        }
 
         bool changed = false;
         for (int i = 0; i < ChildrenNodes.Count; i++)
+        {
             changed |= ChildrenNodes[i].UpdateData(ref entity);
-
+        }
 
         return changed;
     }

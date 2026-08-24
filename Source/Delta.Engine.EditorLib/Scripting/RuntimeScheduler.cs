@@ -11,17 +11,9 @@ internal sealed class RuntimeScheduler : IRuntimeScheduler, IDisposable
     private readonly IRuntime _runtime;
     private readonly IThreadGetter? _uiThreadGetter;
     private Thread? _runtimeThread;
-    private bool _disposed = false;
+    private bool _disposed;
 
-
-    private readonly List<Action> _actionsLoop = [];
-
-
-    public event Action OnLoop
-    {
-        add => _actionsLoop.Add(value);
-        remove => _actionsLoop.Remove(value);
-    }
+    public event EventHandler? OnLoop;
 
     public RuntimeScheduler(IRuntime runtime, IThreadGetter? uiThreadGetter)
     {
@@ -41,21 +33,25 @@ internal sealed class RuntimeScheduler : IRuntimeScheduler, IDisposable
         while (!_disposed)
         {
             if (_uiThreadGetter != null && _uiThreadGetter.Thread != null)
+            {
                 _uiThreadGetter.Thread(Execute).Wait();
+            }
             else
+            {
                 Execute();
+            }
         }
     }
 
     private void Execute()
     {
-        foreach (var action in _actionsLoop)
-            action.Invoke();
+        OnLoop?.Invoke(this, EventArgs.Empty);
         _runtime.Run();
     }
 
     public void Dispose()
     {
         _disposed = true;
+        _runtimeThread = null;
     }
 }

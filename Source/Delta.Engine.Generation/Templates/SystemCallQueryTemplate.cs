@@ -22,7 +22,10 @@ public static readonly QueryDescription {{Model.SystemCallQueryName}} = new()
     private static string GetTypeArray(IEnumerable<string>? parameterSymbols)
     {
         if (parameterSymbols == null)
+        {
             return "[]";
+        }
+
         return $"[{string.Join(", ", parameterSymbols.Select(s => $"typeof({s})"))}]";
     }
 }

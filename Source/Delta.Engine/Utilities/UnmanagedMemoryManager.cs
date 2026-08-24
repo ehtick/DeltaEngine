@@ -30,14 +30,14 @@ public sealed unsafe class UnmanagedMemoryManager<T> : MemoryManager<T>
     /// <summary>
     /// Create a new UnmanagedMemoryManager instance at the given pointer and size
     /// </summary>
-    public UnmanagedMemoryManager(T* pointer, int length)
+    public UnmanagedMemoryManager(T* address, int length)
     {
-        _pointer = pointer;
+        _pointer = address;
         _length = length;
     }
-    public UnmanagedMemoryManager(nint pointer, int length)
+    public UnmanagedMemoryManager(nint address, int length)
     {
-        _pointer = (T*)pointer.ToPointer();
+        _pointer = (T*)address.ToPointer();
         _length = length;
     }
 
@@ -58,7 +58,10 @@ public sealed unsafe class UnmanagedMemoryManager<T> : MemoryManager<T>
     public override MemoryHandle Pin(int elementIndex = 0)
     {
         if (elementIndex < 0 || elementIndex >= _length)
-            throw new Exception();
+        {
+            throw new ArgumentOutOfRangeException(nameof(elementIndex));
+        }
+
         return new MemoryHandle(_pointer + elementIndex);
     }
     /// <summary>

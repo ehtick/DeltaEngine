@@ -1,3 +1,4 @@
+#pragma warning disable CS8618 // Avalonia initializes XAML-bound controls during InitializeComponent.
 using Avalonia;
 using Avalonia.Controls;
 using System;
@@ -18,8 +19,8 @@ public partial class EditorPanelHeader : UserControl
     public static readonly StyledProperty<bool> CloseEnabledProperty =
         AvaloniaProperty.Register<ComponentNodeControl, bool>(nameof(CloseEnabled), false);
 
-    private void CloseClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => OnCloseClick?.Invoke();
-    public event Action OnCloseClick;
+    private void CloseClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => OnCloseClick?.Invoke(this, EventArgs.Empty);
+    public event EventHandler? OnCloseClick;
 
     public string? PanelName
     {
@@ -62,13 +63,17 @@ public partial class EditorPanelHeader : UserControl
     public void StartDebug()
     {
         if (DebugEnabled)
+        {
             DebugTimer.StartDebug();
+        }
     }
 
     public void StopDebug()
     {
         if (DebugEnabled)
+        {
             DebugTimer.StopDebug();
+        }
     }
 
     public EditorPanelHeader() => InitializeComponent();

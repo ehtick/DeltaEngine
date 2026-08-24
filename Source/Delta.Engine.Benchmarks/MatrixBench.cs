@@ -21,7 +21,7 @@ public class MatrixBench
     private readonly Quaternion[] rotations = new Quaternion[R];
     private readonly Vector3[] scales = new Vector3[R];
 
-    private static Random rnd = new(Magic);
+    private static BenchmarkRandom rnd = new(Magic);
 
     private const int Magic = 132;
     private const int R = 40000000;
@@ -71,7 +71,9 @@ public class MatrixBench
             {
                 var difference = MathF.Abs(expected.GetElement(column, row) - actual.GetElement(column, row));
                 if (difference > 1e-5f)
+                {
                     throw new InvalidOperationException($"{name} does not match Delta.Maths column-vector TRS at ({column}, {row}).");
+                }
             }
         }
     }
@@ -121,7 +123,7 @@ public class MatrixBench
         return v;
     }
     //[Benchmark]
-    public float MatrixOldNew()
+    public float MatrixOld2()
     {
         float v = 0;
         bool add = false;

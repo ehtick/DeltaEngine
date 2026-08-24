@@ -3,6 +3,14 @@
 Date: 2026-08-18
 Scope: `Delta.Engine` workstream only.
 
+> Historical delivery snapshot. It explains why migration adapters exist but
+> is not the current ABI source of truth. Read
+> `Source/Delta.Engine.Integration/EngineIntegrationContracts.cs` and
+> `EngineRendererContracts.cs` for current signatures, and
+> [../../HIGH_PRIORITY_TODO.md](../../HIGH_PRIORITY_TODO.md) for their ordered
+> consolidation. The snippets and dependency inventory below are intentionally
+> not maintained as a second public contract.
+
 ## Namespace convention
 
 All owned projects in `Source` use the `Delta.Engine` root. The namespace migration

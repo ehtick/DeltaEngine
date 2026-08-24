@@ -23,7 +23,7 @@ public sealed class EngineGlueContractTests
     ];
 
     [Fact]
-    public void Render_adapter_forwards_resize_before_frame()
+    public void RenderAdapterForwardsResizeBeforeFrame()
     {
         using var sink = new FakeRenderSink();
         using var adapter = new EngineRenderServiceAdapter(sink);
@@ -50,7 +50,7 @@ public sealed class EngineGlueContractTests
     }
 
     [Fact]
-    public void Frame_loop_stops_when_platform_requests_exit()
+    public void FrameLoopStopsWhenPlatformRequestsExit()
     {
         using var input = new ExitAfterOneFrameInput();
         using var world = new NoopWorld();

@@ -48,7 +48,10 @@ file static class {{Model.TypeName}}File
     {
         StringBuilder sb = new();
         foreach (var symbol in Model.ContainingTypes())
+        {
             sb.Append(symbol.TypeDeclaration()).AppendLine().Append("{").AppendLine();
+        }
+
         return sb.ToString();
     }
 
@@ -56,7 +59,10 @@ file static class {{Model.TypeName}}File
     {
         StringBuilder sb = new();
         for (int i = 0; i < Model.ContainingTypesCount(); i++)
+        {
             sb.AppendLine().Append("}").AppendLine();
+        }
+
         return sb.ToString();
     }
 }

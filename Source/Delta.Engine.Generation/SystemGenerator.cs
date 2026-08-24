@@ -42,7 +42,10 @@ public sealed class SystemGenerator : GeneratorBase
     private static bool IsTypeWithAttribute(SyntaxNode syntaxNode, string attributeName)
     {
         if (syntaxNode is not BaseTypeDeclarationSyntax type)
+        {
             return false;
+        }
+
         return type.AttributeLists.Any(l => l.Attributes.Any(a => a.Name.ToFullString() == attributeName));
     }
 
@@ -53,18 +56,27 @@ public sealed class SystemGenerator : GeneratorBase
         foreach (var type in types)
         {
             if (type == null)
+            {
                 continue;
+            }
+
             if (!type.IsAllPartialToRoot(out var nonPartial))
             {
                 if (nonPartial is null)
+                {
                     continue;
+                }
+
                 ctx.ReportNotPartial(nonPartial.Identifier.GetLocation(), nameof(SystemAttribute));
                 continue;
             }
 
             var symbol = compilation.GetSemanticModel(type.SyntaxTree).GetDeclaredSymbol(type);
             if (symbol is null)
+            {
                 continue;
+            }
+
             SystemTemplate template = new(new(symbol, nameof(SystemCallAttribute)));
             ctx.AddSource(template);
         }

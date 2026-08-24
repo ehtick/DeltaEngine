@@ -5,6 +5,10 @@ using System;
 namespace Delta.Engine.ECS.Components;
 
 [Component, Dirty]
+[System.Diagnostics.CodeAnalysis.SuppressMessage(
+    "Design",
+    "CA1051:Do not declare visible instance fields",
+    Justification = "ECS component fields are public by design for generated ref access and blittable layout.")]
 public struct Render : IEquatable<Render>, IComparable<Render>
 {
     internal GuidAsset<ShaderData> _shader;
@@ -46,4 +50,12 @@ public struct Render : IEquatable<Render>, IComparable<Render>
     public static bool operator ==(Render left, Render right) => left.Equals(right);
     [Imp(Inl)]
     public static bool operator !=(Render left, Render right) => !(left == right);
+
+    public static bool operator <(Render left, Render right) => left.CompareTo(right) < 0;
+
+    public static bool operator <=(Render left, Render right) => left.CompareTo(right) <= 0;
+
+    public static bool operator >(Render left, Render right) => left.CompareTo(right) > 0;
+
+    public static bool operator >=(Render left, Render right) => left.CompareTo(right) >= 0;
 }

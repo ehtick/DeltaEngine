@@ -9,8 +9,11 @@ public static class ProjectCreator
 {
     public static void CreateProject(IProjectPath projectPath)
     {
+        ArgumentNullException.ThrowIfNull(projectPath);
         if (IsDirectoryEmpty(projectPath.RootDirectory))
+        {
             SetupProjectDirectory(projectPath);
+        }
     }
 
     public static string GetExecutableDirectory()

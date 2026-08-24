@@ -10,7 +10,11 @@ using System;
 
 namespace Delta.Engine.Editor;
 
-internal partial class NamedTextField : InspectorNode
+[System.Diagnostics.CodeAnalysis.SuppressMessage(
+    "Performance",
+    "CA1812:Avoid uninstantiated internal classes",
+    Justification = "Avalonia instantiates this control from the XAML resource.")]
+internal sealed partial class NamedTextField : InspectorNode
 {
     public static readonly StyledProperty<string?> FieldNameProperty =
         AvaloniaProperty.Register<ComponentNodeControl, string?>(nameof(FieldName));
@@ -24,7 +28,7 @@ internal partial class NamedTextField : InspectorNode
     public static readonly StyledProperty<HorizontalAlignment> FieldNameAlignmentProperty =
         AvaloniaProperty.Register<ComponentNodeControl, HorizontalAlignment>(nameof(FieldNameAlignment));
 
-    private bool _dragging = false;
+    private bool _dragging;
     private Point _prevPosition;
 
     public Cursor? FieldCursor
@@ -84,7 +88,9 @@ internal partial class NamedTextField : InspectorNode
     private void DataTextBox_LostFocus(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         if (IColorMarkable.MarkedNode == this)
+        {
             IColorMarkable.MarkedNode = null;
+        }
     }
 
     private void BeginDrag(object? sender, PointerPressedEventArgs e)
@@ -99,7 +105,9 @@ internal partial class NamedTextField : InspectorNode
     private void Drag(object? sender, PointerEventArgs e)
     {
         if (!_dragging)
+        {
             return;
+        }
 
         var pos = e.GetPosition(this);
         var deltaPos = pos - _prevPosition;

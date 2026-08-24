@@ -1,11 +1,10 @@
-using Delta.Engine.Assets;
 using Delta.Engine.Runtime;
 using Delta.Maths;
 using System;
 using System.Runtime.InteropServices;
+namespace Delta.Engine.Assets.Defaults;
 
-using Delta.Engine.Assets.Defaults;
-public class TriangleMesh
+public static class TriangleMesh
 {
     private static readonly float4 r = new(1.0f, 0.0f, 0.0f, 1.0f);
     private static readonly float4 g = new(0.0f, 1.0f, 0.0f, 1.0f);

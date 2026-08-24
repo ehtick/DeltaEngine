@@ -1,10 +1,9 @@
 using Delta.Engine.Runtime;
-using Delta.Engine.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
+namespace Delta.Engine.Assets;
 
-using Delta.Engine.Assets;
 internal class DefaultAssetCollection<T> : IAssetCollection<T> where T : class, IAsset
 {
     private const string MetaEnding = ".meta";
@@ -15,7 +14,10 @@ internal class DefaultAssetCollection<T> : IAssetCollection<T> where T : class, 
     public string GetPath(GuidAsset<T> guidAsset)
     {
         if (!_assetsData.TryGetValue(guidAsset.guid, out var result))
+        {
             _runtimeAssetsData.TryGetValue(guidAsset.guid, out result);
+        }
+
         return result?.path ?? string.Empty;
     }
     public string GetName(GuidAsset<T> guidAsset) => Path.GetFileNameWithoutExtension(GetPath(guidAsset));
@@ -24,10 +26,14 @@ internal class DefaultAssetCollection<T> : IAssetCollection<T> where T : class, 
     {
         var dictionary = _assetsData.ContainsKey(guidAsset.guid) ? _assetsData : _runtimeAssetsData;
         if (!dictionary.TryGetValue(guidAsset.guid, out var data))
+        {
             throw new FileNotFoundException();
+        }
 
         if (!data.assetRef.TryGetTarget(out var asset))
+        {
             data.assetRef.SetTarget(asset = LoadAsset(data.path));
+        }
 
         return asset;
     }
@@ -72,7 +78,10 @@ internal class DefaultAssetCollection<T> : IAssetCollection<T> where T : class, 
         GuidAsset<T>[] guidAssets = new GuidAsset<T>[_assetsData.Count];
         int index = 0;
         foreach (var item in _assetsData)
+        {
             guidAssets[index++] = new GuidAsset<T>(item.Key);
+        }
+
         return guidAssets;
     }
 
@@ -81,7 +90,10 @@ internal class DefaultAssetCollection<T> : IAssetCollection<T> where T : class, 
         GuidAsset<T>[] guidAssets = new GuidAsset<T>[_runtimeAssetsData.Count];
         int index = 0;
         foreach (var item in _runtimeAssetsData)
+        {
             guidAssets[index++] = new GuidAsset<T>(item.Key);
+        }
+
         return guidAssets;
     }
 
@@ -90,9 +102,15 @@ internal class DefaultAssetCollection<T> : IAssetCollection<T> where T : class, 
         GuidAsset<T>[] guidAssets = new GuidAsset<T>[_assetsData.Count + _runtimeAssetsData.Count];
         int index = 0;
         foreach (var item in _assetsData)
+        {
             guidAssets[index++] = new GuidAsset<T>(item.Key);
+        }
+
         foreach (var item in _runtimeAssetsData)
+        {
             guidAssets[index++] = new GuidAsset<T>(item.Key);
+        }
+
         return guidAssets;
     }
 
@@ -100,7 +118,7 @@ internal class DefaultAssetCollection<T> : IAssetCollection<T> where T : class, 
     public int GetRuntimeAssetsCount() => _runtimeAssetsData.Count;
     public int GetAllAssetsCount() => _assetsData.Count + _runtimeAssetsData.Count;
 
-    private class GuidAssetData
+    private sealed class GuidAssetData
     {
         public readonly WeakReference<T?> assetRef;
         public readonly string path;

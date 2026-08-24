@@ -5,6 +5,7 @@ using Microsoft.CodeAnalysis.Emit;
 using Microsoft.CodeAnalysis.Text;
 using System;
 using System.IO;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 
@@ -92,7 +93,7 @@ public sealed class RoslynScriptCompiler : IScriptCompiler
                 Microsoft.CodeAnalysis.DiagnosticSeverity.Warning => ScriptDiagnosticSeverity.Warning,
                 _ => ScriptDiagnosticSeverity.Error,
             },
-            diagnostic.GetMessage(),
+            diagnostic.GetMessage(CultureInfo.InvariantCulture),
             sourcePath,
             line,
             column);

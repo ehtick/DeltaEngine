@@ -1,5 +1,3 @@
-using Arch.Core;
-using System;
 using System.IO;
 using System.Reflection;
 using System.Text.Json;
@@ -10,12 +8,12 @@ namespace Delta.Engine.Assets;
 
 internal static class Serialization
 {
-    private static readonly JsonSerializerOptions _options;
+    private static readonly JsonSerializerOptions _options = CreateOptions();
     public static JsonSerializerOptions Options => _options;
 
-    static Serialization()
+    private static JsonSerializerOptions CreateOptions()
     {
-        _options = new(JsonSerializerOptions.Default)
+        return new(JsonSerializerOptions.Default)
         {
             IgnoreReadOnlyFields = false,
             IncludeFields = true,
@@ -53,7 +51,9 @@ internal static class Serialization
     private static void AddPrivateFieldsModifier(JsonTypeInfo jsonTypeInfo)
     {
         if (jsonTypeInfo.Kind != JsonTypeInfoKind.Object)
+        {
             return;
+        }
 
         foreach (FieldInfo field in jsonTypeInfo.Type.GetFields(BindingFlags.Instance | BindingFlags.NonPublic))
         {

@@ -7,18 +7,23 @@ using System.Runtime.InteropServices;
 
 namespace Delta.Engine.Editor.Hierarchy
 {
-    public class HierarchyNodeCreator
+    public sealed class EntityReferenceEventArgs(EntityReference entity) : EventArgs
+    {
+        public EntityReference Entity { get; } = entity;
+    }
+
+    public sealed class HierarchyNodeCreator
     {
         private readonly Stack<HierarchyNodeControl> _nodes = [];
         private readonly HashSet<EntityReference> _expandedNodes = [];
 
         private readonly List<EntityReference> _childrenListCached = [];
 
-        public event Action<EntityReference>? OnEntitySelectRequest;
-        public event Action<EntityReference>? OnEntityRemoveRequest;
+        public event EventHandler<EntityReferenceEventArgs>? OnEntitySelectRequest;
+        public event EventHandler<EntityReferenceEventArgs>? OnEntityRemoveRequest;
 
-        public void CallRemove(EntityReference entityRef) => OnEntityRemoveRequest?.Invoke(entityRef);
-        public void CallSelect(EntityReference entityRef) => OnEntitySelectRequest?.Invoke(entityRef);
+        public void CallRemove(EntityReference entityRef) => OnEntityRemoveRequest?.Invoke(this, new EntityReferenceEventArgs(entityRef));
+        public void CallSelect(EntityReference entityRef) => OnEntitySelectRequest?.Invoke(this, new EntityReferenceEventArgs(entityRef));
 
 
         public bool IsCollapsed(EntityReference entityRef)
@@ -29,9 +34,13 @@ namespace Delta.Engine.Editor.Hierarchy
         public void SetCollapsed(EntityReference entityRef, bool collapsed)
         {
             if (collapsed)
+            {
                 _expandedNodes.Remove(entityRef);
+            }
             else
+            {
                 _expandedNodes.Add(entityRef);
+            }
         }
 
         public ReadOnlySpan<EntityReference> GetChildren(EntityReference entityRef)

@@ -5,15 +5,21 @@ the SDL3 event loop, input translation, close handling, resize observation and
 frame clock. `EngineHost` still owns deterministic stage order:
 
 ```text
-SDL3 poll -> InputSnapshot -> world update -> render frame -> UI producer update
+SDL3 poll -> InputSnapshot -> world/user update
+  -> UI update/layout -> render submission -> present
 ```
+
+This is the target same-frame order. The historical `EngineHost` contract
+still records `RenderUpdated` before `UiUpdated`; phase 2 of the repair plan
+migrates implementation and stage-order tests together.
 
 The renderer receives surface metrics and frame time through
 `EngineFrameContext`; it never polls SDL input. The headless `Delta.Engine`
 boundary remains usable with `NullRenderer` and has no Render, Vulkan, SDL3 or
 Shader project reference.
 
-The sample uses the real `Delta.Render.Core` window/session contracts and
+The fullscreen sample is a historical lower-level smoke, not the current
+editor UI composition path. It uses the real `Delta.Render.Core` window/session contracts and
 `Delta.Render.Vulkan` swapchain lifecycle. It loads the versioned vertex and
 fragment `ShaderArtifact` outputs of DeltaShader, creates a Vulkan graphics
 pipeline, and draws the fullscreen SDF rectangle every frame. Resolution is
@@ -42,15 +48,15 @@ On macOS with a display, SDL3 and MoltenVK available, run one bounded frame:
 dotnet run --project Source/Delta.Engine.Windowed/Delta.Engine.Windowed.csproj -c Release -- --frames 1
 ```
 
-The next rendering step is to replace the fixed fullscreen parameters with a
-renderer-neutral UI draw list and resource bindings; this does not require a
-change to `EngineHost`, input ownership, or the headless core.
+## Current UI layer
 
-## Next UI layer
+DeltaXAML already parses and retains the UI tree and emits the renderer-neutral
+`IUiDrawList`. Production migration uses
+`IUiDrawList -> UiRenderBatchAdapter -> borrowed UiRenderBatch`; Engine only
+schedules the frame and translates SDL input. `EngineUiQuad` is a temporary
+migration adapter and must not become a second UI model.
 
-UI should be a producer of renderer-neutral data, not an Avalonia or renderer-
-owned DOM. The smallest useful next contract is a per-frame draw list containing
-rect, color, clip rectangle, and text runs referencing a text-atlas handle.
-Editor and game can produce separate lists; one renderer can consume both. XAML
-parsing/binding can be added above this list later without changing SDL ownership
-or the render session lifecycle.
+The next step is consumer convergence and real DeltaText glyph submission, not
+another draw-list contract. See
+[../../HIGH_PRIORITY_TODO.md](../../HIGH_PRIORITY_TODO.md) and
+[../../EDITOR_UI_TODO.md](../../EDITOR_UI_TODO.md).

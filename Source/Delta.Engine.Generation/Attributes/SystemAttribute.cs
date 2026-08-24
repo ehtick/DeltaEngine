@@ -15,7 +15,7 @@ using System;
 namespace Delta.Engine;
 
 [System.AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
-public class {{Name}} : System.Attribute { }
+public sealed class {{Name}} : System.Attribute { }
 
 #endif
 """;

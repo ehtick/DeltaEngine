@@ -1,8 +1,6 @@
 using System;
 using System.IO;
 using System.Text;
-
-using Delta.Engine.Utilities;
 internal static class FileHelper
 {
     private const char Underscore = '_';
@@ -16,7 +14,9 @@ internal static class FileHelper
     public static string CreateIndexedFile(string fullPath)
     {
         if (!File.Exists(fullPath))
+        {
             return fullPath;
+        }
 
         string alternateFilename;
         int fileNameIndex = 1;
@@ -27,6 +27,7 @@ internal static class FileHelper
 
         StringBuilder sb = new();
         do
+        {
             sb.Clear().
             Append(directory).
             Append(Path.DirectorySeparatorChar).
@@ -34,6 +35,7 @@ internal static class FileHelper
             Append(Underscore).
             Append(fileNameIndex++).
             Append(extension);
+        }
         while (File.Exists(alternateFilename = sb.ToString()));
 
         return alternateFilename;

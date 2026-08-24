@@ -2,7 +2,7 @@ using Avalonia.Media;
 
 namespace Delta.Engine.Editor.Tools
 {
-    internal class Colors
+    internal static class Colors
     {
         private static readonly Color Over = new(255, 193, 96, 246);
         private static readonly Color Focus = new(255, 175, 50, 240);

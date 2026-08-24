@@ -13,9 +13,8 @@ namespace Delta.Engine.Editor;
 
 public partial class HierarchyControl : UserControl
 {
-    public event Action<EntityReference>? OnEntitySelected;
+    public event EventHandler<EntityReferenceEventArgs>? OnEntitySelected;
     private readonly HierarchyNodeCreator _hierarchyNodeCreator = new();
-    private readonly IComparer<EntityReference> _entityReferenceComparer = new EntityReferenceComparer();
 
     private IListWrapper<HierarchyNodeControl, Control> ChildrenNodes => new(EntityNodeStack.Children);
 
@@ -23,9 +22,12 @@ public partial class HierarchyControl : UserControl
     {
         InitializeComponent();
         if (Design.IsDesignMode)
+        {
             return;
-        _hierarchyNodeCreator.OnEntityRemoveRequest += RemoveEntity;
-        _hierarchyNodeCreator.OnEntitySelectRequest += SelectEntity;
+        }
+
+        _hierarchyNodeCreator.OnEntityRemoveRequest += (_, e) => RemoveEntity(e.Entity);
+        _hierarchyNodeCreator.OnEntitySelectRequest += (_, e) => SelectEntity(e.Entity);
     }
 
     public void UpdateHierarchy()
@@ -38,7 +40,9 @@ public partial class HierarchyControl : UserControl
         UpdateChildrenCount(count);
 
         for (int i = 0; i < count; i++)
+        {
             ChildrenNodes[i].UpdateEntity(entities[i]);
+        }
 
         PanelHeader.StopDebug();
     }
@@ -78,19 +82,11 @@ public partial class HierarchyControl : UserControl
 
     private void SelectEntity(EntityReference entityRef)
     {
-        OnEntitySelected?.Invoke(entityRef);
+        OnEntitySelected?.Invoke(this, new EntityReferenceEventArgs(entityRef));
     }
 
     private void Deselect()
     {
-        OnEntitySelected?.Invoke(EntityReference.Null);
-    }
-
-    private class EntityReferenceComparer : IComparer<EntityReference>
-    {
-        public int Compare(EntityReference e1, EntityReference e2)
-        {
-            return e1.Entity.Get<Order>().order.CompareTo(e2.Entity.Get<Order>().order);
-        }
+        OnEntitySelected?.Invoke(this, new EntityReferenceEventArgs(EntityReference.Null));
     }
 }

@@ -1,8 +1,8 @@
 using Delta.Engine.Assets;
 internal interface IAssetCollection<T> where T : class, IAsset
 {
-    public string GetPath(GuidAsset<T> guid);
-    public string GetName(GuidAsset<T> guid);
+    public string GetPath(GuidAsset<T> assetId);
+    public string GetName(GuidAsset<T> assetId);
     public T GetAsset(GuidAsset<T> guidAsset);
 
     public void SaveAsset(T asset, string path);

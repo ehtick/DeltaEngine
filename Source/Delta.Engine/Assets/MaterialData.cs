@@ -4,6 +4,10 @@ using System.Text.Json.Serialization;
 
 namespace Delta.Engine.Assets;
 
+[System.Diagnostics.CodeAnalysis.SuppressMessage(
+    "Design",
+    "CA1051:Do not declare visible instance fields",
+    Justification = "Material fields are the serialized editor/runtime asset ABI.")]
 public class MaterialData : IAsset
 {
     public readonly GuidAsset<ShaderData> shader;

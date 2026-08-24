@@ -21,7 +21,7 @@
             Background="Black">
       <Image Grid.Row="1"
              Grid.Column="0"
-             x:Name="Render"
+             x:Name="RenderImage"
              x:FieldModifier="private"
              Stretch="Fill"/>
     </Border>

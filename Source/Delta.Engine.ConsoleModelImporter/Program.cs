@@ -7,7 +7,7 @@ using System.Text.Json.Serialization.Metadata;
 
 namespace Delta.Engine.ConsoleModelImporter
 {
-    internal class Program
+    internal sealed class Program
     {
         private static readonly JsonSerializerOptions _options = new(JsonSerializerOptions.Default)
         {
@@ -24,10 +24,11 @@ namespace Delta.Engine.ConsoleModelImporter
         };
         private static void Main(string[] args)
         {
-            Console.WriteLine("Hello, World!");
-
             if (args.Length == 0)
+            {
                 return; // return if no file was dragged onto exe
+            }
+
             var fbxPath = args[0];
             var meshes = ModelImporter.ImportAndGet(fbxPath);
             foreach (var (meshData, name) in meshes)
@@ -51,7 +52,9 @@ namespace Delta.Engine.ConsoleModelImporter
         private static string CreateIndexedFile(string fullPath)
         {
             if (!File.Exists(fullPath))
+            {
                 return fullPath;
+            }
 
             string alternateFilename;
             int fileNameIndex = 1;
@@ -62,6 +65,7 @@ namespace Delta.Engine.ConsoleModelImporter
 
             StringBuilder sb = new();
             do
+            {
                 sb.Clear().
                 Append(directory).
                 Append(Path.DirectorySeparatorChar).
@@ -69,6 +73,7 @@ namespace Delta.Engine.ConsoleModelImporter
                 Append('_').
                 Append(fileNameIndex++).
                 Append(extension);
+            }
             while (File.Exists(alternateFilename = sb.ToString()));
 
             return alternateFilename;
@@ -76,7 +81,9 @@ namespace Delta.Engine.ConsoleModelImporter
         private static void AddPrivateFieldsModifier(JsonTypeInfo jsonTypeInfo)
         {
             if (jsonTypeInfo.Kind != JsonTypeInfoKind.Object)
+            {
                 return;
+            }
 
             foreach (FieldInfo field in jsonTypeInfo.Type.GetFields(BindingFlags.Instance | BindingFlags.NonPublic))
             {

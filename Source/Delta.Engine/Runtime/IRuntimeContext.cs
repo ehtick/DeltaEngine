@@ -22,9 +22,14 @@ public interface IRuntimeContext : IDisposable
             _current = value;
         }
     }
-    void IDisposable.Dispose()
+
+    internal static void RestoreCurrent(IRuntimeContext context)
     {
-        _current = PreviousContext ?? _current;
-        PreviousContext = null;
+        if (ReferenceEquals(_current, context))
+        {
+            _current = context.PreviousContext;
+        }
+
+        context.PreviousContext = null;
     }
 }

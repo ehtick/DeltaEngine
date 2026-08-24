@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text.Json;
+using System.Diagnostics.CodeAnalysis;
 using Delta.Engine.Integration;
 using Delta.Maths;
 using Delta.Render.Core;
@@ -11,6 +12,11 @@ using Delta.Render.Vulkan;
 using Delta.Shader.Abstractions;
 using SDL3;
 using RenderGraphicsShaderProgram = Delta.Render.Core.GraphicsShaderProgram;
+
+[assembly: SuppressMessage(
+    "Design",
+    "CA1515:Consider making public types internal",
+    Justification = "Windowed composition types are the deliberate public opt-in boundary used by game and editor composition roots.")]
 
 namespace Delta.Engine.Windowed;
 

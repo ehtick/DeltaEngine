@@ -10,7 +10,10 @@ internal readonly struct WorldContext(World world)
     public readonly float4x4 GetParentWorldMatrix(Entity entity)
     {
         if (entity.GetParent<Transform>(out var parent))
+        {
             return GetWorldRecursive(parent);
+        }
+
         return float4x4.identity;
     }
 
@@ -19,8 +22,13 @@ internal readonly struct WorldContext(World world)
     {
         parent = entity;
         while (GetParent(ref parent))
+        {
             if (world.Has<T>(parent))
+            {
                 return true;
+            }
+        }
+
         return false;
     }
 
@@ -31,9 +39,13 @@ internal readonly struct WorldContext(World world)
         ref var transform = ref world.Get<Transform>(entity);
         var localMatrix = transform.LocalMatrix;
         if (GetParent<Transform>(entity, out Entity parent))
+        {
             return GetWorldRecursive(parent) * localMatrix;
+        }
         else
+        {
             return localMatrix;
+        }
     }
 
     [Imp(Inl)]
@@ -54,7 +66,9 @@ internal readonly struct WorldContext(World world)
         do
         {
             if (world.Has<T>(entity))
+            {
                 return true;
+            }
         } while (GetParent(ref entity));
 
         return false;

@@ -13,7 +13,7 @@ $$"""
 namespace Delta.Engine;
 
 [System.AttributeUsage(System.AttributeTargets.Method)]
-public class {{Name}} : System.Attribute { }
+public sealed class {{Name}} : System.Attribute { }
 
 #endif
 """;

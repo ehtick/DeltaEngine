@@ -1,17 +1,22 @@
 using System;
 
-using Delta.Engine.Runtime;
-internal class SceneManager : ISceneManager
+namespace Delta.Engine.Runtime;
+
+internal sealed class SceneManager : ISceneManager
 {
     private Scene _scene;
 
     public Scene CurrentScene
     {
         get => _scene;
-        private set => OnSceneChanged?.Invoke(_scene = value);
+        private set
+        {
+            _scene = value;
+            OnSceneChanged?.Invoke(this, new SceneChangedEventArgs(value));
+        }
     }
 
-    public event Action<Scene>? OnSceneChanged;
+    public event EventHandler<SceneChangedEventArgs>? OnSceneChanged;
 
     public SceneManager()
     {
@@ -25,7 +30,9 @@ internal class SceneManager : ISceneManager
     public void SaveScene(string name)
     {
         if (_scene != null)
+        {
             IRuntimeContext.Current.AssetImporter.CreateAsset(_scene, name);
+        }
     }
 
     public void CreateScene()
@@ -36,4 +43,6 @@ internal class SceneManager : ISceneManager
     {
         return;
     }
+
+    public void Dispose() => _scene.Dispose();
 }

@@ -8,7 +8,7 @@ using System.Diagnostics;
 
 namespace Delta.Engine.ECS;
 
-internal class HierarchySystem
+internal sealed class HierarchySystem
 {
     private readonly Dictionary<EntityReference, LinkedListNode<TreeNode>> _entityToNode = [];
 
@@ -28,8 +28,13 @@ internal class HierarchySystem
         var search = _entityToNode[entityRef];
         var node = parentNode.children.First;
         for (int i = 0; node is not null; i++, node = node.Next)
+        {
             if (node.Value.Equals(search.Value))
+            {
                 return i;
+            }
+        }
+
         Debug.Assert(false);
         return -1;
     }
@@ -45,10 +50,16 @@ internal class HierarchySystem
         var count = children.Count;
         var node = children.First;
         if (node is null)
+        {
             return [];
+        }
+
         EntityReference[] references = new EntityReference[count];
         for (int i = 0; node is not null; i++, node = node.Next)
+        {
             references[i] = node.Value.entityRef;
+        }
+
         return references;
     }
 
@@ -79,7 +90,9 @@ internal class HierarchySystem
         var node = _entityToNode[entityRef];
 
         foreach (var item in node.Value.children)
+        {
             children.Add(item.entityRef);
+        }
     }
 
     public int GetFirstChildrenCount(EntityReference entityRef)
@@ -111,7 +124,10 @@ internal class HierarchySystem
         var count = parentNode.children.Count;
         EntityReference[] siblings = new EntityReference[count];
         for (int i = 0; node is not null; i++, node = node.Next)
+        {
             siblings[i] = node.Value.entityRef;
+        }
+
         return siblings;
     }
 
@@ -153,9 +169,14 @@ internal class HierarchySystem
     private LinkedListNode<TreeNode> GetOrCreateNode()
     {
         if (!_cachedNodes.TryPop(out var node))
+        {
             node = new LinkedListNode<TreeNode>(new TreeNode());
+        }
         else if (_cachedTreeNodes.TryPop(out var cachedTreeNode))
+        {
             node.Value = cachedTreeNode;
+        }
+
         return node;
     }
 
@@ -199,7 +220,7 @@ internal class HierarchySystem
 
     private struct HierarchyFlag { }
 
-    private class TreeNode : IEquatable<TreeNode>
+    private sealed class TreeNode : IEquatable<TreeNode>
     {
         public EntityReference entityRef;
         public readonly LinkedList<TreeNode> children;
@@ -231,7 +252,9 @@ internal class HierarchySystem
             _entitiesToDestroy.Clear();
             world.GetEntities(_destroyDescription, _entitiesToDestroy);
             if (_entitiesToDestroy.Count == 0)
+            {
                 return;
+            }
 
             // Do not include items which has parent with DestroyFlag
             _entitiesToDestroy.RemoveAll(static x => x.GetLastParent<DestroyFlag>(out var _));
@@ -251,7 +274,10 @@ internal class HierarchySystem
         private readonly void RemoveEntities(TreeNode treeNode)
         {
             foreach (var item in treeNode.children)
+            {
                 RemoveEntities(item);
+            }
+
             treeNode.entityRef.Entity.AddOrGet<DestroyFlag>();
             hierarchySystem.RemoveNode(treeNode);
         }

@@ -1,8 +1,6 @@
 using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-
-using Delta.Engine.Utilities;
 internal readonly ref struct JaggedReadOnlySpan<T>
 {
     private readonly ref T[] _reference;

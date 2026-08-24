@@ -9,28 +9,28 @@ using System.IO;
 
 namespace Delta.Engine.EditorLib.Loader;
 
-public class RuntimeLoader
+public sealed class RuntimeLoader : IDisposable
 {
     private readonly IProjectPath _projectPath;
-    private IRuntime _runtime;
+    private Delta.Engine.Runtime.Runtime _runtime;
 
-    private readonly ICompilerModule _compilerModule;
+    private readonly CompilerModule _compilerModule;
     private readonly ShaderCompilerModule _shaderCompilerModule;
-    private IRuntimeScheduler _executionModule;
+    private RuntimeScheduler _executionModule;
 
     private readonly IThreadGetter? _threadGetter;
 
     public IAccessorsContainer Accessors => _compilerModule.Accessors ??
         throw new InvalidOperationException("Accessor container is unavailable before compiler initialization.");
-    public List<Type> Components => _compilerModule.Components;
+    public IReadOnlyList<Type> Components => _compilerModule.Components;
 
-    public event Action OnLoop
-    {
-        add => _executionModule.OnLoop += value;
-        remove => _executionModule.OnLoop -= value;
-    }
+    public event EventHandler? OnLoop;
 
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage(
+        "Reliability",
+        "CA2000:Dispose objects before losing scope",
+        Justification = "Runtime takes ownership of the context returned by RuntimeContextFactory.")]
     public RuntimeLoader(IProjectPath projectPath, IThreadGetter? uiThreadGetter)
     {
         _projectPath = projectPath;
@@ -45,14 +45,20 @@ public class RuntimeLoader
         _runtime = new Delta.Engine.Runtime.Runtime(ctx);
 
         _executionModule = new RuntimeScheduler(_runtime, _threadGetter);
+        _executionModule.OnLoop += ForwardLoop;
         var directory = Directory.GetCurrentDirectory();
 
         DefaultsImporter<MeshData>.Import(Path.Combine(directory, "Import", "Models"));
         _shaderCompilerModule.CompileAndImportShaders(Path.Combine(directory, "Import", "Shaders"));
     }
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage(
+        "Reliability",
+        "CA2000:Dispose objects before losing scope",
+        Justification = "Runtime takes ownership of the context returned by RuntimeContextFactory.")]
     public void ReloadRuntime()
     {
+        _executionModule.Dispose();
         _runtime.Dispose();
 
         _compilerModule.Recompile();
@@ -60,7 +66,16 @@ public class RuntimeLoader
         var ctx = RuntimeContextFactory.CreateHeadlessContext(_projectPath);
         _runtime = new Delta.Engine.Runtime.Runtime(ctx);
         _executionModule = new RuntimeScheduler(_runtime, _threadGetter);
+        _executionModule.OnLoop += ForwardLoop;
     }
 
     public void Init() => _executionModule.Init();
+
+    private void ForwardLoop(object? sender, EventArgs e) => OnLoop?.Invoke(this, e);
+
+    public void Dispose()
+    {
+        _executionModule.Dispose();
+        _runtime.Dispose();
+    }
 }

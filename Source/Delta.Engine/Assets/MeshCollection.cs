@@ -1,19 +1,28 @@
 using System;
 using System.Collections.Generic;
+namespace Delta.Engine.Assets;
 
-using Delta.Engine.Assets;
-internal class MeshCollection : DefaultAssetCollection<MeshData>
+internal sealed class MeshCollection : DefaultAssetCollection<MeshData>
 {
     private readonly Dictionary<Guid, Dictionary<VertexAttribute, WeakReference<byte[]?>>> _meshMapVariants = [];
 
     public unsafe byte[] GetMeshVariant(VertexAttribute vertexMask, Guid guid)
     {
         if (!_meshMapVariants.TryGetValue(guid, out var meshVariants))
+        {
             _meshMapVariants[guid] = meshVariants = [];
+        }
+
         if (!meshVariants.TryGetValue(vertexMask, out var reference))
+        {
             meshVariants[vertexMask] = reference = new(null);
+        }
+
         if (!reference.TryGetTarget(out var result))
+        {
             reference.SetTarget(result = GetMeshVariant(GetAsset(new GuidAsset<MeshData>(guid)), vertexMask));
+        }
+
         return result;
     }
 

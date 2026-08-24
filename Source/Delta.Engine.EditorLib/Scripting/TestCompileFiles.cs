@@ -2,7 +2,7 @@ using System.IO;
 using System.Text;
 using Delta.Engine.EditorLib.Scripting;
 
-internal class TestCompileFiles
+internal static class TestCompileFiles
 {
     private const string TestCsFileName = "Something";
     private const string TestCsFile =

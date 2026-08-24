@@ -14,7 +14,7 @@ namespace Delta.Engine.Integration.Tests;
 public sealed class VerticalSliceContractTests
 {
     [Fact]
-    public void ScriptCompiler_returns_assembly_bytes_on_success()
+    public void ScriptCompilerReturnsAssemblyBytesOnSuccess()
     {
         var compiler = new RoslynScriptCompiler();
         var result = compiler.Compile(new ScriptCompilationRequest(
@@ -28,7 +28,7 @@ public sealed class VerticalSliceContractTests
     }
 
     [Fact]
-    public void ScriptCompiler_returns_diagnostics_without_assembly_on_failure()
+    public void ScriptCompilerReturnsDiagnosticsWithoutAssemblyOnFailure()
     {
         var compiler = new RoslynScriptCompiler();
         var result = compiler.Compile(new ScriptCompilationRequest(
@@ -45,7 +45,7 @@ public sealed class VerticalSliceContractTests
     }
 
     [Fact]
-    public void ComponentSchema_contains_nested_editable_string_and_maths_fields()
+    public void ComponentSchemaContainsNestedEditableStringAndMathsFields()
     {
         ComponentSchema schema = ComponentSchemaBuilder.Create<TransformComponent>();
 
@@ -64,7 +64,7 @@ public sealed class VerticalSliceContractTests
     }
 
     [Fact]
-    public void AccessorTree_reads_and_writes_nested_managed_and_editable_values()
+    public void AccessorTreeReadsAndWritesNestedManagedAndEditableValues()
     {
         var component = new TransformComponent
         {
@@ -90,7 +90,7 @@ public sealed class VerticalSliceContractTests
     }
 
     [Fact]
-    public void AccessorTree_does_not_reuse_stale_script_type_after_reload()
+    public void AccessorTreeDoesNotReuseStaleScriptTypeAfterReload()
     {
         using var old = LoadScript("public sealed class Reloaded { public int Value; }");
         using var current = LoadScript("public sealed class Reloaded { public string Name = \"new\"; }");
@@ -105,7 +105,7 @@ public sealed class VerticalSliceContractTests
     }
 
     [Fact]
-    public void Collectible_script_context_is_released_after_compiler_and_accessor_release()
+    public void CollectibleScriptContextIsReleasedAfterCompilerAndAccessorRelease()
     {
         WeakReference context = CreateCollectibleScriptContext();
 
@@ -177,8 +177,12 @@ public sealed class VerticalSliceContractTests
     [AttributeUsage(AttributeTargets.Field)]
     private sealed class EditableAttribute : Attribute;
 
-#pragma warning disable CS0169
-    public sealed class TransformComponent
+#pragma warning disable CS0169, CS0649
+    [System.Diagnostics.CodeAnalysis.SuppressMessage(
+        "Performance",
+        "CA1823:Avoid unused private fields",
+        Justification = "The fields are intentionally discovered and accessed through the reflection-backed schema test.")]
+    private sealed class TransformComponent
     {
         public float3 Position;
         public string Label = string.Empty;
@@ -187,10 +191,16 @@ public sealed class VerticalSliceContractTests
         private int _speed;
     }
 
-    public struct Nested
+    private struct Nested : IEquatable<Nested>
     {
         [Editable]
         private float _weight;
+
+        public bool Equals(Nested other) => _weight == other._weight;
+        public override bool Equals(object? obj) => obj is Nested other && Equals(other);
+        public override int GetHashCode() => _weight.GetHashCode();
+        public static bool operator ==(Nested left, Nested right) => left.Equals(right);
+        public static bool operator !=(Nested left, Nested right) => !left.Equals(right);
     }
-#pragma warning restore CS0169
+#pragma warning restore CS0169, CS0649
 }

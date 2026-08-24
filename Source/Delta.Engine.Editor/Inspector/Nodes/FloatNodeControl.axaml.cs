@@ -1,3 +1,4 @@
+#pragma warning disable CS8618 // Avalonia initializes XAML-bound controls during InitializeComponent.
 using Arch.Core;
 using Avalonia;
 using Avalonia.Layout;
@@ -7,7 +8,7 @@ using Delta.Engine.Editor.Inspector.Internal;
 
 namespace Delta.Engine.Editor;
 
-internal partial class FloatNodeControl : InspectorNode
+internal sealed partial class FloatNodeControl : InspectorNode
 {
     private readonly NodeData _nodeData;
     public static readonly StyledProperty<HorizontalAlignment> FieldNameAlignmentProperty =
@@ -35,7 +36,9 @@ internal partial class FloatNodeControl : InspectorNode
     public override bool UpdateData(ref EntityReference entity)
     {
         if (!ClipVisible)
+        {
             return false;
+        }
 
         bool changed = _nodeData.UpdateFloat(Field.FieldData, ref entity);
 

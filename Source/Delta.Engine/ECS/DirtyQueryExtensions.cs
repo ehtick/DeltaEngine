@@ -1,9 +1,7 @@
 using Arch.Core;
-using Arch.Core.Extensions;
 using Arch.Core.Utils;
 using Delta.Engine.ECS.Attributes;
 using Delta.Engine.ECS.Components;
-using Delta.Engine.Runtime;
 using Delta.Engine.Utilities;
 using System;
 using System.Collections.Generic;
@@ -20,6 +18,7 @@ public static class DirtyQueryExtensions
     public static void InlineDirtyQuery<T, T0, T1>(this World world, in QueryDescription description, ref T iForEach)
         where T : struct, IForEach<T0, T1>
     {
+        ArgumentNullException.ThrowIfNull(world);
         world.AddDirty<T0>(description);
         world.AddDirty<T1>(description);
         world.InlineQuery<T, T0, T1>(description, ref iForEach);
@@ -40,7 +39,10 @@ public static class DirtyQueryExtensions
         var cmp = Component<T>.ComponentType;
         var dirtCmp = Component<DirtyFlag<T>>.ComponentType;
         if (!_nonDirtyLookup.TryGetValue(description, out var dict))
+        {
             _nonDirtyLookup[description] = dict = [];
+        }
+
         if (!dict.TryGetValue(cmp, out var desc))
         {
             desc = description;
@@ -68,14 +70,20 @@ public static class DirtyQueryExtensions
     public static void MarkDirty<T>(this Entity entity)
     {
         if (entity.Has<T>() && !entity.Has<DirtyFlag<T>>() && AttributeCache.HasAttribute<DirtyAttribute, T>())
+        {
             entity.Add<DirtyFlag<T>>();
+        }
     }
 
     [Imp(Sync)]
     public static void MarkDirty(this Entity entity, Type component)
     {
+        ArgumentNullException.ThrowIfNull(component);
         if (!entity.Has(component) || !AttributeCache.HasAttribute<DirtyAttribute>(component))
+        {
             return;
+        }
+
         if (!typeToDirtyFlag.TryGetValue(component, out var typeNflag))
         {
             var type = DirtyFlagGeneric.MakeGenericType(component);
@@ -84,7 +92,9 @@ public static class DirtyQueryExtensions
             typeToDirtyFlag[component] = typeNflag = (type, flag);
         }
         if (!entity.Has(typeNflag.type))
+        {
             entity.Add(typeNflag.flag);
+        }
     }
 }
 

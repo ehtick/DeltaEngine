@@ -2,6 +2,7 @@ using Delta.Engine.Scripting;
 using Delta.Engine.EditorLib.Scripting;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -9,14 +10,19 @@ using System.Text;
 using Delta.Engine.EditorLib.Compile;
 // TODO: Rewrite with templates as Delta.Engine.Generation
 // Add support for generics components
-internal class AccessorGenerator
+internal static class AccessorGenerator
 {
     public static string GenerateAccessors(HashSet<Type> componentTypes)
     {
         HashSet<Type> visitedTypes = [];
         foreach (var item in componentTypes)
+        {
             if (item.IsPublic)
+            {
                 GetAvaliableTypes(item, visitedTypes);
+            }
+        }
+
         var code = GenerateAccessorClasses(visitedTypes);
         return code;
     }
@@ -24,19 +30,25 @@ internal class AccessorGenerator
     public static void GetAvaliableTypes(Type type, HashSet<Type> visited)
     {
         if (visited.Contains(type))
+        {
             return;
+        }
 
         visited.Add(type);
 
         foreach (var field in SelectFields(type.GetFields()))
+        {
             AddField(field, visited);
+        }
     }
 
     private static void AddField(FieldInfo field, HashSet<Type> visited)
     {
         var type = field.FieldType;
         if (!type.IsPrimitive && type != typeof(string))
+        {
             GetAvaliableTypes(type, visited);
+        }
     }
 
     private static string GenerateAccessorClasses(HashSet<Type> types)
@@ -48,20 +60,23 @@ internal class AccessorGenerator
             OfType<string>().
             ToHashSet();
         GenerateUsings(code, namespaces);
-        code.Append($"public class AccessorsContainer: {nameof(IAccessorsContainer)}").AppendLine().
+        code.Append(CultureInfo.InvariantCulture, $"public class AccessorsContainer: {nameof(IAccessorsContainer)}").AppendLine().
             Append('{').AppendLine();
-        code.Append($"public FrozenDictionary<Type, {nameof(IAccessor)}> AllAccessors ").
-            Append("{ get; }").Append($" = new Dictionary<Type, {nameof(IAccessor)}>()").AppendLine().
+        code.Append(CultureInfo.InvariantCulture, $"public FrozenDictionary<Type, {nameof(IAccessor)}> AllAccessors ").
+            Append("{ get; }").Append(CultureInfo.InvariantCulture, $" = new Dictionary<Type, {nameof(IAccessor)}>()").AppendLine().
             Append('{').AppendLine();
         foreach (var item in types)
         {
-            code.Append('{').Append($"typeof({GetFormattedName(item)}), new {GetAccessorName(item)}()").Append("},").
+            code.Append('{').Append(CultureInfo.InvariantCulture, $"typeof({GetFormattedName(item)}), new {GetAccessorName(item)}()").Append("},").
                 AppendLine();
         }
         code.Append("}.ToFrozenDictionary();").AppendLine();
 
         foreach (var type in types)
+        {
             GenerateAccessorClass(code, type);
+        }
+
         code.AppendLine().
             Append('}');
         return code.ToString();
@@ -81,7 +96,7 @@ internal class AccessorGenerator
     {
         var fields = SelectFields(type.GetFields());
 
-        code.Append("private class ").Append(GetAccessorName(type)).Append($": {nameof(IAccessor)}");
+        code.Append("private class ").Append(GetAccessorName(type)).Append(CultureInfo.InvariantCulture, $": {nameof(IAccessor)}");
         code.AppendLine();
         code.Append('{');
         code.AppendLine();
@@ -92,7 +107,9 @@ internal class AccessorGenerator
         GenerateFieldPointerGetter(code, fields, type);
 
         foreach (var field in fields)
+        {
             GenerateFieldAccessor(code, field, type);
+        }
 
         code.AppendLine().
         Append('}').
@@ -126,7 +143,7 @@ internal class AccessorGenerator
         sb.AppendLine().Append('{').AppendLine();
         foreach (var field in fieldInfos)
         {
-            sb.Append('"').Append(field.Name).Append('"').Append($"=> typeof({GetFormattedName(field.FieldType)}),").AppendLine();
+            sb.Append('"').Append(field.Name).Append('"').Append(CultureInfo.InvariantCulture, $"=> typeof({GetFormattedName(field.FieldType)}),").AppendLine();
         }
         sb.Append("_ => throw new InvalidOperationException($\"Field with name {name} of type {typeof(Transform)} not found\")").AppendLine();
         sb.AppendLine().Append("};").AppendLine();
@@ -142,10 +159,10 @@ internal class AccessorGenerator
         sb.AppendLine().Append('{').AppendLine();
         foreach (var field in fieldInfos)
         {
-            sb.Append($"case \"{field.Name}\":").AppendLine();
+            sb.Append(CultureInfo.InvariantCulture, $"case \"{field.Name}\":").AppendLine();
             sb.Append('{').AppendLine();
-            sb.Append($"var val = ({GetFormattedName(type)})obj;").AppendLine();
-            sb.Append($"return {GetSetMethodName(field)}(ref val);").AppendLine();
+            sb.Append(CultureInfo.InvariantCulture, $"var val = ({GetFormattedName(type)})obj;").AppendLine();
+            sb.Append(CultureInfo.InvariantCulture, $"return {GetSetMethodName(field)}(ref val);").AppendLine();
             sb.Append('}').AppendLine();
         }
         sb.Append("default: throw new InvalidOperationException($\"Field with name {name} of type {typeof(Transform)} not found\");").AppendLine();
@@ -159,7 +176,7 @@ internal class AccessorGenerator
         sb.Append("private readonly string[] _fieldNames = ").Append('[');
         foreach (var field in fieldInfos)
         {
-            sb.Append($"\"{field.Name}\",").AppendLine();
+            sb.Append(CultureInfo.InvariantCulture, $"\"{field.Name}\",").AppendLine();
         }
         sb.Append("];");
         sb.Append("public ReadOnlySpan<string> FieldNames => new(_fieldNames);").AppendLine();
@@ -170,12 +187,12 @@ internal class AccessorGenerator
         sb.AppendLine();
         sb.Append("public unsafe nint GetFieldPtr(nint ptr, string name)");
         sb.AppendLine().Append('{').AppendLine();
-        sb.Append($"ref var obj = ref Unsafe.AsRef<{GetFormattedName(type)}>(ptr.ToPointer());").AppendLine();
+        sb.Append(CultureInfo.InvariantCulture, $"ref var obj = ref Unsafe.AsRef<{GetFormattedName(type)}>(ptr.ToPointer());").AppendLine();
         sb.Append("return name switch");
         sb.AppendLine().Append('{').AppendLine();
         foreach (var field in fieldInfos)
         {
-            sb.Append('"').Append(field.Name).Append('"').Append($"=> new nint(Unsafe.AsPointer(ref {GetSetMethodName(field)}(ref obj))),").AppendLine();
+            sb.Append('"').Append(field.Name).Append('"').Append(CultureInfo.InvariantCulture, $"=> new nint(Unsafe.AsPointer(ref {GetSetMethodName(field)}(ref obj))),").AppendLine();
         }
         sb.Append("_ => throw new InvalidOperationException($\"Field with name {name} of type {typeof(Transform)} not found\")").AppendLine();
         sb.AppendLine().Append("};").AppendLine();
@@ -192,7 +209,9 @@ internal class AccessorGenerator
         namespaces.Add("Delta.Engine.EditorLib.Scripting");
 
         foreach (var n in namespaces.Distinct())
+        {
             sb.Append("using ").Append(n).Append(';').AppendLine();
+        }
     }
 
     /// <summary>
@@ -210,7 +229,7 @@ internal class AccessorGenerator
                                 .Select(x => GetFormattedName(x))
                                 .Aggregate((x1, x2) => $"{x1}, {x2}");
             const string g = "`";
-            return $"{type.Name[..type.Name.IndexOf(g)]}<{genericArguments}>";
+            return $"{type.Name[..type.Name.IndexOf(g, StringComparison.Ordinal)]}<{genericArguments}>";
         }
         return type.Name;
     }
@@ -226,7 +245,7 @@ internal class AccessorGenerator
                                 .Select(x => GetFormattedName(x))
                                 .Aggregate((x1, x2) => $"{x1}_{x2}");
             const string g = "`";
-            return $"{type.Name[..type.Name.IndexOf(g)]}__{genericArguments}__";
+            return $"{type.Name[..type.Name.IndexOf(g, StringComparison.Ordinal)]}__{genericArguments}__";
         }
         return type.Name;
     }

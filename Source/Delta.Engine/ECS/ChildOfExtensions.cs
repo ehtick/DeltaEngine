@@ -15,9 +15,13 @@ internal static class ChildOfExtensions
     public static float4x4 GetWorldMatrix(this in Entity entity)
     {
         if (entity.Has<Transform>())
+        {
             return GetWorldRecursive(entity);
+        }
         else
+        {
             return GetParentWorldMatrix(entity);
+        }
     }
 
     /// <summary>
@@ -30,7 +34,10 @@ internal static class ChildOfExtensions
     public static float4x4 GetParentWorldMatrix(this in Entity entity)
     {
         if (entity.GetParent<Transform>(out var parent))
+        {
             return parent.GetWorldRecursive();
+        }
+
         return float4x4.identity;
     }
 
@@ -45,9 +52,13 @@ internal static class ChildOfExtensions
         ref var transform = ref entity.Get<Transform>();
         var localMatrix = transform.LocalMatrix;
         if (entity.GetParent<Transform>(out Entity parent))
+        {
             return parent.GetWorldRecursive() * localMatrix;
+        }
         else
+        {
             return localMatrix;
+        }
     }
 
     [Imp(Inl)]
@@ -68,8 +79,13 @@ internal static class ChildOfExtensions
     {
         matchedParent = entity;
         while (GetParent(ref matchedParent))
+        {
             if (matchedParent.Has<T>())
+            {
                 return true;
+            }
+        }
+
         return false;
     }
 
@@ -79,8 +95,13 @@ internal static class ChildOfExtensions
         marchedParent = entity;
         Entity parent = entity;
         while (GetParent(ref parent))
+        {
             if (parent.Has<T>())
+            {
                 marchedParent = parent;
+            }
+        }
+
         return parent != entity;
     }
 
@@ -89,8 +110,13 @@ internal static class ChildOfExtensions
     public static bool HasParent<T>(this Entity entity)
     {
         while (GetParent(ref entity))
+        {
             if (entity.Has<T>())
+            {
                 return true;
+            }
+        }
+
         return false;
     }
 
@@ -99,8 +125,13 @@ internal static class ChildOfExtensions
     {
         uint depth = 0;
         while (GetParent(ref entity))
+        {
             if (entity.Has<T>())
+            {
                 depth++;
+            }
+        }
+
         return depth;
     }
 
@@ -108,8 +139,12 @@ internal static class ChildOfExtensions
     {
         int depth = 0;
         while (GetParent(ref entity))
+        {
             if (entity.Has<T>())
+            {
                 depthSpan[depth++] = entity.Get<T>();
+            }
+        }
     }
 
     [Imp(Inl)]
@@ -117,8 +152,13 @@ internal static class ChildOfExtensions
     {
         last = Entity.Null;
         while (GetParent(ref entity))
+        {
             if (entity.Has<T>())
+            {
                 last = entity;
+            }
+        }
+
         return last != Entity.Null;
     }
 
@@ -128,8 +168,13 @@ internal static class ChildOfExtensions
     {
         var query = world.Query(in queryDescription);
         foreach (var archetype in query.GetArchetypeIterator())
+        {
             if (archetype.EntityCount > 0)
+            {
                 return true;
+            }
+        }
+
         return false;
     }
 }

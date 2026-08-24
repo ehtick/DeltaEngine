@@ -1,3 +1,4 @@
+#pragma warning disable CS8618 // Avalonia initializes XAML-bound controls during InitializeComponent.
 using Arch.Core;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -9,7 +10,7 @@ using System;
 
 namespace Delta.Engine.Editor;
 
-internal partial class GuidAssetNodeControl : InspectorNode
+internal sealed partial class GuidAssetNodeControl : InspectorNode
 {
     private readonly NodeData _nodeData;
     private readonly NodeData _guidData;
@@ -32,7 +33,10 @@ internal partial class GuidAssetNodeControl : InspectorNode
     public override bool UpdateData(ref EntityReference entity)
     {
         if (!ClipVisible)
+        {
             return false;
+        }
+
         bool changed = _guidToSet.HasValue;
         if (_guidToSet is { } guid)
         {
@@ -69,7 +73,10 @@ internal partial class GuidAssetNodeControl : InspectorNode
             int count = assets.Length;
             ISearchFlyoutViewModel[] guids = new ISearchFlyoutViewModel[count];
             for (int i = 0; i < count; i++)
+            {
                 guids[i] = new SearchFlyoutViewModel<Guid>(assets[i].guid, assets[i].GetAssetNameOrDefault());
+            }
+
             return guids;
         }
         public readonly string GetName(ref EntityReference entityRef, NodeData nodeData)
@@ -88,7 +95,10 @@ internal partial class GuidAssetNodeControl : InspectorNode
     private void UserControl_PointerEntered(object? sender, PointerEventArgs e)
     {
         if (IColorMarkable.MarkedNode == this)
+        {
             return;
+        }
+
         GuidLabel.BorderBrush = Tools.Colors.DefaultBorderOverBrush;
         SelectAssetButton.BorderBrush = Tools.Colors.DefaultBorderOverBrush;
     }
@@ -96,7 +106,10 @@ internal partial class GuidAssetNodeControl : InspectorNode
     private void UserControl_PointerExited(object? sender, PointerEventArgs e)
     {
         if (IColorMarkable.MarkedNode == this)
+        {
             return;
+        }
+
         GuidLabel.BorderBrush = Tools.Colors.DefaultBorderBrush;
         SelectAssetButton.BorderBrush = Tools.Colors.DefaultBorderBrush;
     }

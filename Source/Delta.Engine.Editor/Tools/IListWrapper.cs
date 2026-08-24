@@ -30,9 +30,11 @@ internal readonly struct IListWrapper<T, K> : IList<T> where T : K
     {
         int count = _list.Count;
         for (int i = 0; i < count; i++)
+        {
             array[i] = _list[i] is T value
                 ? value
                 : throw new InvalidCastException($"List item at index {i} is not {typeof(T).Name}.");
+        }
     }
 
     public bool Remove(T item) => _list.Remove(item);
@@ -44,7 +46,9 @@ internal readonly struct IListWrapper<T, K> : IList<T> where T : K
         public readonly T Current => enumerator.Current is T value
             ? value
             : throw new InvalidCastException($"Enumerator item is not {typeof(T).Name}.");
-        readonly object IEnumerator.Current => Current;
+        readonly object IEnumerator.Current => Current is object value
+            ? value
+            : throw new InvalidOperationException("The wrapped list contained a null item.");
         public readonly void Dispose() => enumerator.Dispose();
         public readonly bool MoveNext() => enumerator.MoveNext();
         public readonly void Reset() => enumerator.Dispose();

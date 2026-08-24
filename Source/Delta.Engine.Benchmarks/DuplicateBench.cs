@@ -16,7 +16,7 @@ public unsafe class DuplicateBench
     private readonly int[][] _itemsSource = new int[R][];
     private readonly int[][] _items = new int[R][];
     private static readonly EqualityComparer<int> comparer = EqualityComparer<int>.Default;
-    private static Random rnd = new(11);
+    private static BenchmarkRandom rnd = new(11);
     private Span<int> Items(int set) => _items[set];
 
     public DuplicateBench()
@@ -26,7 +26,9 @@ public unsafe class DuplicateBench
         {
             _items[i] = new int[N];
             for (int j = 0; j < N; j++)
+            {
                 _items[i][j] = rnd.Next(0, N);
+            }
         }
     }
 
@@ -39,7 +41,9 @@ public unsafe class DuplicateBench
             _itemsSource[i] = new int[N];
             _items[i] = new int[N];
             for (int j = 0; j < N; j++)
+            {
                 _itemsSource[i][j] = rnd.Next(0, N);
+            }
         }
     }
 
@@ -47,7 +51,9 @@ public unsafe class DuplicateBench
     public void Setup()
     {
         for (int i = 0; i < R; i++)
+        {
             Array.Copy(_itemsSource[i], _items[i], N);
+        }
     }
 
     [Benchmark]
@@ -65,8 +71,13 @@ public unsafe class DuplicateBench
             for (int i = 0; i < count; i++)
             {
                 for (int j = 0; j < i; j++)
+                {
                     if (comparer.Equals(items[i], items[j]))
+                    {
                         goto end;
+                    }
+                }
+
                 items[lastNonDuplicate++] = items[i];
             end:;
             }
@@ -91,8 +102,13 @@ public unsafe class DuplicateBench
             {
                 var item = items[i];
                 for (int j = 0; j < lastNonDuplicate; j++)
+                {
                     if (comparer.Equals(item, items[j]))
+                    {
                         goto end;
+                    }
+                }
+
                 items[lastNonDuplicate++] = item;
             end:;
             }
@@ -116,13 +132,22 @@ public unsafe class DuplicateBench
             for (int i = 0; i < count; i++)
             {
                 for (int j = 0; j < i; j++)
+                {
                     if (!duplicateMask[j] && comparer.Equals(items[i], items[j]) && (duplicateMask[i] = true))
+                    {
                         break;
+                    }
+                }
             }
             int lastNonDuplicate = 0;
             for (int i = 0; i < count; i++)
+            {
                 if (!duplicateMask[i])
+                {
                     items[lastNonDuplicate++] = items[i];
+                }
+            }
+
             return lastNonDuplicate;
         }
         return count;
@@ -144,15 +169,25 @@ public unsafe class DuplicateBench
             for (int i = 0; i < count; i++)
             {
                 for (int j = 0; j < i; j++)
+                {
                     if (!duplicateMask[j] && comparer.Equals(items[i], items[j]) && (duplicateMask[i] = true))
+                    {
                         goto end;
+                    }
+                }
+
                 duplicateMask[i] = false;
             end:;
             }
             int lastNonDuplicate = 0;
             for (int i = 0; i < count; i++)
+            {
                 if (!duplicateMask[i])
+                {
                     items[lastNonDuplicate++] = items[i];
+                }
+            }
+
             return lastNonDuplicate;
         }
         return count;
@@ -174,18 +209,26 @@ public unsafe class DuplicateBench
             for (int i = 0; i < count; i++)
             {
                 for (int j = 0; j < i; j++)
+                {
                     if (!duplicateMask[j] && comparer.Equals(items[i], items[j]))
                     {
                         duplicateMask[i] = true;
                         goto end;
                     }
+                }
+
                 duplicateMask[i] = false;
             end:;
             }
             int lastNonDuplicate = 0;
             for (int i = 0; i < count; i++)
+            {
                 if (!duplicateMask[i])
+                {
                     items[lastNonDuplicate++] = items[i];
+                }
+            }
+
             return lastNonDuplicate;
         }
         return count;
@@ -206,13 +249,22 @@ public unsafe class DuplicateBench
             for (int i = 0; i < count; i++)
             {
                 for (int j = 0; j < i; j++)
+                {
                     if (!duplicateMask[j] && comparer.Equals(items[i], items[j]) && (duplicateMask[i] = true))
+                    {
                         break;
+                    }
+                }
             }
             int lastNonDuplicate = 0;
             for (int i = 0; i < count; i++)
+            {
                 if (!duplicateMask[i])
+                {
                     items[lastNonDuplicate++] = items[i];
+                }
+            }
+
             ArrayPool<bool>.Shared.Return(duplicateMask);
             return lastNonDuplicate;
         }
@@ -234,13 +286,22 @@ public unsafe class DuplicateBench
             for (int i = 0; i < count; i++)
             {
                 for (int j = 0; j < i; j++)
+                {
                     if (!duplicateMask[j] && comparer.Equals(items[i], items[j]) && (duplicateMask[i] = true))
+                    {
                         break;
+                    }
+                }
             }
             int lastNonDuplicate = 0;
             for (int i = 0; i < count; i++)
+            {
                 if (!duplicateMask[i])
+                {
                     items[lastNonDuplicate++] = items[i];
+                }
+            }
+
             return lastNonDuplicate;
         }
         return count;
@@ -259,7 +320,10 @@ public unsafe class DuplicateBench
             HashSet<int> set = [.. items];
             int i = 0;
             foreach (var item in set)
+            {
                 items[i++] = item;
+            }
+
             return set.Count;
         }
         return count;
@@ -278,7 +342,10 @@ public unsafe class DuplicateBench
             PooledSet<int> set = [.. items];
             int i = 0;
             foreach (var item in set)
+            {
                 items[i++] = item;
+            }
+
             int count = set.Count;
             set.Dispose();
             return count;

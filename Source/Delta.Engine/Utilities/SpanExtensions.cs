@@ -9,45 +9,72 @@ public static class SpanExtensions
 {
     public static bool Exist<T>(this ReadOnlySpan<T> span, Predicate<T> match, out T result) where T : struct
     {
+        ArgumentNullException.ThrowIfNull(match);
         result = default;
         foreach (var item in span)
+        {
             if (match(item))
             {
                 result = item;
                 return true;
             }
+        }
+
         return false;
     }
 
     public static bool Exist<T>(this ReadOnlySpan<T> span, Predicate<T> match) where T : struct
     {
+        ArgumentNullException.ThrowIfNull(match);
         foreach (var item in span)
+        {
             if (match(item))
+            {
                 return true;
+            }
+        }
+
         return false;
     }
 
     public static unsafe bool Exist<T>(this ReadOnlySpan<T> span, delegate*<T, bool> match) where T : struct
     {
         foreach (var item in span)
+        {
             if (match(item))
+            {
                 return true;
+            }
+        }
+
         return false;
     }
 
     public static T Find<T>(this ReadOnlySpan<T> span, Predicate<T> match) where T : struct
     {
+        ArgumentNullException.ThrowIfNull(match);
         foreach (var item in span)
+        {
             if (match(item))
+            {
                 return item;
+            }
+        }
+
         return default;
     }
 
     public static int FindIndex<T>(this ReadOnlySpan<T> span, Predicate<T> match) where T : struct
     {
+        ArgumentNullException.ThrowIfNull(match);
         for (int i = 0; i < span.Length; i++)
+        {
             if (match(span[i]))
+            {
                 return i;
+            }
+        }
+
         return -1;
     }
 
@@ -81,21 +108,22 @@ public static class SpanExtensions
         return ro.FindIndex(match);
     }
 
-    public static unsafe void CopyTo<T>(this T[] array, T* pointer) where T : unmanaged
+    public static unsafe void CopyTo<T>(this T[] array, T* destination) where T : unmanaged
     {
-        Span<T> span = new(pointer, array.Length);
+        ArgumentNullException.ThrowIfNull(array);
+        Span<T> span = new(destination, array.Length);
         array.CopyTo(span);
     }
 
-    public static unsafe void CopyTo<T>(this Span<T> array, T* pointer) where T : unmanaged
+    public static unsafe void CopyTo<T>(this Span<T> array, T* destination) where T : unmanaged
     {
-        Span<T> span = new(pointer, array.Length);
+        Span<T> span = new(destination, array.Length);
         array.CopyTo(span);
     }
 
-    public static unsafe void CopyTo<T>(this ReadOnlySpan<T> array, T* pointer) where T : unmanaged
+    public static unsafe void CopyTo<T>(this ReadOnlySpan<T> array, T* destination) where T : unmanaged
     {
-        Span<T> span = new(pointer, array.Length);
+        Span<T> span = new(destination, array.Length);
         array.CopyTo(span);
     }
 
@@ -106,8 +134,12 @@ public static class SpanExtensions
 
     public static unsafe void CopyToParallel<T>(this Memory<T> source, Memory<T> destination, int threads)
     {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(threads);
+
         if (source.Length != destination.Length)
-            throw new Exception();
+        {
+            throw new ArgumentException("Source and destination lengths must match.", nameof(destination));
+        }
 
         int cores = int.Min(Environment.ProcessorCount, threads);
 
@@ -147,8 +179,13 @@ public static class SpanExtensions
         {
             var item = items[i];
             for (int j = 0; j < lastNonDuplicate; j++)
+            {
                 if (comparer.Equals(item, items[j]))
+                {
                     goto end;
+                }
+            }
+
             items[lastNonDuplicate++] = item;
         end:;
         }
@@ -157,14 +194,20 @@ public static class SpanExtensions
 
     public static int Distinct<T>(this Span<T> items, IEqualityComparer<T> comparer)
     {
+        ArgumentNullException.ThrowIfNull(comparer);
         int count = items.Length;
         int lastNonDuplicate = 0;
         for (int i = 0; i < count; i++)
         {
             var item = items[i];
             for (int j = 0; j < lastNonDuplicate; j++)
+            {
                 if (comparer.Equals(item, items[j]))
+                {
                     goto end;
+                }
+            }
+
             items[lastNonDuplicate++] = item;
         end:;
         }
@@ -183,11 +226,14 @@ public static class SpanExtensions
         {
             var item = items[i];
             for (int j = 0; j < lastNonDuplicate; j++)
+            {
                 if (comparer.Equals(item, repeatCount[j].key))
                 {
                     repeatCount[j].count++;
                     goto end;
                 }
+            }
+
             repeatCount[lastNonDuplicate++] = (item, 1);
         end:;
         }

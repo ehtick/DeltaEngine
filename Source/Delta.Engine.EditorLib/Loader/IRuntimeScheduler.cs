@@ -4,6 +4,6 @@ namespace Delta.Engine.EditorLib.Loader;
 
 public interface IRuntimeScheduler
 {
-    public event Action OnLoop;
+    public event EventHandler? OnLoop;
     public void Init();
 }
