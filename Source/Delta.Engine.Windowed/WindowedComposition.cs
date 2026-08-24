@@ -487,7 +487,7 @@ public sealed class VulkanWindowRenderService : IEngineRenderService
         catch (FileNotFoundException exception)
         {
             throw new InvalidOperationException(
-                $"Missing text shader artifact '{path}'. Prepare it with 'cd ../DeltaShader && ./eng/prepare-text-artifacts.sh artifacts/text' from the DeltaEngine repository.",
+                $"Missing text shader artifact '{path}'. From the Furnace workspace root, prepare it with 'DeltaShader/eng/prepare-text-artifacts.sh DeltaShader/artifacts/text'.",
                 exception);
         }
     }

@@ -21,7 +21,7 @@ Before building or running the windowed text path, prepare the generated SDF
 SPIR-V artifacts from the DeltaShader repository:
 
 ```bash
-cd ../DeltaShader && ./eng/prepare-text-artifacts.sh artifacts/text
+DeltaShader/eng/prepare-text-artifacts.sh DeltaShader/artifacts/text
 ```
 
 The windowed project copies only `SdfTextVertex.vert.spv` and
