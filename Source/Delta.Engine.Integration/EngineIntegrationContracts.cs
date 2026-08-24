@@ -120,27 +120,9 @@ public interface IEngineUiService : IDisposable
     void Shutdown();
 }
 
-public readonly record struct EngineUiClipRect(float X, float Y, float Width, float Height)
-{
-    public static EngineUiClipRect Unbounded => new(0, 0, float.PositiveInfinity, float.PositiveInfinity);
-    public bool IsUnbounded => X == 0 && Y == 0 && float.IsPositiveInfinity(Width) && float.IsPositiveInfinity(Height);
-}
-
-public readonly record struct EngineUiQuad(
-    float X, float Y, float Width, float Height,
-    float Red, float Green, float Blue, float Alpha)
-{
-    public EngineUiClipRect Clip { get; init; } = EngineUiClipRect.Unbounded;
-}
-
-public interface IEngineUiDrawListProvider
-{
-    ReadOnlyMemory<EngineUiQuad> CurrentDrawList { get; }
-}
-
 // Optional same-frame path. The provider owns UI mutations, styles, layout and
 // extraction; EngineHost only schedules it before rendering.
-public interface IEngineUiFrameSource : IEngineUiService, IEngineUiDrawListProvider
+public interface IEngineUiFrameSource : IEngineUiService
 {
     void PrepareFrame(in EngineFrameContext context);
 }

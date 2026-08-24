@@ -5,8 +5,7 @@ namespace Delta.Engine.Integration.Tests;
 
 public sealed class UiFrameSourceContractTests
 {
-    private static readonly EngineUiQuad[] DrawList = [new EngineUiQuad(0, 0, 1, 1, 1, 1, 1, 1)];
-    private static readonly string[] ExpectedEvents = ["ui", "render:1"];
+    private static readonly string[] ExpectedEvents = ["ui", "render"];
 
     [Fact]
     public void OptionalUiFrameSourceIsPreparedBeforeRender()
@@ -15,7 +14,7 @@ public sealed class UiFrameSourceContractTests
         using var input = new FakeInput();
         using var world = new FakeWorld();
         using var ui = new FakeUi(events);
-        using var render = new FakeRender(events, ui);
+        using var render = new FakeRender(events);
         using var host = new EngineHost(input, world, render, ui);
 
         host.Start();
@@ -42,7 +41,6 @@ public sealed class UiFrameSourceContractTests
 
     private sealed class FakeUi(List<string> events) : IEngineUiFrameSource
     {
-        public ReadOnlyMemory<EngineUiQuad> CurrentDrawList => DrawList;
         public void Initialize() { }
         public void PrepareFrame(in EngineFrameContext context) => events.Add("ui");
         public void Update(in EngineFrameContext context) => throw new InvalidOperationException("Host should use PrepareFrame.");
@@ -50,10 +48,10 @@ public sealed class UiFrameSourceContractTests
         public void Dispose() { }
     }
 
-    private sealed class FakeRender(List<string> events, IEngineUiDrawListProvider ui) : IEngineRenderService
+    private sealed class FakeRender(List<string> events) : IEngineRenderService
     {
         public void Initialize() { }
-        public void Render(in EngineFrameContext context) => events.Add($"render:{ui.CurrentDrawList.Length}");
+        public void Render(in EngineFrameContext context) => events.Add("render");
         public void Shutdown() { }
         public void Dispose() { }
     }
