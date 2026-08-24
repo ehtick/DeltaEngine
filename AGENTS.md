@@ -12,6 +12,8 @@ neutral adapters. Editor-specific Roslyn/tooling belongs in DeltaEditor.
   boundary is in scope.
 - [../EDITOR_UI_TODO.md](../EDITOR_UI_TODO.md) is authoritative for the editor
   window/inspector milestone.
+- [../HIGH_PRIORITY_TODO.md](../HIGH_PRIORITY_TODO.md) is authoritative for
+  render lifecycle, UI handoff and editor composition order.
 
 Headless integration stays independent of SDL/Vulkan. Renderer never polls
 input; Engine never parses shader source, XAML or font outlines.
