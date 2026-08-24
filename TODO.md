@@ -1,5 +1,7 @@
 # DeltaEngine TODO
 
+- [x] Make optional windowed renderer initialization transactional with
+  deterministic rollback and retry-safe idempotent lifecycle.
 - After upstream Shader/Render migration, consolidate the host-facing render
   lifecycle on `IEngineRenderService`; lower sink contracts become internal
   adapters rather than competing public lifecycles.

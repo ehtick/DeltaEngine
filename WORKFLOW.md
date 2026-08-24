@@ -15,6 +15,8 @@ dotnet test Source/Delta.Engine.slnx -c Release --no-build --no-restore \
 
 Use headless contract tests before native composition. Surface existing legacy
 warnings separately; do not mix dependency upgrades into an integration fix.
+`Delta.Engine.Windowed.Tests` includes fault-injection coverage for transactional
+initialization, rollback and retry; these tests do not open a native window.
 Run the real editor window from [../DeltaEditor/WORKFLOW.md](../DeltaEditor/WORKFLOW.md).
 
 Before building or running the windowed text path, prepare the generated SDF
