@@ -201,14 +201,70 @@ internal static class WindowedUiFrameSubmission
         IUiRenderFrameSource source,
         in RenderFrameState frameState,
         IGraphicsPipeline pipeline,
-        in GraphicsFrameParameters parameters)
+        in GraphicsFrameParameters parameters,
+        ref TextGlyphInstance[] orderedGlyphs,
+        ref TextBatchRange[] textBatches)
     {
         var frameView = source.BorrowFrame();
         var batch = frameView.Batch;
-        if (!session.EndFrame(in frameState, pipeline, in parameters, batch.Rectangles, batch.DirtyRecords))
+        EnsureTextScratch(batch.TextSubmissions, ref orderedGlyphs, ref textBatches);
+        var textParameters = new TextFrameParameters(
+            parameters.ResolutionX,
+            parameters.ResolutionY,
+            parameters.TimeSeconds,
+            new TextColor(1, 1, 1, 1),
+            new TextColor(0, 0, 0, 0),
+            0);
+        var projectionContext = new TextProjectionContext(
+            frameState.Metrics.Width,
+            frameState.Metrics.Height,
+            frameState.Metrics.DpiScale);
+        var frameSucceeded = session.EndPreparedFrame(
+            in frameState,
+            pipeline,
+            in parameters,
+            textPipeline: null,
+            in textParameters,
+            in frameView,
+            in projectionContext,
+            worldProjection: null,
+            orderedGlyphs,
+            textBatches);
+        if (!frameSucceeded)
         {
             throw new InvalidOperationException("Vulkan UI frame submission failed.");
         }
+    }
+
+    internal static void EnsureTextScratch(
+        ReadOnlySpan<TextSubmissionRecord> submissions,
+        ref TextGlyphInstance[] orderedGlyphs,
+        ref TextBatchRange[] textBatches)
+    {
+        var required = 0;
+        for (var index = 0; index < submissions.Length; index++)
+        {
+            required = checked(required + submissions[index].Glyphs.Glyphs.Length);
+        }
+
+        orderedGlyphs = EnsureCapacity(orderedGlyphs, required);
+        textBatches = EnsureCapacity(textBatches, required);
+    }
+
+    private static T[] EnsureCapacity<T>(T[] storage, int required)
+    {
+        if (storage.Length >= required)
+        {
+            return storage;
+        }
+
+        var capacity = Math.Max(4, storage.Length);
+        while (capacity < required)
+        {
+            capacity = checked(capacity * 2);
+        }
+
+        return new T[capacity];
     }
 }
 
@@ -219,6 +275,8 @@ public sealed class VulkanWindowRenderService : IEngineRenderService
     private readonly IUiRenderFrameSource? _uiRenderFrameSource;
     private IRenderWindowFrameSession? _session;
     private IGraphicsPipeline? _graphicsPipeline;
+    private TextGlyphInstance[] _textGlyphScratch = [];
+    private TextBatchRange[] _textBatchScratch = [];
     private EngineSurfaceSnapshot _lastSurface;
     private bool _disposed;
 
@@ -281,7 +339,14 @@ public sealed class VulkanWindowRenderService : IEngineRenderService
 
         if (_uiRenderFrameSource is not null)
         {
-            WindowedUiFrameSubmission.EndFrameOrThrow(_session, _uiRenderFrameSource, in frameState, _graphicsPipeline, in parameters);
+            WindowedUiFrameSubmission.EndFrameOrThrow(
+                _session,
+                _uiRenderFrameSource,
+                in frameState,
+                _graphicsPipeline,
+                in parameters,
+                ref _textGlyphScratch,
+                ref _textBatchScratch);
             return;
         }
 
@@ -315,6 +380,9 @@ public sealed class VulkanWindowRenderService : IEngineRenderService
             _session.DisposeAsync().AsTask().GetAwaiter().GetResult();
             _session = null;
         }
+
+        _textGlyphScratch = [];
+        _textBatchScratch = [];
 
         _renderer.DisposeAsync().AsTask().GetAwaiter().GetResult();
     }
