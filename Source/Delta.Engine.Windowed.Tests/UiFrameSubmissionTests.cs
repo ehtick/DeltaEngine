@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Delta.Render.Core;
 using Delta.Shader.Abstractions;
@@ -26,6 +27,7 @@ public sealed class UiFrameSubmissionTests
                 source,
                 in state,
                 pipeline,
+                null,
                 in parameters,
                 ref glyphScratch,
                 ref batchScratch));
@@ -51,6 +53,7 @@ public sealed class UiFrameSubmissionTests
                 source,
                 in state,
                 pipeline,
+                null,
                 in parameters,
                 ref glyphScratch,
                 ref batchScratch));
@@ -59,6 +62,63 @@ public sealed class UiFrameSubmissionTests
         Assert.Equal(0, session.SubmitFrameCount);
         Assert.Equal(4, glyphScratch.Length);
         Assert.Equal(4, batchScratch.Length);
+    }
+
+    [Fact]
+    public async Task PreparedTextUsesOneBeginAndCombinedEnd()
+    {
+        using var source = new FakeSource(withText: true);
+        await using var session = new FakeSession();
+        var uiPipeline = new FakePipeline();
+        var textPipeline = new FakePipeline();
+        var state = session.BeginFrame();
+        var parameters = new GraphicsFrameParameters(320, 180, 0);
+        TextGlyphInstance[] glyphScratch = [];
+        TextBatchRange[] batchScratch = [];
+
+        WindowedUiFrameSubmission.EndFrameOrThrow(
+            session,
+            source,
+            in state,
+            uiPipeline,
+            textPipeline,
+            in parameters,
+            ref glyphScratch,
+            ref batchScratch);
+
+        Assert.Equal(1, source.BorrowCount);
+        Assert.Equal(1, session.BeginFrameCount);
+        Assert.Equal(1, session.CombinedEndFrameCount);
+        Assert.True(session.TextPipelineSeen);
+        Assert.Equal(0, session.SubmitFrameCount);
+    }
+
+    [Fact]
+    public void BorrowedServiceDoesNotDisposeBorrowedSession()
+    {
+        var session = new FakeSession();
+        var platform = new Sdl3PlatformShell(new NullWindowFactory(), new WindowConfiguration("test"));
+        using var service = new VulkanWindowRenderService(platform, session);
+
+        service.Dispose();
+
+        Assert.Equal(0, session.DisposeCount);
+    }
+
+    [Fact]
+    public void OwnedServiceDisposesPipelineBeforeOwnedSession()
+    {
+        var order = new List<string>();
+        var session = new FakeSession { PipelineDisposed = () => order.Add("pipeline") };
+        var resources = new FakeOwnedLifetime(session, () => order.Add("session"));
+
+        var pipeline = new FakePipeline(() => order.Add("pipeline"));
+        VulkanWindowRenderService.DisposeOwnedResources(null, pipeline, resources);
+
+        Assert.Equal(2, order.Count);
+        Assert.Equal("pipeline", order[0]);
+        Assert.Equal("session", order[1]);
+        Assert.Equal(1, session.DisposeCount);
     }
 
     private sealed class FakeSource : IUiRenderFrameSource, IDisposable
@@ -102,30 +162,76 @@ public sealed class UiFrameSubmissionTests
         public void Dispose() => _adapter.Dispose();
     }
 
-    private sealed class FakePipeline : IGraphicsPipeline
+    private sealed class FakePipeline(Action? onDispose = null) : IGraphicsPipeline
     {
-        public ValueTask DisposeAsync() => ValueTask.CompletedTask;
+        private bool _disposed;
+
+        public ValueTask DisposeAsync()
+        {
+            if (!_disposed)
+            {
+                _disposed = true;
+                onDispose?.Invoke();
+            }
+
+            return ValueTask.CompletedTask;
+        }
     }
 
     private sealed class FakeSession : IRenderWindowFrameSession
     {
         public int EndFrameCount { get; private set; }
         public int SubmitFrameCount { get; private set; }
+        public int BeginFrameCount { get; private set; }
+        public int CombinedEndFrameCount { get; private set; }
+        public int DisposeCount { get; private set; }
+        public bool TextPipelineSeen { get; private set; }
+        public Action? PipelineDisposed { get; init; }
         public RenderWindowId WindowId => RenderWindowId.New();
-        public RenderFrameState BeginFrame() => RenderFrameState.Ready(0, new WindowMetrics(1, 1, 1));
+        public RenderFrameState BeginFrame()
+        {
+            BeginFrameCount++;
+            return RenderFrameState.Ready(0, new WindowMetrics(1, 1, 1));
+        }
         public bool EndFrame(in RenderFrameState frameState, ReadOnlySpan<RenderRecordChange> dirtyRecords) => false;
         public bool EndFrame(in RenderFrameState frameState, IGraphicsPipeline pipeline, in GraphicsFrameParameters parameters, ReadOnlySpan<UiQuad> uiQuads, ReadOnlySpan<RenderRecordChange> dirtyRecords) { EndFrameCount++; return false; }
-        public bool EndFrame(in RenderFrameState frameState, IGraphicsPipeline uiPipeline, in GraphicsFrameParameters uiParameters, ReadOnlySpan<UiQuad> uiQuads, IGraphicsPipeline textPipeline, in TextFrameParameters textParameters, ReadOnlySpan<ITextAtlasPage> atlasPages, in TextDrawList textDrawList, ReadOnlySpan<RenderRecordChange> dirtyRecords) => false;
+        public bool EndFrame(in RenderFrameState frameState, IGraphicsPipeline uiPipeline, in GraphicsFrameParameters uiParameters, ReadOnlySpan<UiQuad> uiQuads, IGraphicsPipeline textPipeline, in TextFrameParameters textParameters, ReadOnlySpan<ITextAtlasPage> atlasPages, in TextDrawList textDrawList, ReadOnlySpan<RenderRecordChange> dirtyRecords)
+        {
+            CombinedEndFrameCount++;
+            TextPipelineSeen = textPipeline is not null;
+            return TextPipelineSeen;
+        }
         public bool EndFrame(in RenderFrameState frameState, IGraphicsPipeline uiPipeline, in GraphicsFrameParameters uiParameters, ReadOnlySpan<UiQuad> uiQuads, IGraphicsPipeline textPipeline, in TextFrameParameters textParameters, ReadOnlySpan<TextGlyphInstance> textGlyphs, ReadOnlySpan<RenderRecordChange> dirtyRecords) => false;
         public bool EndFrame(in RenderFrameState frameState, IGraphicsPipeline pipeline, in GraphicsFrameParameters parameters, in UiDrawList drawList, ReadOnlySpan<RenderRecordChange> dirtyRecords) => false;
         public bool SubmitFrame(IGraphicsPipeline pipeline, in GraphicsFrameParameters parameters, in UiDrawList drawList, ReadOnlySpan<RenderRecordChange> dirtyRecords) { SubmitFrameCount++; return false; }
         public bool SubmitFrame(IGraphicsPipeline uiPipeline, in GraphicsFrameParameters uiParameters, in UiDrawList uiDrawList, IGraphicsPipeline textPipeline, in TextFrameParameters textParameters, ReadOnlySpan<ITextAtlasPage> atlasPages, in TextDrawList textDrawList, ReadOnlySpan<RenderRecordChange> dirtyRecords) => false;
         public bool SubmitFrame(IGraphicsPipeline uiPipeline, in GraphicsFrameParameters uiParameters, in UiDrawList uiDrawList, IGraphicsPipeline textPipeline, in TextFrameParameters textParameters, in TextDrawList textDrawList, ReadOnlySpan<RenderRecordChange> dirtyRecords) => false;
-        public IGraphicsPipeline CreateTextPipeline(in GraphicsShaderProgram shaderProgram) => throw new NotSupportedException();
-        public IGraphicsPipeline CreateGraphicsPipeline(in GraphicsShaderProgram shaderProgram) => throw new NotSupportedException();
+        public IGraphicsPipeline CreateTextPipeline(in GraphicsShaderProgram shaderProgram) => new FakePipeline(PipelineDisposed);
+        public IGraphicsPipeline CreateGraphicsPipeline(in GraphicsShaderProgram shaderProgram) => new FakePipeline(PipelineDisposed);
         public ITextAtlasDevice CreateTextAtlasDevice() => throw new NotSupportedException();
         public bool DrawFullscreenTriangle(IGraphicsPipeline pipeline, in GraphicsFrameParameters parameters) => false;
         public bool Resize(WindowMetrics metrics) => false;
-        public ValueTask DisposeAsync() => ValueTask.CompletedTask;
+        public ValueTask DisposeAsync()
+        {
+            DisposeCount++;
+            return ValueTask.CompletedTask;
+        }
+    }
+
+    private sealed class FakeOwnedLifetime(FakeSession session, Action onDispose) : VulkanWindowRenderService.IWindowedResourceLifetime
+    {
+        public IRenderWindowFrameSession Session { get; } = session;
+        public void Initialize(Sdl3PlatformShell platform) { }
+        public void Dispose()
+        {
+            session.DisposeAsync().AsTask().GetAwaiter().GetResult();
+            onDispose();
+        }
+    }
+
+    private sealed class NullWindowFactory : IRenderWindowFactory
+    {
+        public WindowCreateResult CreateWindow(WindowConfiguration configuration)
+            => WindowCreateResult.Failure(new RenderDiagnosticBag());
     }
 }

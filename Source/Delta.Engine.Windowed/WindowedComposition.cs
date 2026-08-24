@@ -10,6 +10,7 @@ using Delta.Render.Core;
 using Delta.Render.Platform.SDL3;
 using Delta.Render.Vulkan;
 using Delta.Shader.Abstractions;
+using Delta.Shader.Text;
 using SDL3;
 
 [assembly: SuppressMessage(
@@ -201,6 +202,7 @@ internal static class WindowedUiFrameSubmission
         IUiRenderFrameSource source,
         in RenderFrameState frameState,
         IGraphicsPipeline pipeline,
+        IGraphicsPipeline? textPipeline,
         in GraphicsFrameParameters parameters,
         ref TextGlyphInstance[] orderedGlyphs,
         ref TextBatchRange[] textBatches)
@@ -223,7 +225,7 @@ internal static class WindowedUiFrameSubmission
             in frameState,
             pipeline,
             in parameters,
-            textPipeline: null,
+            textPipeline,
             in textParameters,
             in frameView,
             in projectionContext,
@@ -270,11 +272,55 @@ internal static class WindowedUiFrameSubmission
 
 public sealed class VulkanWindowRenderService : IEngineRenderService
 {
+    internal interface IWindowedResourceLifetime : IDisposable
+    {
+        IRenderWindowFrameSession Session { get; }
+        void Initialize(Sdl3PlatformShell platform);
+    }
+
+    private sealed class BorrowedResourceLifetime(IRenderWindowFrameSession session) : IWindowedResourceLifetime
+    {
+        public IRenderWindowFrameSession Session { get; } = session ?? throw new ArgumentNullException(nameof(session));
+        public void Initialize(Sdl3PlatformShell platform) { }
+        public void Dispose() { }
+    }
+
+    private sealed class OwnedResourceLifetime(VulkanRenderer renderer) : IWindowedResourceLifetime
+    {
+        private readonly VulkanRenderer _renderer = renderer ?? throw new ArgumentNullException(nameof(renderer));
+        private IRenderWindowFrameSession? _session;
+
+        public IRenderWindowFrameSession Session => _session ??
+            throw new InvalidOperationException("Window resources are not initialized.");
+
+        public void Initialize(Sdl3PlatformShell platform)
+        {
+            if (_session is not null)
+            {
+                return;
+            }
+
+            _session = _renderer.CreateWindowSession(platform.Window);
+        }
+
+        public void Dispose()
+        {
+            if (_session is not null)
+            {
+                _session.DisposeAsync().AsTask().GetAwaiter().GetResult();
+                _session = null;
+            }
+
+            _renderer.DisposeAsync().AsTask().GetAwaiter().GetResult();
+        }
+    }
+
     private readonly Sdl3PlatformShell _platform;
-    private readonly VulkanRenderer _renderer;
+    private readonly IWindowedResourceLifetime _resources;
     private readonly IUiRenderFrameSource? _uiRenderFrameSource;
     private IRenderWindowFrameSession? _session;
     private IGraphicsPipeline? _graphicsPipeline;
+    private IGraphicsPipeline? _textPipeline;
     private TextGlyphInstance[] _textGlyphScratch = [];
     private TextBatchRange[] _textBatchScratch = [];
     private EngineSurfaceSnapshot _lastSurface;
@@ -284,21 +330,47 @@ public sealed class VulkanWindowRenderService : IEngineRenderService
         Sdl3PlatformShell platform,
         VulkanRenderer renderer,
         IUiRenderFrameSource? uiRenderFrameSource = null)
+        : this(platform, new OwnedResourceLifetime(renderer), uiRenderFrameSource)
+    {
+    }
+
+    public VulkanWindowRenderService(
+        Sdl3PlatformShell platform,
+        IRenderWindowFrameSession session,
+        IUiRenderFrameSource? uiRenderFrameSource = null)
+        : this(platform, new BorrowedResourceLifetime(session), uiRenderFrameSource)
+    {
+    }
+
+    internal VulkanWindowRenderService(
+        Sdl3PlatformShell platform,
+        IWindowedResourceLifetime resources,
+        IUiRenderFrameSource? uiRenderFrameSource)
     {
         _platform = platform ?? throw new ArgumentNullException(nameof(platform));
-        _renderer = renderer ?? throw new ArgumentNullException(nameof(renderer));
+        _resources = resources ?? throw new ArgumentNullException(nameof(resources));
         _uiRenderFrameSource = uiRenderFrameSource;
     }
 
     public void Initialize()
     {
         ThrowIfDisposed();
-        _session = _renderer.CreateWindowSession(_platform.Window);
+        _resources.Initialize(_platform);
+        _session = _resources.Session;
         var selection = WindowShaderArtifactSelection.For(_uiRenderFrameSource is not null);
         var vertex = LoadShaderArtifact(selection.VertexName);
         var fragment = LoadShaderArtifact(selection.FragmentName);
         var program = new GraphicsShaderProgram(vertex, fragment);
         _graphicsPipeline = _session.CreateGraphicsPipeline(in program);
+        if (_uiRenderFrameSource is not null)
+        {
+            var textVertex = LoadSpirv("SdfTextVertex.vert");
+            var textFragment = LoadSpirv("SdfTextFragment.frag");
+            var textProgram = SdfTextGraphicsShaderProgram.CreateProgram(
+                textVertex,
+                textFragment);
+            _textPipeline = _session.CreateTextPipeline(in textProgram);
+        }
         _lastSurface = _platform.Surface;
     }
 
@@ -310,17 +382,14 @@ public sealed class VulkanWindowRenderService : IEngineRenderService
             throw new InvalidOperationException("Window render service must be initialized before rendering.");
         }
 
-        if (context.Surface.IsValid)
+        if (context.Surface.IsValid && _lastSurface != context.Surface)
         {
-            if (_lastSurface != context.Surface)
+            if (!_session.Resize(new WindowMetrics((uint)context.Surface.Width, (uint)context.Surface.Height, 1.0f)))
             {
-                if (!_session.Resize(new WindowMetrics((uint)context.Surface.Width, (uint)context.Surface.Height, 1.0f)))
-                {
-                    throw new InvalidOperationException("Vulkan swapchain resize failed.");
-                }
-
-                _lastSurface = context.Surface;
+                throw new InvalidOperationException("Vulkan swapchain resize failed.");
             }
+
+            _lastSurface = context.Surface;
         }
 
         var frameState = _session.BeginFrame();
@@ -339,11 +408,17 @@ public sealed class VulkanWindowRenderService : IEngineRenderService
 
         if (_uiRenderFrameSource is not null)
         {
+            if (_textPipeline is null)
+            {
+                throw new InvalidOperationException("The window renderer text resources are not initialized.");
+            }
+
             WindowedUiFrameSubmission.EndFrameOrThrow(
                 _session,
                 _uiRenderFrameSource,
                 in frameState,
                 _graphicsPipeline,
+                _textPipeline,
                 in parameters,
                 ref _textGlyphScratch,
                 ref _textBatchScratch);
@@ -370,21 +445,24 @@ public sealed class VulkanWindowRenderService : IEngineRenderService
         }
 
         _disposed = true;
-        if (_graphicsPipeline is not null)
-        {
-            _graphicsPipeline.DisposeAsync().AsTask().GetAwaiter().GetResult();
-            _graphicsPipeline = null;
-        }
-        if (_session is not null)
-        {
-            _session.DisposeAsync().AsTask().GetAwaiter().GetResult();
-            _session = null;
-        }
+        DisposeOwnedResources(_textPipeline, _graphicsPipeline, _resources);
+        _textPipeline = null;
+        _graphicsPipeline = null;
 
         _textGlyphScratch = [];
         _textBatchScratch = [];
+        _session = null;
+    }
 
-        _renderer.DisposeAsync().AsTask().GetAwaiter().GetResult();
+    internal static void DisposeOwnedResources(
+        IGraphicsPipeline? textPipeline,
+        IGraphicsPipeline? graphicsPipeline,
+        IWindowedResourceLifetime resources)
+    {
+        ArgumentNullException.ThrowIfNull(resources);
+        textPipeline?.DisposeAsync().AsTask().GetAwaiter().GetResult();
+        graphicsPipeline?.DisposeAsync().AsTask().GetAwaiter().GetResult();
+        resources.Dispose();
     }
 
     private void ThrowIfDisposed() => ObjectDisposedException.ThrowIf(_disposed, this);
@@ -397,6 +475,21 @@ public sealed class VulkanWindowRenderService : IEngineRenderService
         var manifest = JsonSerializer.Deserialize<Delta.Shader.Abstractions.ShaderAbiManifest>(File.ReadAllText(manifestPath))
             ?? throw new InvalidDataException($"Shader manifest was empty: {manifestPath}");
         return new ShaderArtifact(File.ReadAllBytes(spirvPath), manifest);
+    }
+
+    private static byte[] LoadSpirv(string name)
+    {
+        var path = Path.Combine(AppContext.BaseDirectory, "shaders", name + ".spv");
+        try
+        {
+            return File.ReadAllBytes(path);
+        }
+        catch (FileNotFoundException exception)
+        {
+            throw new InvalidOperationException(
+                $"Missing text shader artifact '{path}'. Prepare it with 'cd ../DeltaShader && ./eng/prepare-text-artifacts.sh artifacts/text' from the DeltaEngine repository.",
+                exception);
+        }
     }
 }
 

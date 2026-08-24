@@ -17,6 +17,17 @@ Use headless contract tests before native composition. Surface existing legacy
 warnings separately; do not mix dependency upgrades into an integration fix.
 Run the real editor window from [../DeltaEditor/WORKFLOW.md](../DeltaEditor/WORKFLOW.md).
 
+Before building or running the windowed text path, prepare the generated SDF
+SPIR-V artifacts from the DeltaShader repository:
+
+```bash
+cd ../DeltaShader && ./eng/prepare-text-artifacts.sh artifacts/text
+```
+
+The windowed project copies only `SdfTextVertex.vert.spv` and
+`SdfTextFragment.frag.spv`; the generated shader factory owns their embedded
+ABI manifests.
+
 ## Code metrics
 
 Run the manual GitHub Actions `Code metrics` workflow before committing a

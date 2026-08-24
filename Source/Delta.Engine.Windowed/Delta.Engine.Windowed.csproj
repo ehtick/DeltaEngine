@@ -17,6 +17,7 @@
     <ProjectReference Include="..\..\..\DeltaRender\src\Delta.Render.Core\Delta.Render.Core.csproj" />
     <ProjectReference Include="..\..\..\DeltaRender\src\Delta.Render.Platform.SDL3\Delta.Render.Platform.SDL3.csproj" />
     <ProjectReference Include="..\..\..\DeltaRender\src\Delta.Render.Vulkan\Delta.Render.Vulkan.csproj" />
+    <ProjectReference Include="..\..\..\DeltaShader\src\Delta.Shader.Text\Delta.Shader.Text.csproj" />
     <PackageReference Include="SDL3-CS" Version="3.4.12.6" />
     <PackageReference Include="Silk.NET.MoltenVK.Native" Version="2.23.0" GeneratePathProperty="true" />
     <Content Include="$(PkgSilk_NET_MoltenVK_Native)/runtimes/osx/native/libMoltenVK.dylib" Condition=" '$(RuntimeIdentifier)' == 'osx-arm64' Or '$(RuntimeIdentifier)' == 'osx-x64' ">
@@ -35,5 +36,7 @@
     <Content Include="..\..\..\DeltaRender\samples\Delta.Render.Smoke\shaders\ui-panel.vert.shader.json" Link="shaders\ui-panel.vert.shader.json" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="..\..\..\DeltaRender\samples\Delta.Render.Smoke\shaders\ui-panel.frag.spv" Link="shaders\ui-panel.frag.spv" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="..\..\..\DeltaRender\samples\Delta.Render.Smoke\shaders\ui-panel.frag.shader.json" Link="shaders\ui-panel.frag.shader.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\..\DeltaShader\artifacts\text\SdfTextVertex.vert.spv" Link="shaders\SdfTextVertex.vert.spv" CopyToOutputDirectory="PreserveNewest" Condition="Exists('..\..\..\DeltaShader\artifacts\text\SdfTextVertex.vert.spv')" />
+    <Content Include="..\..\..\DeltaShader\artifacts\text\SdfTextFragment.frag.spv" Link="shaders\SdfTextFragment.frag.spv" CopyToOutputDirectory="PreserveNewest" Condition="Exists('..\..\..\DeltaShader\artifacts\text\SdfTextFragment.frag.spv')" />
   </ItemGroup>
 </Project>
