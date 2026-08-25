@@ -198,8 +198,14 @@ These adapters are intentionally minimal and are only used as migration bridges 
 - `EngineRenderServiceAdapter` forwards the first valid surface change to an
   `IEngineRenderFrameSink` before forwarding the frame. This is still an adapter boundary;
   it is not the permanent `RenderPacket` API.
-- `IEngineShaderModuleSource` is the shader-owner boundary. It exchanges opaque module bytes
-  by `EngineShaderId`; DeltaShader reflection/compiler types stay inside the shader adapter.
+- `IEngineShaderModuleSource` is the historical compatibility boundary. It
+  exchanges opaque module bytes by `EngineShaderId`, so it is not sufficient
+  to represent the final shader artifact and must not be treated as the ABI
+  source of truth. The target renderer adapter consumes
+  `Delta.Shader.Contract.IShaderArtifact` / `IGraphicsShaderProgram`: SPIR-V
+  together with resolved binary `ShaderAbi`. DeltaShader authoring,
+  Roslyn/reflection state, GLSL, live generic values and content hashes remain
+  outside that runtime artifact.
 
 The dependency direction is:
 

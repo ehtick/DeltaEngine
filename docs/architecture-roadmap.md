@@ -20,7 +20,7 @@ rewrite.
 ## Dependency direction
 
 ```text
-MathsGen -> Delta.Maths -> DeltaShader -> SPIR-V + manifest
+MathsGen -> Delta.Maths -> DeltaShader -> SPIR-V + binary ShaderAbi
                                       \          /
 DeltaXAML -> IUiDrawList --------------> DeltaRender
 DeltaText -> positioned glyph data ----/
@@ -29,8 +29,11 @@ DeltaECS ---------------------------> Delta.Engine
                          DeltaEditorShell -> DeltaEditor
 ```
 
-Delta.Engine may depend on DeltaECS, DeltaRender, DeltaShader runtime
-contracts, DeltaXAML/DeltaText neutral contracts and Delta.Maths. Those
+Delta.Engine may depend on DeltaECS, DeltaRender,
+`Delta.Shader.Contract` runtime contracts, DeltaXAML/DeltaText neutral
+contracts and Delta.Maths. The current optional compute/windowed adapters still
+reach `Delta.Shader.Abstractions` through a compatibility path; that is
+migration state, not the target dependency. Those
 standalone projects must not depend on Delta.Engine. DeltaEditor owns the
 application composition and may depend on Engine; the reverse edge is
 forbidden.
@@ -44,7 +47,8 @@ forbidden.
 - `DeltaText/`: shaping, positioned glyphs, outlines and CPU SDF/MSDF data.
 - `DeltaRender/`: SDL3 surface/window integration, Vulkan/MoltenVK, render
   graph, GPU UI/text resources and submission.
-- `DeltaShader/`: shader compiler, analyzers, SPIR-V artifacts, and reflection manifest.
+- `DeltaShader/`: shader compiler and analyzers; it lowers authoring/reflection
+  state to final SPIR-V plus the binary ABI owned by `Delta.Shader.Contract`.
 - `Delta.Engine/`: runtime composition, scenes, assets, serialization, module
   lifecycle, SDL input translation, scheduling and migration adapters.
 - `DeltaEditorShell/`: editor controls/views and XAML registry.
@@ -84,8 +88,10 @@ or XAML layout/rendering.
    DeltaECS supplies an equivalent adapter.
 6. Replace Avalonia editor panels with Delta XAML controls incrementally. The
    Vulkan viewport remains a GPU image and is composited directly.
-7. Move shader assets to DeltaShader manifests/SPIR-V while preserving a fixture path
-   for hand-authored shaders during transition.
+7. Move shader assets to `Delta.Shader.Contract` artifacts (SPIR-V plus binary
+   `ShaderAbi`) while preserving the current SPIR-V/JSON compatibility fixture
+   path during transition. GLSL, Roslyn/reflection state, live generic values
+   and content hashes do not enter the runtime artifact.
 8. Delete old adapters and dependencies only after feature and test parity.
 
 No phase should require a GPU-to-CPU copy to display the editor viewport.

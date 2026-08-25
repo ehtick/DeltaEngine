@@ -22,6 +22,13 @@ DeltaEditor owns scripting and inspection.
 `DeltaEditorShell` owns editor controls/views; `Delta.Editor.UiHost` is the
 adapter and `Delta.Editor.App` is the composition root.
 
+Optional windowed/compute adapters currently consume
+`Delta.Shader.Abstractions.ShaderArtifact` through DeltaRender as a migration
+compatibility path. The final runtime boundary is the immutable
+`Delta.Shader.Contract.IShaderArtifact`: SPIR-V plus resolved binary
+`ShaderAbi`. Engine does not transport GLSL, Roslyn/compiler state, live
+generic shader values or an artifact-owned content hash.
+
 The optional windowed renderer initializes its session and pipelines
 transactionally: failed initialization rolls back resources created so far,
 leaves the service uninitialized for a retry, and repeated successful

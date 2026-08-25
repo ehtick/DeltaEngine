@@ -8,16 +8,21 @@ shader source/provenance. No Vulkan implementation is duplicated in DeltaEngine.
 The sample uses the generated `compute_double.spv` and
 `compute_double.shader.json` pair. Engine loads both into
 `Delta.Shader.Abstractions.ShaderArtifact`, then passes that shared artifact to
-`Delta.Render`; Render derives pipeline metadata from the ABI manifest. The
-runtime path does not reference Roslyn, MSBuild, or the shader compiler.
+`Delta.Render`; Render derives pipeline metadata from the compatibility ABI
+manifest. This documents the current API, not the completed migration. The
+target input is `Delta.Shader.Contract.IShaderArtifact`, containing SPIR-V and
+the resolved binary `ShaderAbi`. The runtime path does not reference Roslyn,
+MSBuild, the shader compiler, GLSL, live generic shader values or an
+artifact-owned content hash.
 
 The sample uses only public `Delta.Render` contracts:
 
 1. `VulkanRenderer.CreateComputeDevice()` creates the compute device.
 2. `IComputeDevice.CreateStorageBuffer()` allocates the SSBO.
 3. `IComputeDevice.Upload()` transfers engine input data.
-4. `IComputeDevice.CreateComputePipeline()` consumes the shared
-   `ShaderArtifact`.
+4. `IComputeDevice.CreateComputePipeline()` currently consumes the shared
+   `Delta.Shader.Abstractions.ShaderArtifact` compatibility type; its target
+   contract is `Delta.Shader.Contract.IShaderArtifact`.
 5. `IComputeDevice.Dispatch()` executes one workgroup.
 6. `IComputeDevice.Readback()` returns the result for the oracle check.
 

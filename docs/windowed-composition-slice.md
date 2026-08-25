@@ -21,14 +21,17 @@ Shader project reference.
 The fullscreen sample is a historical lower-level smoke, not the current
 editor UI composition path. It uses the real `Delta.Render.Core` window/session contracts and
 `Delta.Render.Vulkan` swapchain lifecycle. It loads the versioned vertex and
-fragment `ShaderArtifact` outputs of DeltaShader, creates a Vulkan graphics
-pipeline, and draws the fullscreen SDF rectangle every frame. Resolution is
-carried through Delta.Maths `float2`; elapsed time comes from `EngineHost`.
+fragment SPIR-V/JSON fixture pairs into the current
+`Delta.Shader.Abstractions.ShaderArtifact` compatibility type, creates a
+Vulkan graphics pipeline, and draws the fullscreen SDF rectangle every frame.
+This does not yet implement the final `Delta.Shader.Contract` handoff of SPIR-V
+plus binary `ShaderAbi`. Resolution is carried through Delta.Maths `float2`;
+elapsed time comes from `EngineHost`.
 
 | Dependency | Current usable contract | Windowed slice status |
 | --- | --- | --- |
 | Delta.Maths | `float2` and related runtime value types | Used by SDF uniform description |
-| DeltaShader | C# vertex/fragment shaders and versioned graphics ABI | Generated fullscreen artifacts are consumed |
+| DeltaShader | C# vertex/fragment authoring; final SPIR-V + binary ABI contract | Compatibility fixture pairs are consumed; `Delta.Shader.Contract` migration is pending |
 | Delta.Render | SDL3 window, Vulkan surface, swapchain and graphics pipeline | Fullscreen draw is connected |
 | SDL3-CS | Native event polling/window operations | Owned by the platform shell |
 | MoltenVK | Render sibling loads it on macOS | Available only in a real macOS display smoke |
