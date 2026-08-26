@@ -28,8 +28,8 @@ DeltaShader/eng/prepare-text-artifacts.sh DeltaShader/artifacts/text
 
 The windowed project copies only `SdfTextVertex.vert.spv` and
 `SdfTextFragment.frag.spv`; the generated shader factory owns their embedded
-ABI manifests. This is current compatibility packaging for the
-`Delta.Shader.Abstractions` consumer. The target runtime handoff is a complete
+ABI manifests. This remains migration packaging for the pre-final shader
+consumer. The target runtime handoff is a complete
 `Delta.Shader.Contract.IShaderArtifact` (SPIR-V plus binary `ShaderAbi`), not a
 raw SPIR-V file, GLSL sidecar or compiler object.
 

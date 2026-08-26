@@ -9,10 +9,10 @@ public sealed class NullRendererContractTests
     public void HeadlessLoopAcceptsResizeAndNoOpFrame()
     {
         using var renderer = new NullRenderer();
-        var surface = new EngineSurfaceSnapshot(320, 200);
+        var surface = new EngineSurfaceSnapshot(320, 200, IsResized: true);
         var frame = new EngineRenderFrame(4, surface);
 
-        renderer.Resize(in surface);
+        renderer.Initialize();
         renderer.Render(in frame);
 
         Assert.False(renderer.HasBackend);
@@ -40,7 +40,8 @@ public sealed class NullRendererContractTests
         using var renderer = new NullRenderer();
         var surface = new EngineSurfaceSnapshot(0, 0);
 
-        renderer.Resize(in surface);
+        renderer.Initialize();
+        renderer.Render(new EngineRenderFrame(1, surface));
 
         Assert.False(renderer.LastSurface.IsValid);
         Assert.Equal(0, renderer.LastSurface.Width);

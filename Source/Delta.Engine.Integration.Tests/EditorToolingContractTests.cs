@@ -1,4 +1,5 @@
 using Delta.Engine.Integration;
+using Delta.XAML.Contract;
 using Xunit;
 
 namespace Delta.Engine.Integration.Tests;
@@ -8,14 +9,19 @@ public sealed class EditorToolingContractTests
     [Fact]
     public void PhysicalKeyTextAndImeAreDistinctNeutralBoundaries()
     {
-        var key = new EngineUiInputPacket(EngineUiInputKind.KeyDown, Code: 65);
-        var text = new EngineUiInputPacket(EngineUiInputKind.TextInput, Text: "ä");
+        var key = UiInputEvent.FromKey(new UiKeyEvent(
+            UiKeyEventKind.Down,
+            new UiPhysicalKey(65),
+            new UiLogicalKey(65),
+            default,
+            false));
+        var text = UiInputEvent.FromText(new UiTextInput("ä".AsMemory()));
 
-        Assert.Equal(EngineUiInputKind.KeyDown, key.Kind);
-        Assert.Equal(65, key.Code);
-        Assert.Null(key.Text);
-        Assert.Equal(EngineUiInputKind.TextInput, text.Kind);
-        Assert.Equal("ä", text.Text);
+        Assert.Equal(UiInputEventKind.Key, key.Kind);
+        Assert.Equal(UiKeyEventKind.Down, key.Key.Kind);
+        Assert.Equal((uint)65, key.Key.PhysicalKey.Value);
+        Assert.Equal(UiInputEventKind.Text, text.Kind);
+        Assert.Equal("ä", text.Text.Text.ToString());
         Assert.True(typeof(IEngineImeCompositionSink).GetMethod(nameof(IEngineImeCompositionSink.UpdateComposition)) is not null);
     }
 }

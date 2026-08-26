@@ -5,8 +5,6 @@ namespace Delta.Engine.Integration.Tests;
 
 public sealed class EngineGlueContractTests
 {
-    private static readonly string[] ResizeThenRender = ["initialize", "resize", "render"];
-    private static readonly string[] ResizeOnceThenRender = ["initialize", "resize", "render", "render"];
     private static readonly EngineLifecycleStage[] ShutdownStages =
     [
         EngineLifecycleStage.FrameStarted,
@@ -23,30 +21,15 @@ public sealed class EngineGlueContractTests
     ];
 
     [Fact]
-    public void RenderAdapterForwardsResizeBeforeFrame()
+    public void RenderServiceReceivesCanonicalTimeFreeFrame()
     {
-        using var sink = new FakeRenderSink();
-        using var adapter = new EngineRenderServiceAdapter(sink);
-        var input = new InputSnapshot(7, Surface: new EngineSurfaceSnapshot(1280, 720));
+        using var render = new CapturingRenderService();
+        var frame = new EngineRenderFrame(7, new EngineSurfaceSnapshot(1280, 720, IsResized: true));
 
-        adapter.Initialize();
-        adapter.Render(new EngineRenderFrame(7, input.Surface));
+        render.Initialize();
+        render.Render(in frame);
 
-        Assert.Equal(ResizeThenRender, sink.Calls);
-    }
-
-    [Fact]
-    public void RenderAdapterOnlyResizesWhenSurfaceChanges()
-    {
-        using var sink = new FakeRenderSink();
-        using var adapter = new EngineRenderServiceAdapter(sink);
-        var input = new InputSnapshot(7, Surface: new EngineSurfaceSnapshot(1280, 720));
-
-        adapter.Initialize();
-        adapter.Render(new EngineRenderFrame(7, input.Surface));
-        adapter.Render(new EngineRenderFrame(8, input.Surface));
-
-        Assert.Equal(ResizeOnceThenRender, sink.Calls);
+        Assert.Equal(frame, render.LastFrame);
     }
 
     [Fact]
@@ -80,15 +63,13 @@ public sealed class EngineGlueContractTests
         Assert.Equal(ShutdownStages, host.StageLog.Skip(4).Select(static stage => stage.Stage));
     }
 
-    private sealed class FakeRenderSink : IEngineRenderFrameSink
+    private sealed class CapturingRenderService : IEngineRenderService
     {
-        public List<string> Calls { get; } = [];
-
-        public void Initialize() => Calls.Add("initialize");
-        public void Resize(EngineSurfaceSnapshot surface) => Calls.Add("resize");
-        public void Render(in EngineRenderFrame frame) => Calls.Add("render");
-        public void Shutdown() => Calls.Add("shutdown");
-        public void Dispose() => Calls.Add("dispose");
+        public EngineRenderFrame LastFrame { get; private set; }
+        public void Initialize() { }
+        public void Render(in EngineRenderFrame frame) => LastFrame = frame;
+        public void Shutdown() { }
+        public void Dispose() { }
     }
 
     private sealed class ExitAfterOneFrameInput : IEngineInputService

@@ -11,6 +11,7 @@ using Delta.Render.Platform.SDL3;
 using Delta.Render.Vulkan;
 using Delta.Shader.Abstractions;
 using Delta.Shader.Text;
+using Delta.XAML.Contract;
 using SDL3;
 
 [assembly: SuppressMessage(
@@ -67,7 +68,7 @@ public sealed class Sdl3PlatformShell : IEnginePlatformShell
         }
 
         var events = new List<EngineInputEvent>();
-        var uiPackets = new List<EngineUiInputPacket>();
+        var uiEvents = new List<UiInputEvent>();
         var exitRequested = _window.IsClosed;
         while (SDL.PollEvent(out var nativeEvent))
         {
@@ -84,38 +85,83 @@ public sealed class Sdl3PlatformShell : IEnginePlatformShell
                     break;
                 case SDL.EventType.KeyDown:
                     events.Add(new EngineInputEvent(EngineInputEventKind.KeyDown, Code: (int)nativeEvent.Key.Key));
-                    uiPackets.Add(new EngineUiInputPacket(EngineUiInputKind.KeyDown,
-                        Code: (int)nativeEvent.Key.Key, IsRepeat: nativeEvent.Key.Repeat));
+                    uiEvents.Add(UiInputEvent.FromKey(new UiKeyEvent(
+                        UiKeyEventKind.Down,
+                        new UiPhysicalKey((uint)nativeEvent.Key.Key),
+                        new UiLogicalKey((uint)nativeEvent.Key.Key),
+                        default,
+                        nativeEvent.Key.Repeat)));
                     break;
                 case SDL.EventType.KeyUp:
                     events.Add(new EngineInputEvent(EngineInputEventKind.KeyUp, Code: (int)nativeEvent.Key.Key));
-                    uiPackets.Add(new EngineUiInputPacket(EngineUiInputKind.KeyUp,
-                        Code: (int)nativeEvent.Key.Key));
+                    uiEvents.Add(UiInputEvent.FromKey(new UiKeyEvent(
+                        UiKeyEventKind.Up,
+                        new UiPhysicalKey((uint)nativeEvent.Key.Key),
+                        new UiLogicalKey((uint)nativeEvent.Key.Key),
+                        default,
+                        false)));
                     break;
                 case SDL.EventType.MouseMotion:
                     events.Add(new EngineInputEvent(EngineInputEventKind.PointerMove, X: nativeEvent.Motion.X, Y: nativeEvent.Motion.Y));
-                    uiPackets.Add(new EngineUiInputPacket(EngineUiInputKind.PointerMove,
-                        X: nativeEvent.Motion.X, Y: nativeEvent.Motion.Y,
-                        DeltaX: nativeEvent.Motion.XRel, DeltaY: nativeEvent.Motion.YRel));
+                    uiEvents.Add(UiInputEvent.FromPointingDevice(new UiPointerEvent(
+                        UiPointerEventKind.Move,
+                        UiPointerDeviceKind.Mouse,
+                        0,
+                        new float2(nativeEvent.Motion.X, nativeEvent.Motion.Y),
+                        new float2(nativeEvent.Motion.XRel, nativeEvent.Motion.YRel),
+                        default,
+                        UiPointerButton.None,
+                        default,
+                        0,
+                        default)));
                     break;
                 case SDL.EventType.MouseButtonDown:
                     events.Add(new EngineInputEvent(EngineInputEventKind.PointerDown, Code: nativeEvent.Button.Button, X: nativeEvent.Button.X, Y: nativeEvent.Button.Y));
-                    uiPackets.Add(new EngineUiInputPacket(EngineUiInputKind.PointerDown,
-                        Code: nativeEvent.Button.Button, X: nativeEvent.Button.X, Y: nativeEvent.Button.Y));
+                    uiEvents.Add(UiInputEvent.FromPointingDevice(new UiPointerEvent(
+                        UiPointerEventKind.ButtonDown,
+                        UiPointerDeviceKind.Mouse,
+                        0,
+                        new float2(nativeEvent.Button.X, nativeEvent.Button.Y),
+                        default,
+                        default,
+                        new UiPointerButton((uint)nativeEvent.Button.Button),
+                        default,
+                        0,
+                        default)));
                     break;
                 case SDL.EventType.MouseButtonUp:
                     events.Add(new EngineInputEvent(EngineInputEventKind.PointerUp, Code: nativeEvent.Button.Button, X: nativeEvent.Button.X, Y: nativeEvent.Button.Y));
-                    uiPackets.Add(new EngineUiInputPacket(EngineUiInputKind.PointerUp,
-                        Code: nativeEvent.Button.Button, X: nativeEvent.Button.X, Y: nativeEvent.Button.Y));
+                    uiEvents.Add(UiInputEvent.FromPointingDevice(new UiPointerEvent(
+                        UiPointerEventKind.ButtonUp,
+                        UiPointerDeviceKind.Mouse,
+                        0,
+                        new float2(nativeEvent.Button.X, nativeEvent.Button.Y),
+                        default,
+                        default,
+                        new UiPointerButton((uint)nativeEvent.Button.Button),
+                        default,
+                        0,
+                        default)));
                     break;
                 case SDL.EventType.MouseWheel:
-                    uiPackets.Add(new EngineUiInputPacket(EngineUiInputKind.Wheel,
-                        X: nativeEvent.Wheel.MouseX, Y: nativeEvent.Wheel.MouseY,
-                        DeltaX: nativeEvent.Wheel.X, DeltaY: nativeEvent.Wheel.Y));
+                    uiEvents.Add(UiInputEvent.FromPointingDevice(new UiPointerEvent(
+                        UiPointerEventKind.Wheel,
+                        UiPointerDeviceKind.Mouse,
+                        0,
+                        new float2(nativeEvent.Wheel.MouseX, nativeEvent.Wheel.MouseY),
+                        default,
+                        new float2(nativeEvent.Wheel.X, nativeEvent.Wheel.Y),
+                        UiPointerButton.None,
+                        default,
+                        0,
+                        default)));
                     break;
                 case SDL.EventType.TextInput:
-                    uiPackets.Add(new EngineUiInputPacket(EngineUiInputKind.TextInput,
-                        Text: Marshal.PtrToStringUTF8(nativeEvent.Text.Text)));
+                    var text = Marshal.PtrToStringUTF8(nativeEvent.Text.Text);
+                    if (!string.IsNullOrEmpty(text))
+                    {
+                        uiEvents.Add(UiInputEvent.FromText(new UiTextInput(text.AsMemory())));
+                    }
                     break;
             }
         }
@@ -125,7 +171,7 @@ public sealed class Sdl3PlatformShell : IEnginePlatformShell
             exitRequested = true;
         }
 
-        return new InputSnapshot(frameNumber, exitRequested, _surface, events.ToArray(), uiPackets.ToArray());
+        return new InputSnapshot(frameNumber, exitRequested, _surface, events.ToArray(), uiEvents.ToArray());
     }
 
     public void Shutdown()

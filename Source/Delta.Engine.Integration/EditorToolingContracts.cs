@@ -3,28 +3,6 @@ using System.Collections.Generic;
 
 namespace Delta.Engine.Integration;
 
-public enum EngineUiInputKind
-{
-    Unknown = 0,
-    PointerMove = 1,
-    PointerDown = 2,
-    PointerUp = 3,
-    Wheel = 4,
-    KeyDown = 5,
-    KeyUp = 6,
-    TextInput = 7,
-}
-
-public readonly record struct EngineUiInputPacket(
-    EngineUiInputKind Kind,
-    int Code = 0,
-    float X = 0,
-    float Y = 0,
-    float DeltaX = 0,
-    float DeltaY = 0,
-    string? Text = null,
-    bool IsRepeat = false);
-
 // Text composition is deliberately separate from physical key packets. A
 // platform/editor adapter may implement this seam when IME composition is
 // available without making the renderer or Engine core own text input state.

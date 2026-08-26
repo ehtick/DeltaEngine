@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Delta.XAML.Contract;
 
 namespace Delta.Engine.Integration;
 
@@ -60,7 +61,7 @@ public readonly record struct InputSnapshot(
     bool ExitRequested = false,
     EngineSurfaceSnapshot Surface = default,
     ReadOnlyMemory<EngineInputEvent> Events = default,
-    ReadOnlyMemory<EngineUiInputPacket> UiPackets = default);
+    ReadOnlyMemory<UiInputEvent> UiEvents = default);
 
 public readonly record struct EngineFrameContext(
     int FrameNumber,
@@ -159,36 +160,6 @@ public sealed class EngineWorldServiceAdapter(
     public void Shutdown() { }
 
     public void Dispose() => world.Dispose();
-}
-
-public interface IEngineRenderFrameSink : IDisposable
-{
-    void Initialize();
-    void Resize(EngineSurfaceSnapshot surface);
-    void Render(in EngineRenderFrame frame);
-    void Shutdown();
-}
-
-public sealed class EngineRenderServiceAdapter(IEngineRenderFrameSink sink) : IEngineRenderService
-{
-    private EngineSurfaceSnapshot _lastSurface;
-
-    public void Initialize() => sink.Initialize();
-
-    public void Render(in EngineRenderFrame frame)
-    {
-        if (frame.Surface.IsValid && frame.Surface != _lastSurface)
-        {
-            sink.Resize(frame.Surface);
-            _lastSurface = frame.Surface;
-        }
-
-        sink.Render(frame);
-    }
-
-    public void Shutdown() => sink.Shutdown();
-
-    public void Dispose() => sink.Dispose();
 }
 
 public readonly record struct EngineShaderId(string Value);

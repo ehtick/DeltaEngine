@@ -5,7 +5,7 @@ namespace Delta.Engine.Runtime;
 
 public interface IGraphicsModule : IDisposable
 {
-    IRenderer Renderer { get; }
+    IEngineRenderService Renderer { get; }
 
     (int width, int height) Size { get; set; }
 

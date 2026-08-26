@@ -8,22 +8,11 @@ public readonly record struct EngineRenderFrame(
     long FrameNumber,
     EngineSurfaceSnapshot Surface);
 
-public interface IRenderFrameSink : IDisposable
-{
-    void Resize(in EngineSurfaceSnapshot surface);
-
-    void Render(in EngineRenderFrame frame);
-}
-
-public interface IRenderer : IRenderFrameSink
-{
-}
-
 /// <summary>
 /// A deterministic backend-free renderer for headless engine/editor/game runs.
 /// It records lifecycle observations for diagnostics but performs no rendering.
 /// </summary>
-public sealed class NullRenderer : IRenderer
+public sealed class NullRenderer : IEngineRenderService
 {
     private bool _disposed;
 
@@ -41,18 +30,27 @@ public sealed class NullRenderer : IRenderer
 
     public int RenderCount { get; private set; }
 
-    public void Resize(in EngineSurfaceSnapshot surface)
+    public void Initialize()
     {
         ThrowIfDisposed();
-        LastSurface = surface;
-        ResizeCount++;
     }
 
     public void Render(in EngineRenderFrame frame)
     {
         ThrowIfDisposed();
+        if (frame.Surface != LastSurface)
+        {
+            LastSurface = frame.Surface;
+            ResizeCount++;
+        }
+
         LastFrame = frame;
         RenderCount++;
+    }
+
+    public void Shutdown()
+    {
+        ThrowIfDisposed();
     }
 
     public void Dispose()

@@ -22,7 +22,7 @@ rewrite.
 ```text
 MathsGen -> Delta.Maths -> DeltaShader -> SPIR-V + binary ShaderAbi
                                       \          /
-DeltaXAML -> IUiDrawList --------------> DeltaRender
+DeltaXAML.Contract -> UiDisplayList -> DeltaRender
 DeltaText -> positioned glyph data ----/
 DeltaECS ---------------------------> Delta.Engine
                                            ^
@@ -32,8 +32,8 @@ DeltaECS ---------------------------> Delta.Engine
 Delta.Engine may depend on DeltaECS, DeltaRender,
 `Delta.Shader.Contract` runtime contracts, DeltaXAML/DeltaText neutral
 contracts and Delta.Maths. The current optional compute/windowed adapters still
-reach `Delta.Shader.Abstractions` through a compatibility path; that is
-migration state, not the target dependency. Those
+use a pre-final shader compatibility path; that is migration state, not the
+target dependency. Those
 standalone projects must not depend on Delta.Engine. DeltaEditor owns the
 application composition and may depend on Engine; the reverse edge is
 forbidden.
@@ -89,9 +89,8 @@ or XAML layout/rendering.
 6. Replace Avalonia editor panels with Delta XAML controls incrementally. The
    Vulkan viewport remains a GPU image and is composited directly.
 7. Move shader assets to `Delta.Shader.Contract` artifacts (SPIR-V plus binary
-   `ShaderAbi`) while preserving the current SPIR-V/JSON compatibility fixture
-   path during transition. GLSL, Roslyn/reflection state, live generic values
-   and content hashes do not enter the runtime artifact.
+   `ShaderAbi`). GLSL, Roslyn/reflection state, live generic values and content
+   hashes do not enter the runtime artifact.
 8. Delete old adapters and dependencies only after feature and test parity.
 
 No phase should require a GPU-to-CPU copy to display the editor viewport.
@@ -121,8 +120,8 @@ The first delivery is architectural and executable:
   source tree;
 - provide explicit contract requests to the ECS and renderer owners.
 
-The concrete stage/interface artifact for this delivery is documented in
-`docs/first-engine-delivery-contracts.md`.
+The concrete stage/interface details belong in the project `USER_API.md` and
+`INTERNAL.md`; this roadmap records only the durable direction.
 
 Do not begin by deleting Avalonia or Arch packages. Their removal is an outcome
 of successful migration, not the first step.
