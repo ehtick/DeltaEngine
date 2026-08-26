@@ -3,19 +3,19 @@
 Build the narrow producer first, then the solution:
 
 ```bash
-dotnet restore Source/Delta.Engine.slnx
-dotnet build Source/Delta.Engine.Windowed/Delta.Engine.Windowed.csproj \
+dotnet restore Source/DeltaEngine.slnx
+dotnet build Source/DeltaEngine.Windowed/DeltaEngine.Windowed.csproj \
   -c Release --no-restore --disable-build-servers -m:1 \
   /p:UseSharedCompilation=false
-dotnet build Source/Delta.Engine.slnx -c Release --no-restore \
+dotnet build Source/DeltaEngine.slnx -c Release --no-restore \
   --disable-build-servers -m:1 /p:UseSharedCompilation=false -v:minimal
-dotnet test Source/Delta.Engine.slnx -c Release --no-build --no-restore \
+dotnet test Source/DeltaEngine.slnx -c Release --no-build --no-restore \
   --disable-build-servers -m:1
 ```
 
 Use headless contract tests before native composition. Surface existing legacy
 warnings separately; do not mix dependency upgrades into an integration fix.
-`Delta.Engine.Windowed.Tests` includes fault-injection coverage for transactional
+`DeltaEngine.Windowed.Tests` includes fault-injection coverage for transactional
 initialization, rollback and retry; these tests do not open a native window.
 Run the real editor window from [../DeltaEditor/WORKFLOW.md](../DeltaEditor/WORKFLOW.md).
 
@@ -30,7 +30,7 @@ The windowed project copies only `SdfTextVertex.vert.spv` and
 `SdfTextFragment.frag.spv`; the generated shader factory owns their embedded
 ABI manifests. This remains migration packaging for the pre-final shader
 consumer. The target runtime handoff is a complete
-`Delta.Shader.Contract.IShaderArtifact` (SPIR-V plus binary `ShaderAbi`), not a
+`DeltaShader.Contract.IShaderArtifact` (SPIR-V plus binary `ShaderAbi`), not a
 raw SPIR-V file, GLSL sidecar or compiler object.
 
 ## Code metrics

@@ -13,7 +13,7 @@ case "$error_log" in
 esac
 mkdir -p "$(dirname "$error_log")"
 
-exec dotnet build Source/Delta.Engine.slnx \
+exec dotnet build Source/DeltaEngine.slnx \
     -c Release \
     --no-restore \
     --disable-build-servers \

@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>DeltaEngine.Generation.Tests</RootNamespace>
+    <AssemblyName>DeltaEngine.Generation.Tests</AssemblyName>
+    <PackageId>DeltaEngine.Generation.Tests</PackageId>
+    <DefineConstants>$(DefineConstants);DELTA_GEN_ATTRIBUTES;GLCSharp_GEN_ATTRIBUTES</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DeltaEngine.Generation\DeltaEngine.Generation.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\DeltaEngine.Generation.Core\DeltaEngine.Generation.Core.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+</Project>

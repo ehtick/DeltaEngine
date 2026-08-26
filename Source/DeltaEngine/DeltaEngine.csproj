@@ -1,0 +1,73 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+
+    <RootNamespace>DeltaEngine</RootNamespace>
+    <AssemblyName>DeltaEngine</AssemblyName>
+    <PackageId>DeltaEngine</PackageId>
+
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <PublishAot>false</PublishAot>
+    <StripSymbols>false</StripSymbols>
+    <IncludeSymbols>true</IncludeSymbols>
+    <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+    <Configurations>Debug;Release;DebugPerf;Perf</Configurations>
+    <AnalysisLevel>latest</AnalysisLevel>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>$(DefineConstants);ASSERT;DELTA_GEN_ATTRIBUTES;GLCSharp_GEN_ATTRIBUTES</DefineConstants>
+    <DebugType>portable</DebugType>
+    <GenerateAssemblyInfo>True</GenerateAssemblyInfo>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Perf|AnyCPU'">
+    <DefineTrace>false</DefineTrace>
+    <Optimize>True</Optimize>
+    <DebugType>portable</DebugType>
+    <GenerateAssemblyInfo>True</GenerateAssemblyInfo>
+    <DefineConstants>$(DefineConstants);DELTA_GEN_ATTRIBUTES;GLCSharp_GEN_ATTRIBUTES</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugPerf|AnyCPU'">
+    <Optimize>False</Optimize>
+    <DebugType>portable</DebugType>
+    <GenerateAssemblyInfo>True</GenerateAssemblyInfo>
+    <DefineConstants>$(DefineConstants);DELTA_GEN_ATTRIBUTES;GLCSharp_GEN_ATTRIBUTES</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DebugType>portable</DebugType>
+    <GenerateAssemblyInfo>True</GenerateAssemblyInfo>
+    <DefineConstants>$(DefineConstants);DELTA_GEN_ATTRIBUTES;GLCSharp_GEN_ATTRIBUTES</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.HighPerformance" Version="8.2.2" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.12" />
+    <PackageReference Include="System.Memory" Version="4.5.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DeltaEngine.Integration\DeltaEngine.Integration.csproj" />
+    <ProjectReference Include="..\..\..\DeltaMaths\DeltaMaths.csproj" />
+    <ProjectReference Include="..\..\Depend\Arch\src\Arch\Arch.csproj" />
+    <ProjectReference Include="..\DeltaEngine.Generation.Core\DeltaEngine.Generation.Core.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\DeltaEngine.Generation\DeltaEngine.Generation.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <Using Include="DeltaEngine.InlineConstants">
+      <Static>True</Static>
+    </Using>
+
+  </ItemGroup>
+
+</Project>

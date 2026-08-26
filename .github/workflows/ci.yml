@@ -50,11 +50,11 @@ jobs:
         uses: actions/checkout@v7
         with:
           path: DeltaEngine
-      - name: Checkout Delta.Maths
+      - name: Checkout DeltaMaths
         uses: actions/checkout@v7
         with:
           repository: Artromskiy/DeltaMaths
-          path: Maths
+          path: DeltaMaths
       - name: Install .NET 8
         uses: actions/setup-dotnet@v6
         with:
@@ -63,16 +63,16 @@ jobs:
         uses: actions/cache@v6
         with:
           path: ${{ env.NUGET_PACKAGES }}
-          key: delta-engine-nuget-${{ runner.os }}-${{ hashFiles('DeltaEngine/Source/Delta.Engine.Integration/**/*.csproj', 'DeltaEngine/Source/Delta.Engine.Integration.Tests/**/*.csproj', 'Maths/Delta.Maths.csproj') }}
+          key: delta-engine-nuget-${{ runner.os }}-${{ hashFiles('DeltaEngine/Source/DeltaEngine.Integration/**/*.csproj', 'DeltaEngine/Source/DeltaEngine.Integration.Tests/**/*.csproj', 'DeltaMaths/DeltaMaths.csproj') }}
           restore-keys: delta-engine-nuget-${{ runner.os }}-
       - name: Restore and build stable headless contracts
         working-directory: DeltaEngine
         run: |
-          dotnet restore Source/Delta.Engine.Integration.Tests/Delta.Engine.Integration.Tests.csproj
-          dotnet build Source/Delta.Engine.Integration.Tests/Delta.Engine.Integration.Tests.csproj -c Release --no-restore
+          dotnet restore Source/DeltaEngine.Integration.Tests/DeltaEngine.Integration.Tests.csproj
+          dotnet build Source/DeltaEngine.Integration.Tests/DeltaEngine.Integration.Tests.csproj -c Release --no-restore
       - name: Run tests
         working-directory: DeltaEngine
-        run: dotnet test Source/Delta.Engine.Integration.Tests/Delta.Engine.Integration.Tests.csproj -c Release --no-build --no-restore
+        run: dotnet test Source/DeltaEngine.Integration.Tests/DeltaEngine.Integration.Tests.csproj -c Release --no-build --no-restore
 
   benchmarks:
     if: github.event_name == 'workflow_dispatch' && inputs.run_benchmarks
@@ -88,11 +88,11 @@ jobs:
         uses: actions/checkout@v7
         with:
           path: DeltaEngine
-      - name: Checkout Delta.Maths
+      - name: Checkout DeltaMaths
         uses: actions/checkout@v7
         with:
           repository: Artromskiy/DeltaMaths
-          path: Maths
+          path: DeltaMaths
       - name: Install .NET 8
         uses: actions/setup-dotnet@v6
         with:

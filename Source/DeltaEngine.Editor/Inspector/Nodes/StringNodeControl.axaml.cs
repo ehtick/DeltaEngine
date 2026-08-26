@@ -1,0 +1,31 @@
+#pragma warning disable CS8618 // Avalonia initializes XAML-bound controls during InitializeComponent.
+using Arch.Core;
+using Avalonia.Media;
+using DeltaEngine.Runtime;
+using DeltaEngine.Editor.Inspector.Internal;
+
+namespace DeltaEngine.Editor;
+
+internal sealed partial class StringNodeControl : InspectorNode
+{
+    private readonly NodeData _nodeData;
+    public StringNodeControl() => InitializeComponent();
+    public StringNodeControl(NodeData nodeData) : this()
+    {
+        Field.FieldName = (_nodeData = nodeData).FieldName;
+    }
+
+    public override void SetLabelColor(IBrush brush) { }
+
+    public override bool UpdateData(ref EntityReference entity)
+    {
+        if (!ClipVisible)
+        {
+            return false;
+        }
+
+        bool changed = _nodeData.UpdateString(Field.FieldData, ref entity);
+
+        return changed;
+    }
+}

@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>DeltaEngine.ComputeSmoke</RootNamespace>
+    <AssemblyName>DeltaEngine.ComputeSmoke</AssemblyName>
+    <PackageId>DeltaEngine.ComputeSmoke</PackageId>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <NuGetAudit>false</NuGetAudit>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DeltaEngine.Integration\DeltaEngine.Integration.csproj" />
+    <ProjectReference Include="..\..\..\DeltaShader\src\DeltaShader.Abstractions\DeltaShader.Abstractions.csproj" />
+    <ProjectReference Include="..\..\..\DeltaRender\src\DeltaRender\DeltaRender.csproj" />
+    <ProjectReference Include="..\..\..\DeltaRender\src\DeltaRender.Vulkan\DeltaRender.Vulkan.csproj" />
+    <None Include="fixtures\compute_double.spv" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="fixtures\compute_double.shader.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="fixtures\compute_double.comp" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

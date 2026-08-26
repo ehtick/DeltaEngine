@@ -20,7 +20,7 @@ jobs:
             8.x
             10.x
       - name: Restore
-        run: dotnet restore Source/Delta.Engine.slnx
+        run: dotnet restore Source/DeltaEngine.slnx
       - name: Verify formatting
         continue-on-error: true
         run: |

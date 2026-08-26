@@ -7,13 +7,13 @@ part of the user API.
 UI stages. The host projects only surface identity into the time-free
 `EngineRenderFrame`; renderer services never receive the scheduling clock.
 
-The legacy `Delta.Engine` module facade remains a compatibility composition
+The legacy `DeltaEngine` module facade remains a compatibility composition
 around `IEngineRenderService`. It is not a second renderer lifecycle. The
 windowed adapter owns session/pipeline rollback and delegates resource
 ownership to DeltaRender.
 
 The current retained-XAML library adapter is quarantined in DeltaEditor.UiHost
-until DeltaXAML consumers migrate to `Delta.XAML.Contract.UiDisplayList`.
+until DeltaXAML consumers migrate to `DeltaXAML.Contract.UiDisplayList`.
 Do not expose its library model as an Engine contract or create a second public
 display-list model in this repository.
 

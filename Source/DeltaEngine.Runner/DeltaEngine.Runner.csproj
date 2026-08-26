@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <StripSymbols>true</StripSymbols>
+    <RootNamespace>DeltaEngine.Runner</RootNamespace>
+    <AssemblyName>DeltaEngine.Runner</AssemblyName>
+    <PackageId>DeltaEngine.Runner</PackageId>
+    <Configurations>Debug;Release;DebugPerf;Perf</Configurations>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DeltaEngine.EditorLib\DeltaEngine.EditorLib.csproj" />
+    <ProjectReference Include="..\DeltaEngine\DeltaEngine.csproj" />
+  </ItemGroup>
+
+</Project>

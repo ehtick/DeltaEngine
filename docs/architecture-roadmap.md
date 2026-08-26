@@ -1,4 +1,4 @@
-# Delta.Engine architecture roadmap
+# DeltaEngine architecture roadmap
 
 This document is the current source of truth for the engine integration work.
 The existing source remains a reference and migration target; new architecture
@@ -15,26 +15,26 @@ rewrite.
 - Use a Delta-owned XAML dialect for UI authoring.
 - Replace Arch with DeltaECS after the standalone ECS passes correctness and
   performance gates.
-- Use DeltaShader and Delta.Maths as the shader authoring/math path.
+- Use DeltaShader and DeltaMaths as the shader authoring/math path.
 
 ## Dependency direction
 
 ```text
-MathsGen -> Delta.Maths -> DeltaShader -> SPIR-V + binary ShaderAbi
+DeltaMathsGen -> DeltaMaths -> DeltaShader -> SPIR-V + binary ShaderAbi
                                       \          /
 DeltaXAML.Contract -> UiDisplayList -> DeltaRender
 DeltaText -> positioned glyph data ----/
-DeltaECS ---------------------------> Delta.Engine
+DeltaECS ---------------------------> DeltaEngine
                                            ^
                          DeltaEditorShell -> DeltaEditor
 ```
 
-Delta.Engine may depend on DeltaECS, DeltaRender,
-`Delta.Shader.Contract` runtime contracts, DeltaXAML/DeltaText neutral
-contracts and Delta.Maths. The current optional compute/windowed adapters still
+DeltaEngine may depend on DeltaECS, DeltaRender,
+`DeltaShader.Contract` runtime contracts, DeltaXAML/DeltaText neutral
+contracts and DeltaMaths. The current optional compute/windowed adapters still
 use a pre-final shader compatibility path; that is migration state, not the
 target dependency. Those
-standalone projects must not depend on Delta.Engine. DeltaEditor owns the
+standalone projects must not depend on DeltaEngine. DeltaEditor owns the
 application composition and may depend on Engine; the reverse edge is
 forbidden.
 
@@ -48,8 +48,8 @@ forbidden.
 - `DeltaRender/`: SDL3 surface/window integration, Vulkan/MoltenVK, render
   graph, GPU UI/text resources and submission.
 - `DeltaShader/`: shader compiler and analyzers; it lowers authoring/reflection
-  state to final SPIR-V plus the binary ABI owned by `Delta.Shader.Contract`.
-- `Delta.Engine/`: runtime composition, scenes, assets, serialization, module
+  state to final SPIR-V plus the binary ABI owned by `DeltaShader.Contract`.
+- `DeltaEngine/`: runtime composition, scenes, assets, serialization, module
   lifecycle, SDL input translation, scheduling and migration adapters.
 - `DeltaEditorShell/`: editor controls/views and XAML registry.
 - `DeltaEditor/`: Roslyn tooling, ECS inspection, UiHost adapters and the
@@ -78,7 +78,7 @@ or XAML layout/rendering.
 ## Migration approach
 
 1. Inventory current dependencies and produce a build/test baseline for the
-   existing `Delta.Engine/Source` solution.
+   existing `DeltaEngine/Source` solution.
 2. Define narrow engine-facing contracts for world/runtime, rendering/extraction,
    input snapshots, UI documents, assets, clocks, jobs, and diagnostics.
 3. Add a small new host/composition project without deleting the existing
@@ -88,7 +88,7 @@ or XAML layout/rendering.
    DeltaECS supplies an equivalent adapter.
 6. Replace Avalonia editor panels with Delta XAML controls incrementally. The
    Vulkan viewport remains a GPU image and is composited directly.
-7. Move shader assets to `Delta.Shader.Contract` artifacts (SPIR-V plus binary
+7. Move shader assets to `DeltaShader.Contract` artifacts (SPIR-V plus binary
    `ShaderAbi`). GLSL, Roslyn/reflection state, live generic values and content
    hashes do not enter the runtime artifact.
 8. Delete old adapters and dependencies only after feature and test parity.
