@@ -10,5 +10,6 @@ world orchestration and renderer-neutral frame submission.
 - [docs/architecture-roadmap.md](docs/architecture-roadmap.md) - durable
   dependency direction and migration policy.
 
-DeltaEngine does not own Vulkan resources, SDL polling implementations, ECS
-storage, shader compilation, XAML layout or editor Roslyn tooling.
+DeltaEngine core does not own Vulkan resources, ECS storage, shader compilation,
+XAML layout or editor Roslyn tooling. Its optional Windowed adapter owns SDL
+event polling and translates events into the canonical UI input contract.
