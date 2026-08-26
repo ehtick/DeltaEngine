@@ -2,14 +2,14 @@ using Arch.Core;
 using Arch.Core.Extensions;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using DeltaEngine.ECS;
-using DeltaEngine.ECS.Components;
-using DeltaEngine.Runtime;
-using DeltaEngine.Editor.Hierarchy;
+using Delta.Engine.ECS;
+using Delta.Engine.ECS.Components;
+using Delta.Engine.Runtime;
+using Delta.Engine.Editor.Hierarchy;
 using System;
 using System.Collections.Generic;
 
-namespace DeltaEngine.Editor;
+namespace Delta.Engine.Editor;
 
 public partial class HierarchyControl : UserControl
 {

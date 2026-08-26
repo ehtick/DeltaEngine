@@ -1,9 +1,9 @@
-using DeltaEngine.Runtime;
+using Delta.Engine.Runtime;
 using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace DeltaEngine.EditorLib.Loader;
+namespace Delta.Engine.EditorLib.Loader;
 
 public static class ProjectCreator
 {

@@ -1,6 +1,6 @@
 using System;
 
-namespace DeltaEngine.Runtime;
+namespace Delta.Engine.Runtime;
 
 internal sealed class SceneManager : ISceneManager
 {

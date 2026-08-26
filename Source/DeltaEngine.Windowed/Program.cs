@@ -1,10 +1,10 @@
 using System;
-using DeltaEngine.Integration;
-using DeltaRender;
-using DeltaRender.Platform.SDL3;
-using DeltaRender.Vulkan;
+using Delta.Engine.Integration;
+using Delta.Render.Core;
+using Delta.Render.Platform.SDL3;
+using Delta.Render.Vulkan;
 
-namespace DeltaEngine.Windowed;
+namespace Delta.Engine.Windowed;
 
 internal static class Program
 {

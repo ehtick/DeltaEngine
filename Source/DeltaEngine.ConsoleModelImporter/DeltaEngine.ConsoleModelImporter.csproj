@@ -5,7 +5,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <RootNamespace>DeltaEngine.ConsoleModelImporter</RootNamespace>
+    <RootNamespace>Delta.Engine.ConsoleModelImporter</RootNamespace>
     <AssemblyName>DeltaEngine.ConsoleModelImporter</AssemblyName>
     <PackageId>DeltaEngine.ConsoleModelImporter</PackageId>
   </PropertyGroup>

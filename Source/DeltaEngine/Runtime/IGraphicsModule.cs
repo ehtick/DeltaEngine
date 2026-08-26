@@ -1,7 +1,7 @@
 using System;
-using DeltaEngine.Integration;
+using Delta.Engine.Integration;
 
-namespace DeltaEngine.Runtime;
+namespace Delta.Engine.Runtime;
 
 public interface IGraphicsModule : IDisposable
 {

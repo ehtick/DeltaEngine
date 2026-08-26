@@ -1,13 +1,13 @@
 using BenchmarkDotNet.Attributes;
-using DeltaMaths;
-using Matrix4x4 = DeltaMaths.float4x4;
-using Quaternion = DeltaMaths.quaternion;
-using Vector3 = DeltaMaths.float3;
-using Vector4 = DeltaMaths.float4;
+using Delta.Maths;
+using Matrix4x4 = Delta.Maths.float4x4;
+using Quaternion = Delta.Maths.quaternion;
+using Vector3 = Delta.Maths.float3;
+using Vector4 = Delta.Maths.float4;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace DeltaEngine.Benchmarks;
+namespace Delta.Engine.Benchmarks;
 
 [SimpleJob(iterationCount: 30)]
 [MeanColumn, StdErrorColumn, StdDevColumn, MedianColumn, MemoryDiagnoser]

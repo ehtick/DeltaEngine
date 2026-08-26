@@ -1,8 +1,8 @@
-using DeltaEngine.Runtime;
+using Delta.Engine.Runtime;
 using System;
 using System.Collections.Generic;
 using System.IO;
-namespace DeltaEngine.Assets;
+namespace Delta.Engine.Assets;
 
 internal class DefaultAssetCollection<T> : IAssetCollection<T> where T : class, IAsset
 {

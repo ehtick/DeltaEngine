@@ -1,7 +1,7 @@
 using Arch.Core.Utils;
 using System;
 using System.Collections.Generic;
-namespace DeltaEngine.Utilities;
+namespace Delta.Engine.Utilities;
 
 [System.Diagnostics.CodeAnalysis.SuppressMessage(
     "Design",

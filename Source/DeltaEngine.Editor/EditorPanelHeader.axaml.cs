@@ -3,7 +3,7 @@ using Avalonia;
 using Avalonia.Controls;
 using System;
 
-namespace DeltaEngine.Editor;
+namespace Delta.Engine.Editor;
 
 public partial class EditorPanelHeader : UserControl
 {

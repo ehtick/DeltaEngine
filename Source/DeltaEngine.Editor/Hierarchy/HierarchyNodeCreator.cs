@@ -1,11 +1,11 @@
 using Arch.Core;
-using DeltaEngine.Runtime;
+using Delta.Engine.Runtime;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-namespace DeltaEngine.Editor.Hierarchy
+namespace Delta.Engine.Editor.Hierarchy
 {
     public sealed class EntityReferenceEventArgs(EntityReference entity) : EventArgs
     {

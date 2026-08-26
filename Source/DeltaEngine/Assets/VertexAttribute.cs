@@ -1,7 +1,7 @@
 using System;
 using System.Numerics;
 
-namespace DeltaEngine.Assets;
+namespace Delta.Engine.Assets;
 
 [Flags]
 [System.Diagnostics.CodeAnalysis.SuppressMessage(

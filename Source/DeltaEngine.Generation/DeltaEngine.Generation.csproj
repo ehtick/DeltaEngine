@@ -10,7 +10,7 @@
     <ImplicitUsings>false</ImplicitUsings>
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
-    <RootNamespace>DeltaEngine.Generation</RootNamespace>
+    <RootNamespace>Delta.Engine.Generation</RootNamespace>
     <AssemblyName>DeltaEngine.Generation</AssemblyName>
     <PackageId>DeltaEngine.Generation</PackageId>
   </PropertyGroup>

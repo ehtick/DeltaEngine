@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <IsPackable>false</IsPackable>
-    <RootNamespace>DeltaEngine.Windowed.Tests</RootNamespace>
+    <RootNamespace>Delta.Engine.Windowed.Tests</RootNamespace>
     <NuGetAudit>false</NuGetAudit>
   </PropertyGroup>
 

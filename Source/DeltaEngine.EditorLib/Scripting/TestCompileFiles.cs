@@ -1,6 +1,6 @@
 using System.IO;
 using System.Text;
-using DeltaEngine.EditorLib.Scripting;
+using Delta.Engine.EditorLib.Scripting;
 
 internal static class TestCompileFiles
 {
@@ -8,8 +8,8 @@ internal static class TestCompileFiles
     private const string TestCsFile =
         """
 using System;
-using DeltaEngine;
-using DeltaEngine.Scripting;
+using Delta.Engine;
+using Delta.Engine.Scripting;
 using System.Diagnostics;
 
 [Component]

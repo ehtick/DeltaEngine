@@ -1,4 +1,4 @@
-namespace DeltaEngine.Editor
+namespace Delta.Engine.Editor
 {
     public interface ISearchFlyoutViewModel
     {

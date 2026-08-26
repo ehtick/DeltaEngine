@@ -2,7 +2,7 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 
-namespace DeltaEngine.Editor
+namespace Delta.Engine.Editor
 {
     public partial class App : Application
     {

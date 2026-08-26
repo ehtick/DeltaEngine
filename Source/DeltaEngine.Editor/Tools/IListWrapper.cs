@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace DeltaEngine.Editor.Hierarchy;
+namespace Delta.Engine.Editor.Hierarchy;
 
 internal readonly struct IListWrapper<T, K> : IList<T> where T : K
 {

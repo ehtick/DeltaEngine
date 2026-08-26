@@ -3,7 +3,7 @@ using System;
 using System.Buffers;
 using System.Collections.Generic;
 
-namespace DeltaEngine.Utilities;
+namespace Delta.Engine.Utilities;
 
 public static class SpanExtensions
 {

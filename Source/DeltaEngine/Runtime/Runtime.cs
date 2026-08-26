@@ -2,7 +2,7 @@ using Arch.Core;
 using System;
 using Schedulers;
 
-namespace DeltaEngine.Runtime;
+namespace Delta.Engine.Runtime;
 
 [System.Diagnostics.CodeAnalysis.SuppressMessage(
     "Naming",

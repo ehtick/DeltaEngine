@@ -1,9 +1,9 @@
 using Avalonia.Threading;
-using DeltaEngine.EditorLib.Loader;
+using Delta.Engine.EditorLib.Loader;
 using System;
 using System.Threading.Tasks;
 
-namespace DeltaEngine.Editor;
+namespace Delta.Engine.Editor;
 
 internal sealed class AvaloniaThreadGetter : IThreadGetter
 {

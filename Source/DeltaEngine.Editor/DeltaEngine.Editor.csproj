@@ -7,7 +7,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
 
-    <RootNamespace>DeltaEngine.Editor</RootNamespace>
+    <RootNamespace>Delta.Engine.Editor</RootNamespace>
     <AssemblyName>DeltaEngine.Editor</AssemblyName>
     <PackageId>DeltaEngine.Editor</PackageId>
 

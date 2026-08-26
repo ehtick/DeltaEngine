@@ -2,12 +2,12 @@
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
-using DeltaEngine.Editor.Hierarchy;
-using DeltaEngine.Editor.Inspector.Internal;
+using Delta.Engine.Editor.Hierarchy;
+using Delta.Engine.Editor.Inspector.Internal;
 using System;
 using System.Collections.Generic;
 
-namespace DeltaEngine.Editor;
+namespace Delta.Engine.Editor;
 
 public partial class FlyoutSearchControl : UserControl
 {

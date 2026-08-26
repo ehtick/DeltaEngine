@@ -4,13 +4,13 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Media;
-using DeltaEngine.Runtime;
-using DeltaEngine.Editor.Hierarchy;
-using DeltaEngine.Editor.Inspector;
-using DeltaEngine.Editor.Inspector.Internal;
+using Delta.Engine.Runtime;
+using Delta.Engine.Editor.Hierarchy;
+using Delta.Engine.Editor.Inspector;
+using Delta.Engine.Editor.Inspector.Internal;
 using System;
 
-namespace DeltaEngine.Editor;
+namespace Delta.Engine.Editor;
 
 internal sealed partial class ComponentNodeControl : InspectorNode
 {

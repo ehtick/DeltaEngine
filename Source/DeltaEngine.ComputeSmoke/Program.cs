@@ -1,10 +1,10 @@
 using System.Runtime.InteropServices;
-using DeltaEngine.Integration;
-using DeltaShader.Abstractions;
-using DeltaRender;
-using DeltaRender.Vulkan;
+using Delta.Engine.Integration;
+using Delta.Shader.Abstractions;
+using Delta.Render.Core;
+using Delta.Render.Vulkan;
 
-namespace DeltaEngine.ComputeSmoke;
+namespace Delta.Engine.ComputeSmoke;
 
 internal static class Program
 {

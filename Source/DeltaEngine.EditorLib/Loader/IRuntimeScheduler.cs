@@ -1,6 +1,6 @@
 using System;
 
-namespace DeltaEngine.EditorLib.Loader;
+namespace Delta.Engine.EditorLib.Loader;
 
 public interface IRuntimeScheduler
 {

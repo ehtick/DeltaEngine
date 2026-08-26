@@ -1,7 +1,7 @@
 using BenchmarkDotNet.Attributes;
 using System.Runtime.CompilerServices;
 
-namespace DeltaEngine.Benchmarks
+namespace Delta.Engine.Benchmarks
 {
     public class RefGetBench
     {

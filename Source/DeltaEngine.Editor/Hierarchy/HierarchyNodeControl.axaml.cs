@@ -6,13 +6,13 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
-using DeltaEngine.ECS;
-using DeltaEngine.ECS.Components;
-using DeltaEngine.Runtime;
-using DeltaEngine.Editor.Hierarchy;
+using Delta.Engine.ECS;
+using Delta.Engine.ECS.Components;
+using Delta.Engine.Runtime;
+using Delta.Engine.Editor.Hierarchy;
 using System;
 
-namespace DeltaEngine.Editor;
+namespace Delta.Engine.Editor;
 
 public sealed partial class HierarchyNodeControl : UserControl, IDisposable
 {

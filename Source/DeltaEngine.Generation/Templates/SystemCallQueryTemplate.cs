@@ -1,10 +1,10 @@
-using DeltaEngine.Generation.Models;
-using DeltaEngine.Generation.Core;
+using Delta.Engine.Generation.Models;
+using Delta.Engine.Generation.Core;
 using Microsoft.CodeAnalysis;
 using System.Collections.Generic;
 using System.Linq;
 
-using DeltaEngine.Generation.Templates;
+using Delta.Engine.Generation.Templates;
 internal class SystemCallQueryTemplate(SystemCallModel model) : Template<SystemCallModel>(model)
 {
     public override string ToString() =>

@@ -1,5 +1,5 @@
-using DeltaEngine.Rendering;
-namespace DeltaEngine.Runtime;
+using Delta.Engine.Rendering;
+namespace Delta.Engine.Runtime;
 
 public static class RuntimeContextFactory
 {

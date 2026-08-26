@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using DeltaXAML.Contract;
+using Delta.XAML.Contract;
 
-namespace DeltaEngine.Integration;
+namespace Delta.Engine.Integration;
 
 public enum EngineLifecycleStage
 {

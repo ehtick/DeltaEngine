@@ -1,3 +1,3 @@
-namespace DeltaEngine.ECS.Components;
+namespace Delta.Engine.ECS.Components;
 
 internal struct DirtyFlag<T> { }

@@ -1,12 +1,12 @@
-using DeltaEngine.Generation.Attributes;
-using DeltaEngine.Generation.Core;
+using Delta.Engine.Generation.Attributes;
+using Delta.Engine.Generation.Core;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 
-namespace DeltaEngine.Generation.Models;
+namespace Delta.Engine.Generation.Models;
 
 internal record SystemCallModel : Model
 {

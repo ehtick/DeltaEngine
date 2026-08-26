@@ -5,7 +5,7 @@
     <ImplicitUsings>disabled</ImplicitUsings>
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-    <RootNamespace>DeltaEngine.EditorLib</RootNamespace>
+    <RootNamespace>Delta.Engine.EditorLib</RootNamespace>
     <AssemblyName>DeltaEngine.EditorLib</AssemblyName>
     <PackageId>DeltaEngine.EditorLib</PackageId>
   </PropertyGroup>

@@ -1,8 +1,8 @@
-using DeltaEngine.Integration;
-using DeltaXAML.Contract;
+using Delta.Engine.Integration;
+using Delta.XAML.Contract;
 using Xunit;
 
-namespace DeltaEngine.Integration.Tests;
+namespace Delta.Engine.Integration.Tests;
 
 public sealed class EditorToolingContractTests
 {

@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using System.Text.Json;
-using DeltaEngine.Integration;
-using DeltaEngine.Windowed;
-using DeltaRender;
+using Delta.Engine.Integration;
+using Delta.Engine.Windowed;
+using Delta.Render.Core;
 using Xunit;
 
-namespace DeltaEngine.Windowed.Tests;
+namespace Delta.Engine.Windowed.Tests;
 
 public sealed class WindowedCompositionTests
 {
@@ -74,17 +74,17 @@ public sealed class WindowedCompositionTests
         var uiVertex = ReadManifest(ui.VertexName);
         var uiFragment = ReadManifest(ui.FragmentName);
 
-        Assert.Equal(DeltaShader.Abstractions.ShaderStage.Vertex, uiVertex.Stage);
-        Assert.Equal(DeltaShader.Abstractions.ShaderStage.Fragment, uiFragment.Stage);
+        Assert.Equal(Delta.Shader.Abstractions.ShaderStage.Vertex, uiVertex.Stage);
+        Assert.Equal(Delta.Shader.Abstractions.ShaderStage.Fragment, uiFragment.Stage);
         Assert.Equal(uiVertex.PushConstants[0].Size, uiFragment.PushConstants[0].Size);
         Assert.True(fullscreenVertex.PushConstants.Count == 0);
         Assert.NotEqual(fullscreenFragment.PushConstants[0].Size, uiFragment.PushConstants[0].Size);
     }
 
-    private static DeltaShader.Abstractions.ShaderAbiManifest ReadManifest(string shaderName)
+    private static Delta.Shader.Abstractions.ShaderAbiManifest ReadManifest(string shaderName)
     {
         var path = Path.Combine(AppContext.BaseDirectory, "shaders", shaderName + ".shader.json");
-        return JsonSerializer.Deserialize<DeltaShader.Abstractions.ShaderAbiManifest>(File.ReadAllText(path))
+        return JsonSerializer.Deserialize<Delta.Shader.Abstractions.ShaderAbiManifest>(File.ReadAllText(path))
             ?? throw new InvalidDataException(path);
     }
 

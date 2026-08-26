@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace DeltaEngine.Integration;
+namespace Delta.Engine.Integration;
 
 public enum EngineWorldChangeKind
 {

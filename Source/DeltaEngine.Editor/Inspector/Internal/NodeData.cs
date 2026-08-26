@@ -1,11 +1,11 @@
 using Arch.Core;
 using Avalonia.Controls;
-using DeltaEngine.EditorLib.Scripting;
+using Delta.Engine.EditorLib.Scripting;
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
-namespace DeltaEngine.Editor.Inspector.Internal;
+namespace Delta.Engine.Editor.Inspector.Internal;
 
 internal sealed class NodeData(RootData root, PathData path)
 {

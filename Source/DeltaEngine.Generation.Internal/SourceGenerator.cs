@@ -1,7 +1,7 @@
-using DeltaEngine.Generation.Core;
+using Delta.Engine.Generation.Core;
 using Microsoft.CodeAnalysis;
 
-namespace DeltaEngine.Generation.Internal;
+namespace Delta.Engine.Generation.Internal;
 
 [Generator]
 public sealed class SourceGenerator : GeneratorBase

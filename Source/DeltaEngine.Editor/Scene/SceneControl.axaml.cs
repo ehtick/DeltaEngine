@@ -2,9 +2,9 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
-using DeltaEngine.Runtime;
+using Delta.Engine.Runtime;
 
-namespace DeltaEngine.Editor;
+namespace Delta.Engine.Editor;
 
 public partial class SceneControl : UserControl, System.IDisposable
 {

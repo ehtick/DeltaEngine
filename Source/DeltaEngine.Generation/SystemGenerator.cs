@@ -1,13 +1,13 @@
-using DeltaEngine.Generation.Attributes;
-using DeltaEngine.Generation.Core;
-using DeltaEngine.Generation.Templates;
+using Delta.Engine.Generation.Attributes;
+using Delta.Engine.Generation.Core;
+using Delta.Engine.Generation.Templates;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Collections.Immutable;
 using System.Linq;
 
-namespace DeltaEngine.Generation;
+namespace Delta.Engine.Generation;
 
 [Generator]
 public sealed class SystemGenerator : GeneratorBase

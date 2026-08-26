@@ -1,8 +1,8 @@
-using DeltaEngine.Integration;
+using Delta.Engine.Integration;
 using System;
 using System.IO;
 
-namespace DeltaEditor.Scripting;
+namespace Delta.Editor.Scripting;
 
 public sealed class FileScriptReference : IScriptReference
 {

@@ -6,7 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-    <RootNamespace>DeltaEngine.Benchmarks</RootNamespace>
+    <RootNamespace>Delta.Engine.Benchmarks</RootNamespace>
     <AssemblyName>DeltaEngine.Benchmarks</AssemblyName>
     <PackageId>DeltaEngine.Benchmarks</PackageId>
   </PropertyGroup>

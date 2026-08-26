@@ -1,8 +1,8 @@
-using DeltaEngine.Assets;
+using Delta.Engine.Assets;
 using System;
 using System.Collections.Generic;
 
-namespace DeltaEngine.Runtime;
+namespace Delta.Engine.Runtime;
 
 internal sealed class GlobalAssetCollection : IAssetCollection
 {

@@ -2,7 +2,7 @@ using Microsoft.CodeAnalysis;
 using System;
 using System.Diagnostics;
 
-namespace DeltaEngine.Generation.Core;
+namespace Delta.Engine.Generation.Core;
 
 public abstract class GeneratorBase : IIncrementalGenerator
 {

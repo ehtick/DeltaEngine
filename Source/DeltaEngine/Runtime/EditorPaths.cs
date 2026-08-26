@@ -1,6 +1,6 @@
 using System.IO;
 
-namespace DeltaEngine.Runtime;
+namespace Delta.Engine.Runtime;
 
 public class EditorPaths(string path) : IProjectPath
 {

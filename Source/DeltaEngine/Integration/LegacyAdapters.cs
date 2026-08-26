@@ -1,6 +1,6 @@
-using DeltaEngine.Runtime;
+using Delta.Engine.Runtime;
 
-namespace DeltaEngine.Integration.Adapters;
+namespace Delta.Engine.Integration.Adapters;
 
 public sealed class SceneWorldAdapter(Scene scene) : IEngineWorldService
 {

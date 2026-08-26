@@ -1,7 +1,7 @@
-using DeltaEngine.Generation.Core;
+using Delta.Engine.Generation.Core;
 using System.Linq;
 
-namespace DeltaEngine.Generation.Attributes;
+namespace Delta.Engine.Generation.Attributes;
 
 internal class GenericVariadicAttribute : AttributeTemplate
 {
@@ -10,9 +10,9 @@ $$"""
 #if {{Constants.GenerateAttributes}}
 
 using System;
-using DeltaEngine;
+using Delta.Engine;
 
-namespace DeltaEngine;
+namespace Delta.Engine;
 
 {{LoopSelect(Enumerable.Range(1, Constants.VariadicCount), GenericAttribute)}}
 

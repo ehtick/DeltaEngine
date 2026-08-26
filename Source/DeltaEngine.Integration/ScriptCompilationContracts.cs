@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace DeltaEngine.Integration;
+namespace Delta.Engine.Integration;
 
 public readonly record struct ScriptSource(string Path, string Text);
 

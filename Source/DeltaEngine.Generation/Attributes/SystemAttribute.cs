@@ -1,6 +1,6 @@
-using DeltaEngine.Generation.Core;
+using Delta.Engine.Generation.Core;
 
-namespace DeltaEngine.Generation.Attributes;
+namespace Delta.Engine.Generation.Attributes;
 
 internal class SystemAttribute : AttributeTemplate
 {
@@ -12,7 +12,7 @@ $$"""
 
 using System;
 
-namespace DeltaEngine;
+namespace Delta.Engine;
 
 [System.AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
 public sealed class {{Name}} : System.Attribute { }

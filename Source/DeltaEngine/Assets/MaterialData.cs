@@ -1,8 +1,8 @@
 using System.Collections.Generic;
-using DeltaMaths;
+using Delta.Maths;
 using System.Text.Json.Serialization;
 
-namespace DeltaEngine.Assets;
+namespace Delta.Engine.Assets;
 
 [System.Diagnostics.CodeAnalysis.SuppressMessage(
     "Design",

@@ -1,7 +1,7 @@
 using System.Text.Json;
-using DeltaShader.Abstractions;
+using Delta.Shader.Abstractions;
 
-namespace DeltaEngine.ComputeSmoke;
+namespace Delta.Engine.ComputeSmoke;
 
 internal static class GeneratedShaderArtifactLoader
 {

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace DeltaEngine.Integration;
+namespace Delta.Engine.Integration;
 
 // Text composition is deliberately separate from physical key packets. A
 // platform/editor adapter may implement this seam when IME composition is

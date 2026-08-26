@@ -1,10 +1,10 @@
-using DeltaEngine.Assets;
-using DeltaEngine.Editor.Inspector.Internal;
-using DeltaMaths;
+using Delta.Engine.Assets;
+using Delta.Engine.Editor.Inspector.Internal;
+using Delta.Maths;
 using System;
 using System.Collections.Generic;
 
-namespace DeltaEngine.Editor.Inspector;
+namespace Delta.Engine.Editor.Inspector;
 
 internal static class NodeFactory
 {

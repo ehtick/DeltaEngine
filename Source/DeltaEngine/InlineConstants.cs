@@ -1,7 +1,7 @@
 global using Imp = System.Runtime.CompilerServices.MethodImplAttribute;
 using System.Runtime.CompilerServices;
 
-namespace DeltaEngine;
+namespace Delta.Engine;
 
 internal struct InlineConstants
 {

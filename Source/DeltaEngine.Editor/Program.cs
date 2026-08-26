@@ -1,9 +1,9 @@
 using Avalonia;
-using DeltaEngine.Runtime;
-using DeltaEngine.EditorLib.Loader;
+using Delta.Engine.Runtime;
+using Delta.Engine.EditorLib.Loader;
 using System;
 
-namespace DeltaEngine.Editor;
+namespace Delta.Engine.Editor;
 
 internal static class Program
 {

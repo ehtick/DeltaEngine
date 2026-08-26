@@ -4,11 +4,11 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Media;
-using DeltaEngine.Runtime;
-using DeltaEngine.Editor.Inspector.Internal;
+using Delta.Engine.Runtime;
+using Delta.Engine.Editor.Inspector.Internal;
 using System;
 
-namespace DeltaEngine.Editor;
+namespace Delta.Engine.Editor;
 
 [System.Diagnostics.CodeAnalysis.SuppressMessage(
     "Performance",

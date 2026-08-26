@@ -1,8 +1,8 @@
-using DeltaEngine.Runtime;
-using DeltaMaths;
+using Delta.Engine.Runtime;
+using Delta.Maths;
 using System;
 using System.Runtime.InteropServices;
-namespace DeltaEngine.Assets.Defaults;
+namespace Delta.Engine.Assets.Defaults;
 
 public static class TriangleMesh
 {

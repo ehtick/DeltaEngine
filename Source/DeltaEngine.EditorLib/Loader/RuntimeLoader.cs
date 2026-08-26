@@ -1,18 +1,18 @@
-using DeltaEngine.Assets;
-using DeltaEngine.Assets.Defaults;
-using DeltaEngine.Runtime;
-using DeltaEngine.EditorLib.Compile;
-using DeltaEngine.EditorLib.Scripting;
+using Delta.Engine.Assets;
+using Delta.Engine.Assets.Defaults;
+using Delta.Engine.Runtime;
+using Delta.Engine.EditorLib.Compile;
+using Delta.Engine.EditorLib.Scripting;
 using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace DeltaEngine.EditorLib.Loader;
+namespace Delta.Engine.EditorLib.Loader;
 
 public sealed class RuntimeLoader : IDisposable
 {
     private readonly IProjectPath _projectPath;
-    private DeltaEngine.Runtime.Runtime _runtime;
+    private Delta.Engine.Runtime.Runtime _runtime;
 
     private readonly CompilerModule _compilerModule;
     private readonly ShaderCompilerModule _shaderCompilerModule;
@@ -42,7 +42,7 @@ public sealed class RuntimeLoader : IDisposable
         _compilerModule.Recompile();
 
         var ctx = RuntimeContextFactory.CreateHeadlessContext(_projectPath);
-        _runtime = new DeltaEngine.Runtime.Runtime(ctx);
+        _runtime = new Delta.Engine.Runtime.Runtime(ctx);
 
         _executionModule = new RuntimeScheduler(_runtime, _threadGetter);
         _executionModule.OnLoop += ForwardLoop;
@@ -64,7 +64,7 @@ public sealed class RuntimeLoader : IDisposable
         _compilerModule.Recompile();
 
         var ctx = RuntimeContextFactory.CreateHeadlessContext(_projectPath);
-        _runtime = new DeltaEngine.Runtime.Runtime(ctx);
+        _runtime = new Delta.Engine.Runtime.Runtime(ctx);
         _executionModule = new RuntimeScheduler(_runtime, _threadGetter);
         _executionModule.OnLoop += ForwardLoop;
     }

@@ -6,7 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <StripSymbols>true</StripSymbols>
-    <RootNamespace>DeltaEngine.Runner</RootNamespace>
+    <RootNamespace>Delta.Engine.Runner</RootNamespace>
     <AssemblyName>DeltaEngine.Runner</AssemblyName>
     <PackageId>DeltaEngine.Runner</PackageId>
     <Configurations>Debug;Release;DebugPerf;Perf</Configurations>

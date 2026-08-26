@@ -1,8 +1,8 @@
 using System;
 using System.Threading.Tasks;
-using DeltaEngine.EditorLib.Loader;
+using Delta.Engine.EditorLib.Loader;
 
-namespace DeltaEngine.EditorLib.Loader;
+namespace Delta.Engine.EditorLib.Loader;
 
 public interface IThreadGetter
 {

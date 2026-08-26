@@ -1,4 +1,4 @@
-namespace DeltaEngine.Assets.Defaults;
+namespace Delta.Engine.Assets.Defaults;
 
 public static class DefaultAssets
 {

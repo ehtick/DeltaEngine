@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace DeltaEngine.Integration;
+namespace Delta.Engine.Integration;
 
 public sealed class EngineHost(
     IEngineInputService inputService,

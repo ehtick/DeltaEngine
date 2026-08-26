@@ -1,10 +1,10 @@
-using DeltaEngine.Runtime;
-using DeltaEngine.EditorLib.Loader;
+using Delta.Engine.Runtime;
+using Delta.Engine.EditorLib.Loader;
 using System;
 using System.Collections.Generic;
 using System.Threading;
 
-namespace DeltaEngine.EditorLib.Scripting;
+namespace Delta.Engine.EditorLib.Scripting;
 
 internal sealed class RuntimeScheduler : IRuntimeScheduler, IDisposable
 {

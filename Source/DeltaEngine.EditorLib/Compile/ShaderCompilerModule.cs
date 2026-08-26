@@ -1,5 +1,5 @@
-using DeltaEngine.Assets;
-using DeltaEngine.Runtime;
+using Delta.Engine.Assets;
+using Delta.Engine.Runtime;
 using Silk.NET.Shaderc;
 using System;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 
-using DeltaEngine.EditorLib.Compile;
+using Delta.Engine.EditorLib.Compile;
 internal sealed unsafe class ShaderCompilerModule
 {
     const string VertexExtension = ".vert";

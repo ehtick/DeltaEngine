@@ -1,6 +1,6 @@
 using System;
 
-namespace DeltaEngine.Generation.Tests;
+namespace Delta.Engine.Generation.Tests;
 
 internal static class Program
 {

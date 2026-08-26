@@ -2,7 +2,7 @@ using System;
 using System.Buffers;
 using System.Runtime.InteropServices;
 
-namespace DeltaEngine.Utilities;
+namespace Delta.Engine.Utilities;
 
 /// <summary>
 /// A MemoryManager over a raw pointer

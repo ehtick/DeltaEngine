@@ -1,11 +1,11 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using DeltaEngine.Runtime;
+using Delta.Engine.Runtime;
 using System.Diagnostics;
 using System.IO;
 using System;
 
-namespace DeltaEngine.Editor;
+namespace Delta.Engine.Editor;
 
 public partial class MainWindow : Window
 {

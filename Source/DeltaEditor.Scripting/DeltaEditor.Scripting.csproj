@@ -4,7 +4,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <RootNamespace>DeltaEditor.Scripting</RootNamespace>
+    <RootNamespace>Delta.Editor.Scripting</RootNamespace>
     <AssemblyName>DeltaEditor.Scripting</AssemblyName>
     <PackageId>DeltaEditor.Scripting</PackageId>
   </PropertyGroup>

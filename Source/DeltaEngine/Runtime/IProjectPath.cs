@@ -1,4 +1,4 @@
-namespace DeltaEngine.Runtime;
+namespace Delta.Engine.Runtime;
 
 public interface IProjectPath
 {

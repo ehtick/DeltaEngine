@@ -1,8 +1,8 @@
 using Arch.Core;
-using DeltaEngine.ECS.Components;
-using DeltaMaths;
+using Delta.Engine.ECS.Components;
+using Delta.Maths;
 
-namespace DeltaEngine.ECS;
+namespace Delta.Engine.ECS;
 
 internal readonly struct WorldContext(World world)
 {

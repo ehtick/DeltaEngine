@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 
-namespace DeltaEngine.Utilities;
+namespace Delta.Engine.Utilities;
 
 internal static class Enums
 {

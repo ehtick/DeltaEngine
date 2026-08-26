@@ -1,5 +1,5 @@
-using DeltaEngine.Scripting;
-using DeltaEngine.EditorLib.Scripting;
+using Delta.Engine.Scripting;
+using Delta.Engine.EditorLib.Scripting;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -7,8 +7,8 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-using DeltaEngine.EditorLib.Compile;
-// TODO: Rewrite with templates as DeltaEngine.Generation
+using Delta.Engine.EditorLib.Compile;
+// TODO: Rewrite with templates as Delta.Engine.Generation
 // Add support for generics components
 internal static class AccessorGenerator
 {
@@ -206,7 +206,7 @@ internal static class AccessorGenerator
         namespaces.Add("System.Collections.Generic");
         namespaces.Add("System.Runtime.CompilerServices");
         namespaces.Add("System.Collections.Frozen");
-        namespaces.Add("DeltaEngine.EditorLib.Scripting");
+        namespaces.Add("Delta.Engine.EditorLib.Scripting");
 
         foreach (var n in namespaces.Distinct())
         {

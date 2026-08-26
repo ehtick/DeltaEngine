@@ -1,9 +1,9 @@
-using DeltaEngine.Runtime;
+using Delta.Engine.Runtime;
 using System;
 using System.IO;
 using System.Text.Json;
 
-namespace DeltaEngine.Assets.Defaults;
+namespace Delta.Engine.Assets.Defaults;
 
 [System.Diagnostics.CodeAnalysis.SuppressMessage(
     "Design",

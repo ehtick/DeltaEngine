@@ -1,8 +1,8 @@
-using DeltaECS;
-using DeltaECS.Integration;
+using Delta.ECS;
+using Delta.ECS.Integration;
 using Xunit;
 
-namespace DeltaEngine.Integration.Tests;
+namespace Delta.Engine.Integration.Tests;
 
 public sealed class EcsWorldServiceContractTests
 {

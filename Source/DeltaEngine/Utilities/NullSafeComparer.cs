@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-namespace DeltaEngine.Utilities;
+namespace Delta.Engine.Utilities;
 
 [System.Diagnostics.CodeAnalysis.SuppressMessage(
     "Design",

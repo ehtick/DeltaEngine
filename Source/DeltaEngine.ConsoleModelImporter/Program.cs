@@ -1,11 +1,11 @@
-using DeltaEngine.Assets;
+using Delta.Engine.Assets;
 using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
 
-namespace DeltaEngine.ConsoleModelImporter
+namespace Delta.Engine.ConsoleModelImporter
 {
     internal sealed class Program
     {

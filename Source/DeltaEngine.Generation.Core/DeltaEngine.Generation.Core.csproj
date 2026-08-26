@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
     <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
-    <RootNamespace>DeltaEngine.Generation.Core</RootNamespace>
+    <RootNamespace>Delta.Engine.Generation.Core</RootNamespace>
     <AssemblyName>DeltaEngine.Generation.Core</AssemblyName>
     <PackageId>DeltaEngine.Generation.Core</PackageId>
   </PropertyGroup>

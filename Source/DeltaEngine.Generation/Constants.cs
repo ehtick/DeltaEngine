@@ -1,4 +1,4 @@
-using DeltaEngine.Generation;
+using Delta.Engine.Generation;
 internal class Constants
 {
     public const int VariadicCount = 25;

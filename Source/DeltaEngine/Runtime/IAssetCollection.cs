@@ -1,6 +1,6 @@
-using DeltaEngine.Assets;
+using Delta.Engine.Assets;
 
-namespace DeltaEngine.Runtime;
+namespace Delta.Engine.Runtime;
 
 [System.Diagnostics.CodeAnalysis.SuppressMessage(
     "Naming",

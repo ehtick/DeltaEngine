@@ -1,4 +1,4 @@
-using DeltaEngine.Assets;
+using Delta.Engine.Assets;
 internal interface IAssetCollection<T> where T : class, IAsset
 {
     public string GetPath(GuidAsset<T> assetId);

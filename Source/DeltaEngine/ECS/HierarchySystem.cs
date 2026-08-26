@@ -1,12 +1,12 @@
 using Arch.Core;
 using Arch.Core.Extensions;
-using DeltaEngine.ECS.Components;
-using DeltaEngine.Runtime;
+using Delta.Engine.ECS.Components;
+using Delta.Engine.Runtime;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace DeltaEngine.ECS;
+namespace Delta.Engine.ECS;
 
 internal sealed class HierarchySystem
 {

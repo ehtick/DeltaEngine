@@ -1,9 +1,9 @@
 using System;
-using DeltaEngine.Integration;
+using Delta.Engine.Integration;
 
-namespace DeltaEngine.Rendering;
+namespace Delta.Engine.Rendering;
 
-public sealed class NullGraphicsModule : DeltaEngine.Runtime.IGraphicsModule
+public sealed class NullGraphicsModule : Delta.Engine.Runtime.IGraphicsModule
 {
     private readonly IEngineRenderService _renderer;
     private bool _disposed;

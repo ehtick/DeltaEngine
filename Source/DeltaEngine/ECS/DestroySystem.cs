@@ -1,6 +1,6 @@
 using Arch.Core;
-using DeltaEngine.ECS.Components;
-using DeltaEngine.Runtime;
+using Delta.Engine.ECS.Components;
+using Delta.Engine.Runtime;
 internal static class DestroySystem
 {
     private static readonly QueryDescription _destroyDescription = new QueryDescription().WithAll<DestroyFlag>();

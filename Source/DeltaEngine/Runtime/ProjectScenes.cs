@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace DeltaEngine.Runtime;
+namespace Delta.Engine.Runtime;
 
 internal static class ProjectScenes
 {

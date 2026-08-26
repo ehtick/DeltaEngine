@@ -3,7 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using System;
 
-namespace DeltaEngine.Editor;
+namespace Delta.Engine.Editor;
 
 public partial class FlyoutSearchItem : UserControl
 {

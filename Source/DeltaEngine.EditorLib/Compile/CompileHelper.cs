@@ -1,13 +1,13 @@
-using DeltaEditor.Scripting;
-using DeltaEngine.Integration;
-using DeltaEngine.Runtime;
+using Delta.Editor.Scripting;
+using Delta.Engine.Integration;
+using Delta.Engine.Runtime;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 
-namespace DeltaEngine.EditorLib.Compile;
+namespace Delta.Engine.EditorLib.Compile;
 
 internal sealed class CompileHelper(IProjectPath projectPath)
 {

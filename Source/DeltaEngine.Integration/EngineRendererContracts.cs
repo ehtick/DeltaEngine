@@ -1,4 +1,4 @@
-namespace DeltaEngine.Integration;
+namespace Delta.Engine.Integration;
 
 /// <summary>
 /// Time-free renderer input. Engine-owned clocks are extracted into explicit

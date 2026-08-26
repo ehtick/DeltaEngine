@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using DeltaRender;
-using DeltaShader.Abstractions;
-using DeltaEngine.Windowed;
+using Delta.Render.Core;
+using Delta.Shader.Abstractions;
+using Delta.Engine.Windowed;
 using Xunit;
 
-namespace DeltaEngine.Windowed.Tests;
+namespace Delta.Engine.Windowed.Tests;
 
 public sealed class UiFrameSubmissionTests
 {

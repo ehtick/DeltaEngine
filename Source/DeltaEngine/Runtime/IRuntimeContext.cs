@@ -1,6 +1,6 @@
 using System;
 
-namespace DeltaEngine.Runtime;
+namespace Delta.Engine.Runtime;
 
 public interface IRuntimeContext : IDisposable
 {

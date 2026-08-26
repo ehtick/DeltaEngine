@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-namespace DeltaEngine.Assets;
+namespace Delta.Engine.Assets;
 
 internal sealed class MeshCollection : DefaultAssetCollection<MeshData>
 {

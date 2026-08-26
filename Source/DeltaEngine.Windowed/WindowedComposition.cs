@@ -4,14 +4,14 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text.Json;
 using System.Diagnostics.CodeAnalysis;
-using DeltaEngine.Integration;
-using DeltaMaths;
-using DeltaRender;
-using DeltaRender.Platform.SDL3;
-using DeltaRender.Vulkan;
-using DeltaShader.Abstractions;
-using DeltaShader.Text;
-using DeltaXAML.Contract;
+using Delta.Engine.Integration;
+using Delta.Maths;
+using Delta.Render.Core;
+using Delta.Render.Platform.SDL3;
+using Delta.Render.Vulkan;
+using Delta.Shader.Abstractions;
+using Delta.Shader.Text;
+using Delta.XAML.Contract;
 using SDL3;
 
 [assembly: SuppressMessage(
@@ -19,7 +19,7 @@ using SDL3;
     "CA1515:Consider making public types internal",
     Justification = "Windowed composition types are the deliberate public opt-in boundary used by game and editor composition roots.")]
 
-namespace DeltaEngine.Windowed;
+namespace Delta.Engine.Windowed;
 
 #nullable enable
 
@@ -587,7 +587,7 @@ public sealed class VulkanWindowRenderService : IEngineRenderService
         var directory = Path.Combine(AppContext.BaseDirectory, "shaders");
         var spirvPath = Path.Combine(directory, name + ".spv");
         var manifestPath = Path.Combine(directory, name + ".shader.json");
-        var manifest = JsonSerializer.Deserialize<DeltaShader.Abstractions.ShaderAbiManifest>(File.ReadAllText(manifestPath))
+        var manifest = JsonSerializer.Deserialize<Delta.Shader.Abstractions.ShaderAbiManifest>(File.ReadAllText(manifestPath))
             ?? throw new InvalidDataException($"Shader manifest was empty: {manifestPath}");
         return new ShaderArtifact(File.ReadAllBytes(spirvPath), manifest);
     }

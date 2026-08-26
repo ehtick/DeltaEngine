@@ -1,5 +1,5 @@
 using Arch.Core;
-namespace DeltaEngine.ECS;
+namespace Delta.Engine.ECS;
 
 public static class EntityReferenceExtensions
 {

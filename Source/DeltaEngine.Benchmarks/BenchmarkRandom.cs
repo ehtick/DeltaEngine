@@ -1,4 +1,4 @@
-namespace DeltaEngine.Benchmarks;
+namespace Delta.Engine.Benchmarks;
 
 internal sealed class BenchmarkRandom
 {

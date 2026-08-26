@@ -1,7 +1,7 @@
-using DeltaEngine.Integration;
+using Delta.Engine.Integration;
 using Xunit;
 
-namespace DeltaEngine.Integration.Tests;
+namespace Delta.Engine.Integration.Tests;
 
 public sealed class UiFrameSourceContractTests
 {

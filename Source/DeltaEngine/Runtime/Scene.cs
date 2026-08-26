@@ -1,13 +1,13 @@
 using Arch.Core;
-using DeltaEngine.Assets;
-using DeltaEngine.ECS;
-using DeltaEngine.ECS.Components;
+using Delta.Engine.Assets;
+using Delta.Engine.ECS;
+using Delta.Engine.ECS.Components;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text.Json.Serialization;
 
-namespace DeltaEngine.Runtime;
+namespace Delta.Engine.Runtime;
 
 [System.Diagnostics.CodeAnalysis.SuppressMessage(
     "Reliability",

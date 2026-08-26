@@ -3,12 +3,12 @@ using Arch.Core;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
-using DeltaEngine.Assets;
-using DeltaEngine.Runtime;
-using DeltaEngine.Editor.Inspector.Internal;
+using Delta.Engine.Assets;
+using Delta.Engine.Runtime;
+using Delta.Engine.Editor.Inspector.Internal;
 using System;
 
-namespace DeltaEngine.Editor;
+namespace Delta.Engine.Editor;
 
 internal sealed partial class GuidAssetNodeControl : InspectorNode
 {

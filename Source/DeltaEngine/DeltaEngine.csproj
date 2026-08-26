@@ -8,7 +8,7 @@
     <ImplicitUsings>disable</ImplicitUsings>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 
-    <RootNamespace>DeltaEngine</RootNamespace>
+    <RootNamespace>Delta.Engine</RootNamespace>
     <AssemblyName>DeltaEngine</AssemblyName>
     <PackageId>DeltaEngine</PackageId>
 

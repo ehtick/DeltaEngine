@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Frozen;
 
-namespace DeltaEngine.EditorLib.Scripting;
+namespace Delta.Engine.EditorLib.Scripting;
 
 public interface IAccessor
 {

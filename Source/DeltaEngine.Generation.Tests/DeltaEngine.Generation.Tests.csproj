@@ -5,7 +5,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <RootNamespace>DeltaEngine.Generation.Tests</RootNamespace>
+    <RootNamespace>Delta.Engine.Generation.Tests</RootNamespace>
     <AssemblyName>DeltaEngine.Generation.Tests</AssemblyName>
     <PackageId>DeltaEngine.Generation.Tests</PackageId>
     <DefineConstants>$(DefineConstants);DELTA_GEN_ATTRIBUTES;GLCSharp_GEN_ATTRIBUTES</DefineConstants>

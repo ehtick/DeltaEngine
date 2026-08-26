@@ -3,10 +3,10 @@ using Arch.Core;
 using Avalonia;
 using Avalonia.Layout;
 using Avalonia.Media;
-using DeltaEngine.Runtime;
-using DeltaEngine.Editor.Inspector.Internal;
+using Delta.Engine.Runtime;
+using Delta.Engine.Editor.Inspector.Internal;
 
-namespace DeltaEngine.Editor;
+namespace Delta.Engine.Editor;
 
 internal sealed partial class FloatNodeControl : InspectorNode
 {

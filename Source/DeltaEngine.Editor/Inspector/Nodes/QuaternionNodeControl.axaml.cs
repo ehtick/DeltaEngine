@@ -2,13 +2,13 @@
 using Arch.Core;
 using Avalonia.Controls;
 using Avalonia.Media;
-using DeltaEngine.Runtime;
-using DeltaEngine.Editor.Inspector.Internal;
+using Delta.Engine.Runtime;
+using Delta.Engine.Editor.Inspector.Internal;
 using ExCSS;
-using DeltaMaths;
+using Delta.Maths;
 using System;
 
-namespace DeltaEngine.Editor;
+namespace Delta.Engine.Editor;
 
 internal sealed partial class QuaternionNodeControl : InspectorNode
 {

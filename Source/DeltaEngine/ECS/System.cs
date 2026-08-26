@@ -1,4 +1,4 @@
-namespace DeltaEngine.ECS;
+namespace Delta.Engine.ECS;
 
 public interface ISystem
 {

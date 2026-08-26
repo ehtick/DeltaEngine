@@ -2,9 +2,9 @@ using Arch.Core;
 using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.VisualTree;
-using DeltaEngine.Runtime;
+using Delta.Engine.Runtime;
 
-namespace DeltaEngine.Editor.Inspector.Internal;
+namespace Delta.Engine.Editor.Inspector.Internal;
 
 internal abstract class InspectorNode : UserControl, IColorMarkable
 {

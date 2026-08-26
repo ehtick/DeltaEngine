@@ -4,7 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace DeltaEngine.Integration;
+namespace Delta.Engine.Integration;
 
 /// <summary>
 /// Reflection/expression adapter that materializes value-level component access.

@@ -1,8 +1,8 @@
-using DeltaEngine.ECS.Attributes;
-using DeltaMaths;
+using Delta.Engine.ECS.Attributes;
+using Delta.Maths;
 using System;
 
-namespace DeltaEngine.ECS.Components;
+namespace Delta.Engine.ECS.Components;
 
 [Component(0, true), Dirty]
 [System.Diagnostics.CodeAnalysis.SuppressMessage(

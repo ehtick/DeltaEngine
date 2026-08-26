@@ -1,6 +1,6 @@
-using DeltaECS.Integration;
+using Delta.ECS.Integration;
 
-namespace DeltaEngine.Integration;
+namespace Delta.Engine.Integration;
 
 public interface IEngineEcsSystem
 {

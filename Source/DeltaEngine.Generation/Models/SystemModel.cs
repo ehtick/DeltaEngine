@@ -1,11 +1,11 @@
-using DeltaEngine.Generation.Core;
+using Delta.Engine.Generation.Core;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 
-using DeltaEngine.Generation.Models;
+using Delta.Engine.Generation.Models;
 internal record SystemModel : Model
 {
     public SystemModel(INamedTypeSymbol typeSymbol, string attributeSearch)

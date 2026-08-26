@@ -1,5 +1,5 @@
-using DeltaEngine.Runtime;
-using DeltaMaths;
+using Delta.Engine.Runtime;
+using Delta.Maths;
 using Silk.NET.Assimp;
 using System;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using System.Collections.Immutable;
 using System.IO;
 using Scene = Silk.NET.Assimp.Scene;
 
-namespace DeltaEngine.Assets;
+namespace Delta.Engine.Assets;
 
 public sealed class ModelImporter : IDisposable
 {

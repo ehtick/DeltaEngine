@@ -1,4 +1,4 @@
-using DeltaEngine.Integration;
+using Delta.Engine.Integration;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
@@ -9,7 +9,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 
-namespace DeltaEditor.Scripting;
+namespace Delta.Editor.Scripting;
 
 public sealed class RoslynScriptCompiler : IScriptCompiler
 {

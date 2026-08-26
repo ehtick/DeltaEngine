@@ -1,6 +1,6 @@
-using DeltaEditor.Scripting;
-using DeltaEngine.Integration;
-using DeltaMaths;
+using Delta.Editor.Scripting;
+using Delta.Engine.Integration;
+using Delta.Maths;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,7 +9,7 @@ using System.Reflection;
 using System.Runtime.Loader;
 using Xunit;
 
-namespace DeltaEngine.Integration.Tests;
+namespace Delta.Engine.Integration.Tests;
 
 public sealed class VerticalSliceContractTests
 {

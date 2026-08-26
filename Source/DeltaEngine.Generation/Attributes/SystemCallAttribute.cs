@@ -1,6 +1,6 @@
-using DeltaEngine.Generation.Core;
+using Delta.Engine.Generation.Core;
 
-namespace DeltaEngine.Generation.Attributes;
+namespace Delta.Engine.Generation.Attributes;
 
 internal class SystemCallAttribute : AttributeTemplate
 {
@@ -10,7 +10,7 @@ $$"""
 #if {{Constants.GenerateAttributes}}
 
 
-namespace DeltaEngine;
+namespace Delta.Engine;
 
 [System.AttributeUsage(System.AttributeTargets.Method)]
 public sealed class {{Name}} : System.Attribute { }

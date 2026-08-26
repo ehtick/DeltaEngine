@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace DeltaEngine.Integration;
+namespace Delta.Engine.Integration;
 
 [Flags]
 public enum ComponentFieldAccess

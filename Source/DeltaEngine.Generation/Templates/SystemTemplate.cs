@@ -1,10 +1,10 @@
-using DeltaEngine.Generation.Models;
-using DeltaEngine.Generation.Core;
+using Delta.Engine.Generation.Models;
+using Delta.Engine.Generation.Core;
 using Microsoft.CodeAnalysis;
 using System.Linq;
 using System.Text;
 
-namespace DeltaEngine.Generation.Templates;
+namespace Delta.Engine.Generation.Templates;
 
 internal class SystemTemplate(SystemModel model) : Template<SystemModel>(model)
 {

@@ -1,7 +1,7 @@
-using DeltaEngine.ECS.Attributes;
-using DeltaEngine.Integration;
-using DeltaEngine.Runtime;
-using DeltaEngine.EditorLib.Scripting;
+using Delta.Engine.ECS.Attributes;
+using Delta.Engine.Integration;
+using Delta.Engine.Runtime;
+using Delta.Engine.EditorLib.Scripting;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -10,7 +10,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.Loader;
 
-namespace DeltaEngine.EditorLib.Compile;
+namespace Delta.Engine.EditorLib.Compile;
 
 internal sealed class CompilerModule : ICompilerModule
 {

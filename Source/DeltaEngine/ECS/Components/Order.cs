@@ -1,6 +1,6 @@
 using System;
 
-namespace DeltaEngine.ECS.Components;
+namespace Delta.Engine.ECS.Components;
 
 /// <summary>
 /// Stores information about order of entity in hierarchy.

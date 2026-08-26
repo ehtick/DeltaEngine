@@ -1,7 +1,7 @@
-using DeltaEngine.Generation.Models;
-using DeltaEngine.Generation.Core;
+using Delta.Engine.Generation.Models;
+using Delta.Engine.Generation.Core;
 
-using DeltaEngine.Generation.Templates;
+using Delta.Engine.Generation.Templates;
 internal class SystemCallInvokeTemplate(SystemCallModel model, string worldParameterName) : Template<SystemCallModel>(model)
 {
     public override string ToString()

@@ -1,10 +1,10 @@
-using DeltaEngine.Assets.Defaults;
-using DeltaEngine.Assets;
-using DeltaEngine.ECS;
-using DeltaEngine.ECS.Components;
-using DeltaEngine.Runtime;
-using DeltaEngine.EditorLib.Loader;
-using DeltaMaths;
+using Delta.Engine.Assets.Defaults;
+using Delta.Engine.Assets;
+using Delta.Engine.ECS;
+using Delta.Engine.ECS.Components;
+using Delta.Engine.Runtime;
+using Delta.Engine.EditorLib.Loader;
+using Delta.Maths;
 using System.Diagnostics;
 
 try

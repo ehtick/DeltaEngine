@@ -1,7 +1,7 @@
-using DeltaEngine.Generation.Models;
-using DeltaEngine.Generation.Core;
+using Delta.Engine.Generation.Models;
+using Delta.Engine.Generation.Core;
 
-namespace DeltaEngine.Generation.Templates;
+namespace Delta.Engine.Generation.Templates;
 
 internal class SystemCallTemplate(SystemCallModel model) : Template<SystemCallModel>(model)
 {

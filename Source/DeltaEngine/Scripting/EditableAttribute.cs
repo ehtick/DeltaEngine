@@ -1,6 +1,6 @@
 using System;
 
-namespace DeltaEngine.Scripting;
+namespace Delta.Engine.Scripting;
 
 [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false, Inherited = false)]
 public sealed class EditableAttribute() : Attribute;
