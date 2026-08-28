@@ -1,6 +1,7 @@
 using Delta.Engine.Rendering;
 namespace Delta.Engine.Runtime;
 
+[System.Obsolete("The legacy runtime context factory is migration-only; use explicit EngineHost composition.", false)]
 public static class RuntimeContextFactory
 {
     public static IRuntimeContext CreateHeadlessContext(IProjectPath projectPath)

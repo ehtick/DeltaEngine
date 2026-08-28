@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 
 namespace Delta.Engine.ECS;
 
+[Obsolete("Arch entity extension helpers are migration-only; use IEcsWorld and explicit adapters.", false)]
 public static class EntityExtensions
 {
     public static bool Has<T>(this Entity entity)

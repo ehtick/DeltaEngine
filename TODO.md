@@ -18,3 +18,10 @@
 Execution order is in
 [../HIGH_PRIORITY_TODO.md](../HIGH_PRIORITY_TODO.md); shared inspector gates
 are in [../EDITOR_UI_TODO.md](../EDITOR_UI_TODO.md).
+
+## Arch legacy isolation plan
+
+- [ ] Keep the Arch-backed `Source/DeltaEngine/ECS` and `Source/DeltaEngine/Runtime` path migration-only; do not add new EngineHost or ECS facades over it.
+- [ ] Move the remaining legacy scene/editor consumers behind a separate legacy project boundary, preserving history and behavior.
+- [ ] Remove the Arch project reference from the active Engine runtime only after those consumers no longer compile against `EntityReference`, Arch `World`, or the old scheduler.
+- [ ] Delete the legacy boundary only after the DeltaECS `IEcsWorld` identity, structural, and system-registration contracts cover its remaining consumers.

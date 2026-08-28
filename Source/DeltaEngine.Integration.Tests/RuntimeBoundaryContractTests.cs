@@ -34,9 +34,8 @@ public sealed class RuntimeBoundaryContractTests
             .Select(static reference => reference.Name ?? string.Empty)
             .ToArray();
 
-        Assert.Contains("Delta.Engine.Integration", references);
+        Assert.Contains("DeltaEngine.Integration", references);
         Assert.Contains(references, static name => name.StartsWith("Microsoft.CodeAnalysis", StringComparison.Ordinal));
         Assert.DoesNotContain(references, static name => name.Equals("DeltaEngine", StringComparison.Ordinal));
     }
 }
-

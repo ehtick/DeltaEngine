@@ -62,7 +62,7 @@ public readonly struct GuidAsset<T> : IEquatable<GuidAsset<T>>, IComparable<Guid
     public readonly int CompareTo(GuidAsset<T> other) => guid.CompareTo(other.guid);
 
     [Imp(Inl)]
-    public override readonly int GetHashCode() => guid.GetHashCode(); // TODO override hashCode? just return first 32 bits?
+    public override readonly int GetHashCode() => guid.GetHashCode();
     [Imp(Inl)]
     public readonly bool Equals(GuidAsset<T> other) => guid.Equals(other.guid);
     [Imp(Inl)]

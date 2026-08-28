@@ -4,6 +4,7 @@ using Schedulers;
 
 namespace Delta.Engine.Runtime;
 
+[Obsolete("The Arch-backed Runtime is migration-only; use EngineHost and EcsWorldService.", false)]
 [System.Diagnostics.CodeAnalysis.SuppressMessage(
     "Naming",
     "CA1724:Type names should not conflict with namespaces",

@@ -8,6 +8,7 @@ using System.Diagnostics;
 
 namespace Delta.Engine.ECS;
 
+[Obsolete("Arch-backed hierarchy is migration-only; use Delta.Engine.Integration.EngineHierarchy.", false)]
 internal sealed class HierarchySystem
 {
     private readonly Dictionary<EntityReference, LinkedListNode<TreeNode>> _entityToNode = [];

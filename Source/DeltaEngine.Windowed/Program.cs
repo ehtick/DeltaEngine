@@ -1,6 +1,6 @@
 using System;
 using Delta.Engine.Integration;
-using Delta.Render.Core;
+using Delta.Render;
 using Delta.Render.Platform.SDL3;
 using Delta.Render.Vulkan;
 

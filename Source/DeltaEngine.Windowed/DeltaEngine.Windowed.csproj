@@ -14,11 +14,12 @@
     <ProjectReference Include="..\DeltaEngine.Integration\DeltaEngine.Integration.csproj" />
     <ProjectReference Include="..\..\..\DeltaXAML\src\DeltaXAML.Contract\DeltaXAML.Contract.csproj" />
     <ProjectReference Include="..\..\..\DeltaMaths\DeltaMaths.csproj" />
-    <ProjectReference Include="..\..\..\DeltaShader\src\DeltaShader.Abstractions\DeltaShader.Abstractions.csproj" />
+    <ProjectReference Include="..\..\..\DeltaShader\src\DeltaShader.Contract\DeltaShader.Contract.csproj" />
     <ProjectReference Include="..\..\..\DeltaRender\src\DeltaRender\DeltaRender.csproj" />
     <ProjectReference Include="..\..\..\DeltaRender\src\DeltaRender.Platform.SDL3\DeltaRender.Platform.SDL3.csproj" />
     <ProjectReference Include="..\..\..\DeltaRender\src\DeltaRender.Vulkan\DeltaRender.Vulkan.csproj" />
-    <ProjectReference Include="..\..\..\DeltaShader\src\DeltaShader.Text\DeltaShader.Text.csproj" />
+    <ProjectReference Include="..\..\..\DeltaRender\tools\DeltaRender.FullscreenShaders\DeltaRender.FullscreenShaders.csproj" />
+    <ProjectReference Include="..\..\..\DeltaRender\tools\DeltaRender.UiShaders\DeltaRender.UiShaders.csproj" />
     <PackageReference Include="SDL3-CS" Version="3.4.12.6" />
     <PackageReference Include="Silk.NET.MoltenVK.Native" Version="2.23.0" GeneratePathProperty="true" />
     <Content Include="$(PkgSilk_NET_MoltenVK_Native)/runtimes/osx/native/libMoltenVK.dylib" Condition=" '$(RuntimeIdentifier)' == 'osx-arm64' Or '$(RuntimeIdentifier)' == 'osx-x64' ">
@@ -30,14 +31,8 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="..\..\..\DeltaRender\samples\DeltaRender.Smoke\shaders\fullscreen-rounded-rectangle.vert.spv" Link="shaders\fullscreen-rounded-rectangle.vert.spv" CopyToOutputDirectory="PreserveNewest" />
-    <Content Include="..\..\..\DeltaRender\samples\DeltaRender.Smoke\shaders\fullscreen-rounded-rectangle.vert.shader.json" Link="shaders\fullscreen-rounded-rectangle.vert.shader.json" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="..\..\..\DeltaRender\samples\DeltaRender.Smoke\shaders\fullscreen-rounded-rectangle.frag.spv" Link="shaders\fullscreen-rounded-rectangle.frag.spv" CopyToOutputDirectory="PreserveNewest" />
-    <Content Include="..\..\..\DeltaRender\samples\DeltaRender.Smoke\shaders\fullscreen-rounded-rectangle.frag.shader.json" Link="shaders\fullscreen-rounded-rectangle.frag.shader.json" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="..\..\..\DeltaRender\samples\DeltaRender.Smoke\shaders\ui-panel.vert.spv" Link="shaders\ui-panel.vert.spv" CopyToOutputDirectory="PreserveNewest" />
-    <Content Include="..\..\..\DeltaRender\samples\DeltaRender.Smoke\shaders\ui-panel.vert.shader.json" Link="shaders\ui-panel.vert.shader.json" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="..\..\..\DeltaRender\samples\DeltaRender.Smoke\shaders\ui-panel.frag.spv" Link="shaders\ui-panel.frag.spv" CopyToOutputDirectory="PreserveNewest" />
-    <Content Include="..\..\..\DeltaRender\samples\DeltaRender.Smoke\shaders\ui-panel.frag.shader.json" Link="shaders\ui-panel.frag.shader.json" CopyToOutputDirectory="PreserveNewest" />
-    <Content Include="..\..\..\DeltaShader\artifacts\text\SdfTextVertex.vert.spv" Link="shaders\SdfTextVertex.vert.spv" CopyToOutputDirectory="PreserveNewest" Condition="Exists('..\..\..\DeltaShader\artifacts\text\SdfTextVertex.vert.spv')" />
-    <Content Include="..\..\..\DeltaShader\artifacts\text\SdfTextFragment.frag.spv" Link="shaders\SdfTextFragment.frag.spv" CopyToOutputDirectory="PreserveNewest" Condition="Exists('..\..\..\DeltaShader\artifacts\text\SdfTextFragment.frag.spv')" />
   </ItemGroup>
 </Project>

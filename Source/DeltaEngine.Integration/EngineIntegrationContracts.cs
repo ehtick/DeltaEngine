@@ -128,6 +128,15 @@ public interface IEngineUiFrameSource : IEngineUiService
     void PrepareFrame(in EngineFrameContext context);
 }
 
+/// <summary>
+/// Optional borrowed UI output shared by a frame source and a window composition.
+/// The returned display list remains valid until the source prepares another frame.
+/// </summary>
+public interface IEngineUiDisplayListSource : IEngineUiFrameSource
+{
+    UiDisplayList BorrowDisplayList();
+}
+
 public readonly record struct EngineEntityId(uint Value)
 {
     public bool IsValid => Value != 0;

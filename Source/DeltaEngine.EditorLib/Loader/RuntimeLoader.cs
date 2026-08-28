@@ -9,6 +9,7 @@ using System.IO;
 
 namespace Delta.Engine.EditorLib.Loader;
 
+[Obsolete("The legacy Roslyn runtime loader is migration-only; use DeltaEditor scripting services.", false)]
 public sealed class RuntimeLoader : IDisposable
 {
     private readonly IProjectPath _projectPath;

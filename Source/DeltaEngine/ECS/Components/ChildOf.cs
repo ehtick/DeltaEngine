@@ -8,6 +8,7 @@ namespace Delta.Engine.ECS.Components;
 /// Can be used for world TRS calculations for rendering
 /// or other child/parent dependencies
 /// </summary>
+[Obsolete("Arch-backed ChildOf is migration-only; use EngineHierarchy with EngineEntityId.", false)]
 [System.Diagnostics.CodeAnalysis.SuppressMessage(
     "Design",
     "CA1051:Do not declare visible instance fields",

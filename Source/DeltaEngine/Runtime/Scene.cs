@@ -9,6 +9,7 @@ using System.Text.Json.Serialization;
 
 namespace Delta.Engine.Runtime;
 
+[Obsolete("Arch-backed Scene is migration-only; use EngineHost, IEcsWorld and EngineHierarchy.", false)]
 [System.Diagnostics.CodeAnalysis.SuppressMessage(
     "Reliability",
     "CA2213:Disposable fields should be disposed",

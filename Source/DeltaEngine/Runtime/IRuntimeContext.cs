@@ -2,6 +2,7 @@ using System;
 
 namespace Delta.Engine.Runtime;
 
+[Obsolete("The global Arch-backed runtime context is migration-only; use explicit EngineHost composition.", false)]
 public interface IRuntimeContext : IDisposable
 {
     internal IRuntimeContext? PreviousContext { get; set; }

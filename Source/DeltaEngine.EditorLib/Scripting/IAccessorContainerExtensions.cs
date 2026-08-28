@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 
 namespace Delta.Engine.EditorLib.Scripting;
 
+[Obsolete("The pointer-based legacy accessor helpers are migration-only; use neutral component accessors in DeltaEditor.", false)]
 public static class AccessorContainerExtensions
 {
     public static Type GetFieldType(this IAccessorsContainer container, Type type, ReadOnlySpan<string> path)

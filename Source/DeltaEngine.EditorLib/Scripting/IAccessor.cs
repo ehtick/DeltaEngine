@@ -3,6 +3,7 @@ using System.Collections.Frozen;
 
 namespace Delta.Engine.EditorLib.Scripting;
 
+[Obsolete("The pointer-based legacy accessor contract is migration-only; use neutral component accessors in DeltaEditor.", false)]
 public interface IAccessor
 {
     public Type GetFieldType(string name);
@@ -11,6 +12,7 @@ public interface IAccessor
     public ReadOnlySpan<string> FieldNames { get; }
 }
 
+[Obsolete("The pointer-based legacy accessor contract is migration-only; use neutral component accessors in DeltaEditor.", false)]
 public interface IAccessorsContainer
 {
     public FrozenDictionary<Type, IAccessor> AllAccessors { get; }

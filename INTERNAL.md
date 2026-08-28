@@ -20,3 +20,9 @@ display-list model in this repository.
 Shader and text runtime ownership remains downstream. Engine may package a
 compatibility artifact during migration, but it must not compile shaders or
 own atlas/GPU resources.
+
+`DeltaEcsHierarchyAdapter` is a cold structural/tooling adapter. It receives
+explicit ECS entity mappings from its caller and reads `EngineHierarchyParent`
+through `IEcsWorld`; it must not be called from a per-frame render or simulation
+hot path. The old Arch-backed hierarchy and scene APIs remain migration-only
+until the bounded isolation plan in `TODO.md` is complete.
