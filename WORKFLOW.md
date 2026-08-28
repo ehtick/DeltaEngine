@@ -3,13 +3,13 @@
 Build the narrow producer first, then the solution:
 
 ```bash
-dotnet restore Source/DeltaEngine.slnx
-dotnet build Source/DeltaEngine.Windowed/DeltaEngine.Windowed.csproj \
+dotnet restore src/DeltaEngine.slnx
+dotnet build src/DeltaEngine.Windowed/DeltaEngine.Windowed.csproj \
   -c Release --no-restore --disable-build-servers -m:1 \
   /p:UseSharedCompilation=false
-dotnet build Source/DeltaEngine.slnx -c Release --no-restore \
+dotnet build src/DeltaEngine.slnx -c Release --no-restore \
   --disable-build-servers -m:1 /p:UseSharedCompilation=false -v:minimal
-dotnet test Source/DeltaEngine.slnx -c Release --no-build --no-restore \
+dotnet test src/DeltaEngine.slnx -c Release --no-build --no-restore \
   --disable-build-servers -m:1
 ```
 

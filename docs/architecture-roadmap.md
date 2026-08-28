@@ -78,7 +78,7 @@ or XAML layout/rendering.
 ## Migration approach
 
 1. Inventory current dependencies and produce a build/test baseline for the
-   existing `DeltaEngine/Source` solution.
+   existing `DeltaEngine/src` solution.
 2. Define narrow engine-facing contracts for world/runtime, rendering/extraction,
    input snapshots, UI documents, assets, clocks, jobs, and diagnostics.
 3. Add a small new host/composition project without deleting the existing
