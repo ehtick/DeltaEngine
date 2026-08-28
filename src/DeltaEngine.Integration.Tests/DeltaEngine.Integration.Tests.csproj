@@ -25,7 +25,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DeltaEditor.Scripting\DeltaEditor.Scripting.csproj" />
-    <ProjectReference Include="..\..\..\DeltaMaths\DeltaMaths.csproj" />
+    <ProjectReference Include="..\..\..\DeltaMaths\src\DeltaMaths\DeltaMaths.csproj" />
     <ProjectReference Include="..\DeltaEngine.Integration\DeltaEngine.Integration.csproj" />
     <ProjectReference Include="..\..\..\DeltaECS\src\DeltaECS\DeltaECS.csproj" />
   </ItemGroup>

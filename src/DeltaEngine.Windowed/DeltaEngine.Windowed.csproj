@@ -13,7 +13,7 @@
   <ItemGroup>
     <ProjectReference Include="..\DeltaEngine.Integration\DeltaEngine.Integration.csproj" />
     <ProjectReference Include="..\..\..\DeltaXAML\src\DeltaXAML.Contract\DeltaXAML.Contract.csproj" />
-    <ProjectReference Include="..\..\..\DeltaMaths\DeltaMaths.csproj" />
+    <ProjectReference Include="..\..\..\DeltaMaths\src\DeltaMaths\DeltaMaths.csproj" />
     <ProjectReference Include="..\..\..\DeltaShader\src\DeltaShader.Contract\DeltaShader.Contract.csproj" />
     <ProjectReference Include="..\..\..\DeltaRender\src\DeltaRender\DeltaRender.csproj" />
     <ProjectReference Include="..\..\..\DeltaRender\src\DeltaRender.Platform.SDL3\DeltaRender.Platform.SDL3.csproj" />
