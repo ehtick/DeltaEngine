@@ -332,7 +332,7 @@ internal sealed class WindowedRenderGraphFeature : IRenderFeature
         Array.Resize(ref _quads, capacity);
     }
 
-    private static bool TryResolveClip(ReadOnlySpan<UiClip> clips, UiClipId id, out UiClipRect result)
+    private static bool TryResolveClip(ReadOnlySpan<UiClipRegion> clips, UiClipId id, out UiClipRect result)
     {
         result = UiClipRect.Unbounded;
         if (!id.IsValid)
