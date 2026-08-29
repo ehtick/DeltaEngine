@@ -27,10 +27,6 @@ public interface IAsset { }
 public readonly struct GuidAsset<T> : IEquatable<GuidAsset<T>>, IComparable<GuidAsset<T>> where T : class, IAsset
 {
     private const string NullDataString = "null";
-    [System.Diagnostics.CodeAnalysis.SuppressMessage(
-        "Design",
-        "CA1051:Do not declare visible instance fields",
-        Justification = "The public guid field is the established serialized asset-handle representation.")]
     public readonly Guid guid;
 
     [JsonConstructor]

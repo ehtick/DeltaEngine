@@ -5,10 +5,6 @@ using System;
 namespace Delta.Engine.ECS.Components;
 
 [Component, Dirty]
-[System.Diagnostics.CodeAnalysis.SuppressMessage(
-    "Design",
-    "CA1051:Do not declare visible instance fields",
-    Justification = "ECS component fields are public by design for generated ref access and blittable layout.")]
 public struct Render : IEquatable<Render>, IComparable<Render>
 {
     internal GuidAsset<ShaderData> _shader;

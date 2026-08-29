@@ -3,10 +3,6 @@ using System.Text.Json.Serialization;
 
 namespace Delta.Engine.Assets;
 
-[System.Diagnostics.CodeAnalysis.SuppressMessage(
-    "Design",
-    "CA1051:Do not declare visible instance fields",
-    Justification = "Serialized shader data uses a public readonly mask for the engine asset ABI.")]
 public class ShaderData : IAsset
 {
     public readonly VertexAttribute attributeMask;

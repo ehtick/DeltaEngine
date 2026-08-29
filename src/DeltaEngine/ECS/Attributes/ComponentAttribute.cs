@@ -5,10 +5,6 @@ namespace Delta.Engine.ECS.Attributes;
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct, AllowMultiple = false, Inherited = false)]
 [System.Diagnostics.CodeAnalysis.SuppressMessage(
-    "Design",
-    "CA1051:Do not declare visible instance fields",
-    Justification = "Attribute fields are consumed by the source generator and are immutable metadata.")]
-[System.Diagnostics.CodeAnalysis.SuppressMessage(
     "Naming",
     "CA1708:Identifiers should differ by more than case",
     Justification = "The lowercase fields are part of the existing generator metadata contract.")]

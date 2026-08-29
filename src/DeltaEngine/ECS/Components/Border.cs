@@ -5,10 +5,6 @@ using System;
 namespace Delta.Engine.ECS.Components;
 
 [Component]
-[System.Diagnostics.CodeAnalysis.SuppressMessage(
-    "Design",
-    "CA1051:Do not declare visible instance fields",
-    Justification = "ECS component fields are public by design for generated ref access and blittable layout.")]
 public struct Border : IEquatable<Border>
 {
     public float4 minMax;

@@ -3,10 +3,6 @@ using System.Text.Json.Serialization;
 
 namespace Delta.Engine.Assets;
 
-[System.Diagnostics.CodeAnalysis.SuppressMessage(
-    "Design",
-    "CA1051:Do not declare visible instance fields",
-    Justification = "Serialized mesh data uses public readonly fields for the engine asset ABI.")]
 public class MeshData : IAsset
 {
     public readonly int vertexCount;

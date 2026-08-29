@@ -9,10 +9,6 @@ namespace Delta.Engine.ECS.Components;
 /// or other child/parent dependencies
 /// </summary>
 [Obsolete("Arch-backed ChildOf is migration-only; use EngineHierarchy with EngineEntityId.", false)]
-[System.Diagnostics.CodeAnalysis.SuppressMessage(
-    "Design",
-    "CA1051:Do not declare visible instance fields",
-    Justification = "ECS component fields are public by design for generated ref access.")]
 public readonly struct ChildOf : IEquatable<ChildOf>
 {
     /// <summary>

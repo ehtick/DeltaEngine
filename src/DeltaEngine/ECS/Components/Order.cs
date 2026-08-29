@@ -8,10 +8,6 @@ namespace Delta.Engine.ECS.Components;
 /// but still contains <see cref="Order"/> component with <see cref="order"/>
 /// Each <see cref="order"/> value is unique for each <see cref="ChildOf.parent"/> group
 /// </summary>
-[System.Diagnostics.CodeAnalysis.SuppressMessage(
-    "Design",
-    "CA1051:Do not declare visible instance fields",
-    Justification = "ECS component fields are public by design for generated ref access.")]
 public struct Order : IEquatable<Order>
 {
     public int order;

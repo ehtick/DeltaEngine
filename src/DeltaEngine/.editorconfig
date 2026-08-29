@@ -137,3 +137,5 @@ dotnet_style_prefer_collection_expression = true:suggestion
 dotnet_diagnostic.CA1505.severity = error
 dotnet_diagnostic.CA1502.severity = suggestion
 dotnet_diagnostic.CA1506.severity = suggestion
+dotnet_diagnostic.CA1051.severity = none
+dotnet_diagnostic.CA1815.severity = none

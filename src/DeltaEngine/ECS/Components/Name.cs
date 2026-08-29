@@ -4,10 +4,6 @@ using System;
 namespace Delta.Engine.ECS.Components;
 
 [Component, Dirty]
-[System.Diagnostics.CodeAnalysis.SuppressMessage(
-    "Design",
-    "CA1051:Do not declare visible instance fields",
-    Justification = "ECS component fields are public by design for generated ref access.")]
 public struct EntityName : IEquatable<EntityName>
 {
     public string name;
