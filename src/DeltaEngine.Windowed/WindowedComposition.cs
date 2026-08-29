@@ -254,27 +254,27 @@ internal sealed class WindowedRenderGraphFeature : IRenderFeature
         }
 
         var clips = displayList.Clips;
-        EnsureCapacity(displayList.Visuals.Length);
+        var order = displayList.Order;
+        EnsureCapacity(order.IsEmpty ? displayList.Visuals.Length : order.Length);
         _quadCount = 0;
-        for (var index = 0; index < displayList.Visuals.Length; index++)
+        if (order.IsEmpty)
         {
-            var visual = displayList.Visuals[index];
-            if (visual.Kind is not (UiVisualKind.SolidRectangle or UiVisualKind.RoundedRectangle or UiVisualKind.Border) ||
-                !TryResolveClip(clips, visual.Clip, out var clip))
+            for (var index = 0; index < displayList.Visuals.Length; index++)
             {
-                continue;
+                AppendVisual(displayList.Visuals[index], clips, checked((uint)index));
             }
+        }
+        else
+        {
+            for (var index = 0; index < order.Length; index++)
+            {
+                var drawRef = order[index];
+                if (drawRef.Kind != UiDrawKind.Visual || (uint)drawRef.Index >= (uint)displayList.Visuals.Length)
+                {
+                    continue;
+                }
 
-            var bounds = visual.Bounds;
-            var color = visual.Color;
-            var quad = new UiQuad(bounds.x, bounds.y, bounds.z, bounds.w, color.x, color.y, color.z, color.w)
-            {
-                Clip = clip,
-                Order = checked((uint)index),
-            };
-            if (quad.IsValid)
-            {
-                _quads[_quadCount++] = quad;
+                AppendVisual(displayList.Visuals[drawRef.Index], clips, checked((uint)index));
             }
         }
     }
@@ -330,6 +330,27 @@ internal sealed class WindowedRenderGraphFeature : IRenderFeature
         }
 
         Array.Resize(ref _quads, capacity);
+    }
+
+    private void AppendVisual(UiVisualDraw visual, ReadOnlySpan<UiClipRegion> clips, uint order)
+    {
+        if (visual.Kind is not (UiVisualKind.SolidRectangle or UiVisualKind.RoundedRectangle or UiVisualKind.Border) ||
+            !TryResolveClip(clips, visual.Clip, out var clip))
+        {
+            return;
+        }
+
+        var bounds = visual.Bounds;
+        var color = visual.Color;
+        var quad = new UiQuad(bounds.x, bounds.y, bounds.z, bounds.w, color.x, color.y, color.z, color.w)
+        {
+            Clip = clip,
+            Order = order,
+        };
+        if (quad.IsValid)
+        {
+            _quads[_quadCount++] = quad;
+        }
     }
 
     private static bool TryResolveClip(ReadOnlySpan<UiClipRegion> clips, UiClipId id, out UiClipRect result)
