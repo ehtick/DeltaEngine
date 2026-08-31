@@ -35,19 +35,21 @@ warnings separately; do not mix dependency upgrades into an integration fix.
 initialization, rollback and retry; these tests do not open a native window.
 Run the real editor window from [../DeltaEditor/WORKFLOW.md](../DeltaEditor/WORKFLOW.md).
 
-Before building or running the windowed text path, prepare the generated SDF
-SPIR-V artifacts from the DeltaShader repository:
+Before building or running the windowed text path, prepare the central
+generated shader catalog from the DeltaShader repository:
 
 ```bash
-DeltaShader/eng/prepare-text-artifacts.sh DeltaShader/artifacts/text
+(cd DeltaShader && ./eng/prepare-compiled-shaders.sh)
 ```
 
-The windowed project copies only `SdfTextVertex.vert.spv` and
-`SdfTextFragment.frag.spv`; the generated shader factory owns their embedded
-ABI manifests. This remains migration packaging for the pre-final shader
-consumer. The target runtime handoff is a complete
+The windowed project reads the prefixed SDF outputs from
+`DeltaShader/src/DeltaShader/CompiledShaders`; the generated shader factory
+owns their embedded ABI manifests. This remains migration packaging for the
+pre-final shader consumer. The target runtime handoff is a complete
 `DeltaShader.Contract.IShaderArtifact` (SPIR-V plus binary `ShaderAbi`), not a
 raw SPIR-V file, GLSL sidecar or compiler object.
+Run `./eng/check-shader-output-ownership.sh` to reject Engine-local generated
+shader binaries and sidecars.
 
 ## Code metrics
 
