@@ -21,25 +21,11 @@ internal static class DirtyQueryDescriptionCache
 
         if (!descriptions.TryGetValue(component, out var result))
         {
-            result = description;
-            AddIfMissing(ref result.All, component);
-            AddIfMissing(ref result.None, dirtyFlag);
+            result = DirtyQueryDescriptionBuilder.AddMissing(description, component, dirtyFlag);
             descriptions[component] = result;
         }
 
         return result;
     }
 
-    private static void AddIfMissing(ref ComponentType[] components, ComponentType component)
-    {
-        if (Array.IndexOf(components, component) >= 0)
-        {
-            return;
-        }
-
-        var expanded = new ComponentType[components.Length + 1];
-        components.CopyTo(expanded, 0);
-        expanded[^1] = component;
-        components = expanded;
-    }
 }
