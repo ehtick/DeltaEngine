@@ -31,6 +31,7 @@ on:
 
 permissions:
   contents: read
+  packages: read
 
 concurrency:
   group: delta-engine-ci-${{ github.workflow }}-${{ github.ref }}
@@ -77,6 +78,18 @@ jobs:
           path: ${{ env.NUGET_PACKAGES }}
           key: delta-engine-nuget-${{ runner.os }}-${{ hashFiles('DeltaEngine/**/*.csproj', 'DeltaECS/**/*.csproj', 'DeltaXAML/**/*.csproj', 'DeltaText/**/*.csproj') }}
           restore-keys: delta-engine-nuget-${{ runner.os }}-
+      - name: Configure GitHub Packages
+        working-directory: DeltaEngine
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: >-
+          dotnet nuget add source
+          https://nuget.pkg.github.com/Artromskiy/index.json
+          --name github-artromskiy
+          --username "${GITHUB_ACTOR}"
+          --password "${GITHUB_TOKEN}"
+          --store-password-in-clear-text
       - name: Restore and build stable headless contracts
         working-directory: DeltaEngine
         run: |
@@ -121,6 +134,18 @@ jobs:
           dotnet-version: |
             8.0.x
             10.0.x
+      - name: Configure GitHub Packages
+        working-directory: DeltaEngine
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: >-
+          dotnet nuget add source
+          https://nuget.pkg.github.com/Artromskiy/index.json
+          --name github-artromskiy
+          --username "${GITHUB_ACTOR}"
+          --password "${GITHUB_TOKEN}"
+          --store-password-in-clear-text
       - name: Run registered benchmarks
         working-directory: DeltaEngine
         shell: bash
