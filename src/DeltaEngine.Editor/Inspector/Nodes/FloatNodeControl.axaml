@@ -2,9 +2,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:uc="clr-namespace:DeltaEngine.Editor;assembly=DeltaEngine.Editor"
+             xmlns:uc="clr-namespace:Delta.Engine.Editor;assembly=DeltaEngine.Editor"
              mc:Ignorable="d" d:DesignWidth="455" d:DesignHeight="20"
-             x:Class="DeltaEngine.Editor.FloatNodeControl">
+             x:Class="Delta.Engine.Editor.FloatNodeControl">
   
   <uc:NamedTextField x:Name="Field"
                      FieldName="fieldName"
