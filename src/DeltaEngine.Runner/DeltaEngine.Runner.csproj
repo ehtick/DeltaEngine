@@ -14,8 +14,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DeltaEngine.EditorLib\DeltaEngine.EditorLib.csproj" />
-    <ProjectReference Include="..\DeltaEngine\DeltaEngine.csproj" />
+    <ProjectReference Include="..\DeltaEngine.ECS\DeltaEngine.ECS.csproj" />
   </ItemGroup>
 
 </Project>

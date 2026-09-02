@@ -56,7 +56,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DeltaEngine.Integration\DeltaEngine.Integration.csproj" />
-    <ProjectReference Include="..\..\..\DeltaMaths\src\DeltaMaths\DeltaMaths.csproj" />
+    <ProjectReference Include="..\DeltaEngine.ECS\DeltaEngine.ECS.csproj" />
+    <PackageReference Include="DeltaMaths" Version="0.0.7" />
     <ProjectReference Include="..\..\Depend\Arch\src\Arch\Arch.csproj" />
     <ProjectReference Include="..\DeltaEngine.Generation.Core\DeltaEngine.Generation.Core.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
     <ProjectReference Include="..\DeltaEngine.Generation\DeltaEngine.Generation.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />

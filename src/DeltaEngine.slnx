@@ -26,6 +26,12 @@
     <BuildType Solution="Perf|*" Project="Release" />
     <BuildType Solution="Release|*" Project="Release" />
   </Project>
+  <Project Path="DeltaEngine.ECS\DeltaEngine.ECS.csproj">
+    <BuildType Solution="DebugPerf|*" Project="Debug" />
+    <BuildType Solution="Debug|*" Project="Debug" />
+    <BuildType Solution="Perf|*" Project="Release" />
+    <BuildType Solution="Release|*" Project="Release" />
+  </Project>
   <Project Path="DeltaEngine.Benchmarks\DeltaEngine.Benchmarks.csproj">
     <BuildType Solution="DebugPerf|*" Project="Debug" />
     <BuildType Solution="Debug|*" Project="Debug" />

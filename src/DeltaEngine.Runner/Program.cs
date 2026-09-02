@@ -1,65 +1,35 @@
-using Delta.Engine.Assets.Defaults;
-using Delta.Engine.Assets;
+using Delta.ECS;
 using Delta.Engine.ECS;
 using Delta.Engine.ECS.Components;
-using Delta.Engine.Runtime;
-using Delta.Engine.EditorLib.Loader;
-using Delta.Maths;
-using System.Diagnostics;
 
-try
+var layouts = new ComponentLayoutRegistry();
+var components = TransformComponentIds.Register(layouts);
+using var world = new World(layouts);
+
+Entity root = world.Create(stackalloc[] { components.WorldTransform, components.Transform });
+Entity child = world.Create(stackalloc[] { components.WorldTransform, components.Transform, components.Parent });
+
+var rootTransform = new Transform
 {
-    string directoryPath = ProjectCreator.GetExecutableDirectory();
-    var projectPath = new EditorPaths(directoryPath);
-    ProjectCreator.CreateProject(projectPath);
-    using var ctx = RuntimeContextFactory.CreateWindowedContext(projectPath);
-    using var eng = new Runtime(ctx);
-
-    //VCShader.Init();
-    DefaultsImporter<MeshData>.Import(Path.Combine(Directory.GetCurrentDirectory(), "Import", "Models"));
-    //MaterialsImporter.Import(Path.Combine(Directory.GetCurrentDirectory(), "Import", "Shaders"));
-
-    var camera = IRuntimeContext.Current.SceneManager.CurrentScene.AddEntity();
-    camera.Entity.Add<Transform>();
-    camera.Entity.Add<Camera>();
-    camera.Entity.Get<Transform>() = new Transform()
-    {
-        rotation = quaternion.identity,
-        scale = new float3(1),
-        position = new float3(0, 0, -5),
-    };
-    var cam = camera.Entity.Get<Camera>();
-    camera.Entity.Get<Camera>() = new Camera();
-    cam = camera.Entity.Get<Camera>();
-
-    var render = IRuntimeContext.Current.SceneManager.CurrentScene.AddEntity();
-    render.Entity.Add<Transform>();
-    render.Entity.Add<Render>();
-
-    render.Entity.Get<Transform>() = new Transform()
-    {
-        rotation = quaternion.identity,
-        scale = new float3(1),
-        position = float3.zero
-    };
-
-    render.Entity.Get<Render>() = new Render()
-    {
-        material = IRuntimeContext.Current.AssetImporter.GetAllAssets<MaterialData>()[0],
-        mesh = IRuntimeContext.Current.AssetImporter.GetAllAssets<MeshData>()[0],
-    };
-
-
-    eng.Context.Running = true;
-
-    while (true)
-    {
-        eng.Run();
-        Thread.Yield();
-    }
-}
-catch (Exception e) when (e is IOException or InvalidOperationException or UnauthorizedAccessException or DllNotFoundException)
+    position = new Delta.Maths.float3(2, 0, 0),
+    rotation = Delta.Maths.quaternion.identity,
+    scale = new Delta.Maths.float3(1),
+};
+var childTransform = new Transform
 {
-    Console.WriteLine(e);
-}
-Console.ReadLine();
+    position = new Delta.Maths.float3(0, 3, 0),
+    rotation = Delta.Maths.quaternion.identity,
+    scale = new Delta.Maths.float3(1),
+};
+
+_ = world.Set(root, components.Transform, rootTransform);
+_ = world.Set(root, components.WorldTransform, new WorldTransform());
+_ = world.Set(child, components.Transform, childTransform);
+_ = world.Set(child, components.Parent, new Parent(root));
+_ = world.Set(child, components.WorldTransform, new WorldTransform());
+
+var transformSystem = new TransformSystem(world, components);
+transformSystem.Update();
+
+WorldTransform childWorld = world.Get<WorldTransform>(child, components.WorldTransform);
+Console.WriteLine($"Updated {child}: {childWorld.Matrix}");
