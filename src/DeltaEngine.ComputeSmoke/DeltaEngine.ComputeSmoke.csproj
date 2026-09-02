@@ -11,9 +11,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DeltaEngine.Integration\DeltaEngine.Integration.csproj" />
-    <ProjectReference Include="..\..\..\DeltaShader\src\DeltaShader.Abstractions\DeltaShader.Abstractions.csproj" />
-    <PackageReference Include="DeltaRender" Version="*" />
-    <PackageReference Include="DeltaRender.Vulkan" Version="*" />
+    <PackageReference Include="DeltaShader.Contract" Version="*" />
   </ItemGroup>
 </Project>
