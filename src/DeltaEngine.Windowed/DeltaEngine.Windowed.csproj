@@ -12,12 +12,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DeltaEngine.Integration\DeltaEngine.Integration.csproj" />
-    <ProjectReference Include="..\..\..\DeltaXAML\src\DeltaXAML.Contract\DeltaXAML.Contract.csproj" />
+    <PackageReference Include="DeltaXAML.Contract" Version="*" />
     <PackageReference Include="DeltaMaths" Version="*" />
-    <ProjectReference Include="..\..\..\DeltaShader\src\DeltaShader.Contract\DeltaShader.Contract.csproj" />
-    <ProjectReference Include="..\..\..\DeltaRender\src\DeltaRender\DeltaRender.csproj" />
-    <ProjectReference Include="..\..\..\DeltaRender\src\DeltaRender.Platform.SDL3\DeltaRender.Platform.SDL3.csproj" />
-    <ProjectReference Include="..\..\..\DeltaRender\src\DeltaRender.Vulkan\DeltaRender.Vulkan.csproj" />
+    <PackageReference Include="DeltaShader.Contract" Version="*" />
+    <PackageReference Include="DeltaRender" Version="*" />
+    <PackageReference Include="DeltaRender.Platform.SDL3" Version="*" />
+    <PackageReference Include="DeltaRender.Vulkan" Version="*" />
     <ProjectReference Include="..\..\..\DeltaRender\tools\DeltaRender.FullscreenShaders\DeltaRender.FullscreenShaders.csproj" />
     <ProjectReference Include="..\..\..\DeltaRender\tools\DeltaRender.UIShaders\DeltaRender.UIShaders.csproj" />
     <PackageReference Include="SDL3-CS" Version="3.4.12.6" />

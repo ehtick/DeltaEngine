@@ -12,10 +12,7 @@
 
   <ItemGroup>
     <PackageReference Include="DeltaECS" Version="*" />
-    <ProjectReference Include="..\..\..\DeltaECS\src\DeltaECS.Generators\DeltaECS.Generators.csproj"
-                      OutputItemType="Analyzer"
-                      ReferenceOutputAssembly="false"
-                      PrivateAssets="all" />
+    <PackageReference Include="DeltaECS.Generators" Version="*" PrivateAssets="all" />
     <PackageReference Include="DeltaMaths" Version="*" />
   </ItemGroup>
 

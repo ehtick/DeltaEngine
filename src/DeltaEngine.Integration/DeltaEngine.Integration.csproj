@@ -11,7 +11,7 @@
 
   <ItemGroup>
     <PackageReference Include="DeltaECS" Version="*" />
-    <ProjectReference Include="..\..\..\DeltaXAML\src\DeltaXAML.Contract\DeltaXAML.Contract.csproj" />
+    <PackageReference Include="DeltaXAML.Contract" Version="*" />
   </ItemGroup>
 
 </Project>
