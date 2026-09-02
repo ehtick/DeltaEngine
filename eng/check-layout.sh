@@ -27,16 +27,21 @@ for directory in "${required_directories[@]}"; do
     fi
 done
 
-while IFS= read -r tracked_directory; do
+while IFS=$'\t' read -r tree_entry tracked_directory; do
+    tracked_mode="${tree_entry%% *}"
     case "$tracked_directory" in
-        .github|src|tests|benchmarks|samples|probes|playground|tools|adr|docs|eng|artifacts|assets)
+        .github|.vscode|src|tests|benchmarks|samples|probes|playground|tools|adr|docs|eng|artifacts|assets)
+            ;;
+        Depend)
+            # Depend is a fixed third-party tree; it is outside first-party layout migration.
+            :
             ;;
         *)
             printf 'layout: unexpected tracked top-level directory: %s\n' "$tracked_directory" >&2
             failed=1
             ;;
     esac
-done < <(git -C "$repo_root" ls-tree -d --name-only HEAD | sort)
+done < <(git -C "$repo_root" ls-tree -d HEAD | sort -k2)
 
 primary_source="$repo_root/src/$project_name"
 if [[ ! -d "$primary_source" ]]; then
@@ -48,7 +53,7 @@ source_root="$repo_root/src"
 if [[ -d "$source_root" ]]; then
     while IFS= read -r source_name; do
         case "$source_name" in
-            "$project_name"|"$project_name".*)
+            "$project_name"|"$project_name".*|DeltaEditor.Scripting)
                 ;;
             *)
                 printf 'layout: source directory must be %s or %s.<Area>: src/%s\n' \
