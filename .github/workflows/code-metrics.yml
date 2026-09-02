@@ -13,6 +13,36 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5
+      - name: Checkout DeltaECS
+        uses: actions/checkout@v5
+        with:
+          repository: Artromskiy/DeltaECS
+          path: DeltaECS
+      - name: Checkout DeltaXAML
+        uses: actions/checkout@v5
+        with:
+          repository: Artromskiy/DeltaXAML
+          path: DeltaXAML
+      - name: Checkout DeltaText
+        uses: actions/checkout@v5
+        with:
+          repository: Artromskiy/DeltaText
+          path: DeltaText
+      - name: Checkout DeltaRender
+        uses: actions/checkout@v5
+        with:
+          repository: Artromskiy/DeltaRender
+          path: DeltaRender
+      - name: Checkout DeltaShader
+        uses: actions/checkout@v5
+        with:
+          repository: Artromskiy/DeltaShader
+          path: DeltaShader
+      - name: Checkout DeltaDiagnostics
+        uses: actions/checkout@v5
+        with:
+          repository: Artromskiy/DeltaDiagnostics
+          path: DeltaDiagnostics
       - name: Setup .NET
         uses: actions/setup-dotnet@v5
         with:
