@@ -8,17 +8,8 @@ internal static class EnumFlagNameBuilder<T> where T : unmanaged, Enum
 {
     public static string Build(T value, Dictionary<T, string> valueToName)
     {
-        const string Splitter = " | ";
         StringBuilder builder = new();
-        foreach (var item in EnumBakedValues<T>.values)
-        {
-            if (value.HasFlag(item))
-            {
-                builder.Append(valueToName[item]).Append(Splitter);
-            }
-        }
-
-        builder.Length -= Splitter.Length;
+        EnumFlagNameAccumulator<T>.Append(value, valueToName, builder);
         return builder.ToString();
     }
 }

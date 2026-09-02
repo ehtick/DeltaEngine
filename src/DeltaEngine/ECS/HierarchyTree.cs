@@ -6,7 +6,7 @@ using System.Diagnostics;
 
 namespace Delta.Engine.ECS;
 
-internal sealed class HierarchyTree
+internal sealed partial class HierarchyTree
 {
     private readonly Dictionary<EntityReference, LinkedListNode<HierarchyTreeNode>> _entityToNode = [];
     private readonly HierarchyTreeNode _root = new();
