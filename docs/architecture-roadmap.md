@@ -31,10 +31,10 @@ DeltaECS ---------------------------> DeltaEngine
 
 DeltaEngine may depend on DeltaECS, DeltaRender,
 `DeltaShader.Contract` runtime contracts, DeltaXAML/DeltaText neutral
-contracts and DeltaMaths. The current optional compute/windowed adapters still
-use a pre-final shader compatibility path; that is migration state, not the
-target dependency. Those
-standalone projects must not depend on DeltaEngine. DeltaEditor owns the
+contracts and DeltaMaths. Published shader and renderer runtime contracts are
+consumed through floating package references; only source-only shader build
+tools remain project references. Those standalone projects must not depend on
+DeltaEngine. DeltaEditor owns the
 application composition and may depend on Engine; the reverse edge is
 forbidden.
 
