@@ -1,3 +1,5 @@
+using System;
+
 namespace Delta.Engine.Utilities;
 
 internal static class Enums

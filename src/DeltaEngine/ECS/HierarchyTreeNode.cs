@@ -1,4 +1,6 @@
 using Arch.Core;
+using System;
+using System.Collections.Generic;
 
 namespace Delta.Engine.ECS;
 
