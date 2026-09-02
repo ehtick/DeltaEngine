@@ -46,8 +46,8 @@ are supplied by the caller rather than stored in the render contract.
 
 - Headless execution is supported through neutral services and `NullRenderer`.
 - Windowed execution is an optional SDL/MoltenVK composition.
-- Engine contracts do not expose SDL, Vulkan, Avalonia, Arch, Roslyn or ECS
-  storage types.
+- Engine contracts do not expose platform, graphics backend, compiler or
+  storage internals.
 - Shader compilation, XAML layout and ECS storage remain owned by their
   respective projects.
 - No standalone runnable samples are currently shipped in this repository.
