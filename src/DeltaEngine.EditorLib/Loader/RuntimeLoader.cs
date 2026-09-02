@@ -1,6 +1,7 @@
 using Delta.Engine.Assets;
 using Delta.Engine.Assets.Defaults;
 using Delta.Engine.Runtime;
+using Delta.Engine.EditorLib.Compile;
 using Delta.Engine.EditorLib.Scripting;
 using System;
 using System.Collections.Generic;
