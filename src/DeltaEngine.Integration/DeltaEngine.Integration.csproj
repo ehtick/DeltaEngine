@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\DeltaECS\src\DeltaECS\DeltaECS.csproj" />
+    <PackageReference Include="DeltaECS" Version="*" />
     <ProjectReference Include="..\..\..\DeltaXAML\src\DeltaXAML.Contract\DeltaXAML.Contract.csproj" />
   </ItemGroup>
 
