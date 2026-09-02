@@ -16,7 +16,7 @@
                       OutputItemType="Analyzer"
                       ReferenceOutputAssembly="false"
                       PrivateAssets="all" />
-    <PackageReference Include="DeltaMaths" Version="0.0.7" />
+    <PackageReference Include="DeltaMaths" Version="*" />
   </ItemGroup>
 
 </Project>
