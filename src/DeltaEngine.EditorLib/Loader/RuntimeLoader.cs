@@ -1,7 +1,6 @@
 using Delta.Engine.Assets;
 using Delta.Engine.Assets.Defaults;
 using Delta.Engine.Runtime;
-using Delta.Engine.EditorLib.Compile;
 using Delta.Engine.EditorLib.Scripting;
 using System;
 using System.Collections.Generic;
@@ -9,14 +8,13 @@ using System.IO;
 
 namespace Delta.Engine.EditorLib.Loader;
 
-[Obsolete("The legacy Roslyn runtime loader is migration-only; use DeltaEditor scripting services.", false)]
+[Obsolete("The legacy editor runtime loader is migration-only; use DeltaEditor scripting services and DeltaShader.Tool/codegen for shader assets.", false)]
 public sealed class RuntimeLoader : IDisposable
 {
     private readonly IProjectPath _projectPath;
     private Delta.Engine.Runtime.Runtime _runtime;
 
     private readonly CompilerModule _compilerModule;
-    private readonly ShaderCompilerModule _shaderCompilerModule;
     private RuntimeScheduler _executionModule;
 
     private readonly IThreadGetter? _threadGetter;
@@ -38,8 +36,6 @@ public sealed class RuntimeLoader : IDisposable
         _threadGetter = uiThreadGetter;
 
         _compilerModule = new CompilerModule(_projectPath);
-        _shaderCompilerModule = new ShaderCompilerModule();
-
         _compilerModule.Recompile();
 
         var ctx = RuntimeContextFactory.CreateHeadlessContext(_projectPath);
@@ -50,7 +46,6 @@ public sealed class RuntimeLoader : IDisposable
         var directory = Directory.GetCurrentDirectory();
 
         DefaultsImporter<MeshData>.Import(Path.Combine(directory, "Import", "Models"));
-        _shaderCompilerModule.CompileAndImportShaders(Path.Combine(directory, "Import", "Shaders"));
     }
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage(
