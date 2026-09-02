@@ -58,6 +58,24 @@ forbidden.
 Do not edit another workstream's new project to unblock local work. Define a
 small interface or fixture and report the required contract to its owner.
 
+## Package boundary exceptions
+
+Published cross-repository runtime contracts are consumed through unpinned
+`PackageReference` entries. The remaining cross-repository project references
+are deliberate build or local-composition boundaries:
+
+- `DeltaEngine.Windowed` references `DeltaRender.FullscreenShaders` and
+  `DeltaRender.UIShaders` because both are source-only, non-packable build
+  tools that provide generated shader outputs.
+- `DeltaEngine.ComputeSmoke` is a retired marker and has no renderer or
+  cross-repository runtime project reference. Its replacement is the current
+  generated `Delta.Shader.Contract.ShaderArtifact` plus Delta.Render
+  RenderGraph path.
+- DeltaEditor references local DeltaEngine projects and DeltaEditorShell for
+  composition; those are not published runtime contract packages.
+- Engine-local projects, source generators and analyzers remain
+  `ProjectReference` edges where they participate in the same build graph.
+
 ## Engine responsibilities
 
 The engine owns:
