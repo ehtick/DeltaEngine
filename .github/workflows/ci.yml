@@ -55,17 +55,17 @@ jobs:
         uses: actions/checkout@v7
         with:
           repository: Artromskiy/DeltaECS
-          path: ../DeltaECS
+          path: DeltaECS
       - name: Checkout DeltaXAML
         uses: actions/checkout@v7
         with:
           repository: Artromskiy/DeltaXAML
-          path: ../DeltaXAML
+          path: DeltaXAML
       - name: Checkout DeltaText
         uses: actions/checkout@v7
         with:
           repository: Artromskiy/DeltaText
-          path: ../DeltaText
+          path: DeltaText
       - name: Install .NET 8
         uses: actions/setup-dotnet@v6
         with:
@@ -117,17 +117,17 @@ jobs:
         uses: actions/checkout@v7
         with:
           repository: Artromskiy/DeltaECS
-          path: ../DeltaECS
+          path: DeltaECS
       - name: Checkout DeltaXAML
         uses: actions/checkout@v7
         with:
           repository: Artromskiy/DeltaXAML
-          path: ../DeltaXAML
+          path: DeltaXAML
       - name: Checkout DeltaText
         uses: actions/checkout@v7
         with:
           repository: Artromskiy/DeltaText
-          path: ../DeltaText
+          path: DeltaText
       - name: Install .NET 8
         uses: actions/setup-dotnet@v6
         with:
