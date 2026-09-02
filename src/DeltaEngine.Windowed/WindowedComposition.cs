@@ -230,33 +230,45 @@ public readonly record struct WindowShaderArtifactSelection(string VertexName, s
 
 internal sealed class WindowedRenderGraphFeature : IRenderFeature
 {
+    private readonly RenderTargetHandle _target;
     private readonly IGraphicsShaderProgram _fullscreenProgram;
     private readonly IGraphicsShaderProgram? _uiProgram;
-    private UiQuad[] _quads = [];
+    private UiVisualDraw[] _visuals = [];
+    private float4[] _effectiveClips = [];
+    private bool[] _hasClips = [];
     private readonly FullscreenPass _fullscreenPass = new();
     private readonly UiPass _uiPass = new();
-    private int _quadCount;
-    private GraphicsFrameParameters _parameters;
+    private int _visualCount;
+    private EngineSurfaceSnapshot _surface;
 
-    public WindowedRenderGraphFeature(IGraphicsShaderProgram fullscreenProgram, IGraphicsShaderProgram? uiProgram)
+    public WindowedRenderGraphFeature(
+        RenderTargetHandle target,
+        IGraphicsShaderProgram fullscreenProgram,
+        IGraphicsShaderProgram? uiProgram)
     {
+        if (!target.IsValid)
+        {
+            throw new ArgumentException("A windowed render graph requires a valid target.", nameof(target));
+        }
+
+        _target = target;
         _fullscreenProgram = fullscreenProgram ?? throw new ArgumentNullException(nameof(fullscreenProgram));
         _uiProgram = uiProgram;
     }
 
     public void Update(EngineSurfaceSnapshot surface, in UiDisplayList displayList)
     {
-        _parameters = new GraphicsFrameParameters(surface.Width, surface.Height, 0);
+        _surface = surface;
         if (_uiProgram is null)
         {
-            _quadCount = 0;
+            _visualCount = 0;
             return;
         }
 
         var clips = displayList.Clips;
         var order = displayList.Order;
         EnsureCapacity(order.IsEmpty ? displayList.Visuals.Length : order.Length);
-        _quadCount = 0;
+        _visualCount = 0;
         if (order.IsEmpty)
         {
             for (var index = 0; index < displayList.Visuals.Length; index++)
@@ -281,13 +293,14 @@ internal sealed class WindowedRenderGraphFeature : IRenderFeature
 
     public void Update(EngineSurfaceSnapshot surface)
     {
-        _parameters = new GraphicsFrameParameters(surface.Width, surface.Height, 0);
-        _quadCount = 0;
+        _surface = surface;
+        _visualCount = 0;
     }
 
-    public void AddPasses(IRenderGraphBuilder graph, IRenderFeatureContext context)
+    public void AddPasses(IRenderGraphBuilder graph, ulong frameNumber)
     {
-        var surface = graph.ImportSurface(context.View.Surface);
+        _ = frameNumber;
+        var surface = graph.ImportTarget(_target);
         var fullscreen = graph.AddRasterPass(
             new RasterPassDescription("engine-fullscreen", new RasterPipelineDescription(_fullscreenProgram, cullMode: RasterCullMode.None)),
             _fullscreenPass);
@@ -299,9 +312,9 @@ internal sealed class WindowedRenderGraphFeature : IRenderFeature
                 AttachmentLoadOperation.Clear,
                 AttachmentStoreOperation.Store,
                 new ClearColor(0.04f, 0.05f, 0.08f, 1f)));
-        _fullscreenPass.Update(_parameters);
+        _fullscreenPass.Update(_surface);
 
-        if (_uiProgram is null || _quadCount == 0)
+        if (_uiProgram is null || _visualCount == 0)
         {
             return;
         }
@@ -313,49 +326,50 @@ internal sealed class WindowedRenderGraphFeature : IRenderFeature
             ui,
             0,
             new ColorAttachmentDescription(surface, AttachmentLoadOperation.Load, AttachmentStoreOperation.Store));
-        _uiPass.Update(_quads, _quadCount, _parameters);
+        _uiPass.Update(_visuals, _effectiveClips, _hasClips, _visualCount, _surface);
     }
 
     private void EnsureCapacity(int required)
     {
-        if (_quads.Length >= required)
+        if (_visuals.Length >= required)
         {
             return;
         }
 
-        var capacity = Math.Max(4, _quads.Length);
+        var capacity = Math.Max(4, _visuals.Length);
         while (capacity < required)
         {
             capacity = checked(capacity * 2);
         }
 
-        Array.Resize(ref _quads, capacity);
+        Array.Resize(ref _visuals, capacity);
+        Array.Resize(ref _effectiveClips, capacity);
+        Array.Resize(ref _hasClips, capacity);
     }
 
     private void AppendVisual(UiVisualDraw visual, ReadOnlySpan<UiClipRegion> clips, uint order)
     {
         if (visual.Kind is not (UiVisualKind.SolidRectangle or UiVisualKind.RoundedRectangle or UiVisualKind.Border) ||
-            !TryResolveClip(clips, visual.Clip, out var clip))
+            !TryResolveClip(clips, visual.Clip, out var clip, out var hasClip))
         {
             return;
         }
 
-        var bounds = visual.Bounds;
-        var color = visual.Color;
-        var quad = new UiQuad(bounds.x, bounds.y, bounds.z, bounds.w, color.x, color.y, color.z, color.w)
-        {
-            Clip = clip,
-            Order = order,
-        };
-        if (quad.IsValid)
-        {
-            _quads[_quadCount++] = quad;
-        }
+        _ = order;
+        _visuals[_visualCount] = visual;
+        _effectiveClips[_visualCount] = clip;
+        _hasClips[_visualCount] = hasClip;
+        _visualCount++;
     }
 
-    private static bool TryResolveClip(ReadOnlySpan<UiClipRegion> clips, UiClipId id, out UiClipRect result)
+    private static bool TryResolveClip(
+        ReadOnlySpan<UiClipRegion> clips,
+        UiClipId id,
+        out float4 result,
+        out bool hasClip)
     {
-        result = UiClipRect.Unbounded;
+        result = default;
+        hasClip = false;
         if (!id.IsValid)
         {
             return true;
@@ -366,7 +380,8 @@ internal sealed class WindowedRenderGraphFeature : IRenderFeature
             return false;
         }
 
-        result = ToClip(clips[id.Value].Bounds);
+        result = clips[id.Value].Bounds;
+        hasClip = true;
         var parent = clips[id.Value].Parent;
         var guard = clips.Length;
         while (parent.IsValid && guard-- > 0)
@@ -376,50 +391,43 @@ internal sealed class WindowedRenderGraphFeature : IRenderFeature
                 return false;
             }
 
-            result = Intersect(result, ToClip(clips[parent.Value].Bounds));
+            result = Intersect(result, clips[parent.Value].Bounds);
             parent = clips[parent.Value].Parent;
         }
 
-        return result.IsValid;
+        return IsValidClip(result);
     }
 
-    private static UiClipRect ToClip(float4 bounds) => new(bounds.x, bounds.y, bounds.z, bounds.w);
-
-    private static UiClipRect Intersect(UiClipRect left, UiClipRect right)
+    private static float4 Intersect(float4 left, float4 right)
     {
-        if (left.IsUnbounded)
-        {
-            return right;
-        }
-
-        if (right.IsUnbounded)
-        {
-            return left;
-        }
-
-        var x = MathF.Max(left.X, right.X);
-        var y = MathF.Max(left.Y, right.Y);
-        var r = MathF.Min(left.X + left.Width, right.X + right.Width);
-        var b = MathF.Min(left.Y + left.Height, right.Y + right.Height);
-        return new UiClipRect(x, y, MathF.Max(0, r - x), MathF.Max(0, b - y));
+        var x = MathF.Max(left.x, right.x);
+        var y = MathF.Max(left.y, right.y);
+        var r = MathF.Min(left.x + left.z, right.x + right.z);
+        var b = MathF.Min(left.y + left.w, right.y + right.w);
+        return new float4(x, y, MathF.Max(0, r - x), MathF.Max(0, b - y));
     }
+
+    private static bool IsValidClip(float4 clip)
+        => float.IsFinite(clip.x) && float.IsFinite(clip.y) &&
+           float.IsFinite(clip.z) && float.IsFinite(clip.w) &&
+           clip.z > 0 && clip.w > 0;
 
     private sealed class FullscreenPass : IRasterPass
     {
-        private GraphicsFrameParameters _parameters;
+        private EngineSurfaceSnapshot _surface;
 
-        public void Update(GraphicsFrameParameters parameters) => _parameters = parameters;
+        public void Update(EngineSurfaceSnapshot surface) => _surface = surface;
 
         public void Record(IRasterCommandContext commands)
         {
-            var viewport = new RenderViewport(0, 0, _parameters.ResolutionX, _parameters.ResolutionY);
-            var scissor = new PixelRect(0, 0, checked((int)_parameters.ResolutionX), checked((int)_parameters.ResolutionY));
+            var viewport = new RenderViewport(0, 0, _surface.Width, _surface.Height);
+            var scissor = new PixelRect(0, 0, _surface.Width, _surface.Height);
             commands.SetViewport(in viewport);
             commands.SetScissor(in scissor);
             var constants = new FullscreenUi.UiPushConstants
             {
-                Resolution = new float2(_parameters.ResolutionX, _parameters.ResolutionY),
-                Time = _parameters.TimeSeconds,
+                Resolution = new float2(_surface.Width, _surface.Height),
+                Time = 0,
             };
             commands.PushConstants(MemoryMarshal.AsBytes(MemoryMarshal.CreateReadOnlySpan(ref constants, 1)));
             commands.Draw(3);
@@ -428,41 +436,60 @@ internal sealed class WindowedRenderGraphFeature : IRenderFeature
 
     private sealed class UiPass : IRasterPass
     {
-        private UiQuad[] _quads = [];
-        private int _quadCount;
-        private GraphicsFrameParameters _parameters;
+        private UiVisualDraw[] _visuals = [];
+        private float4[] _effectiveClips = [];
+        private bool[] _hasClips = [];
+        private int _visualCount;
+        private EngineSurfaceSnapshot _surface;
 
-        public void Update(UiQuad[] quads, int quadCount, GraphicsFrameParameters parameters)
+        public void Update(
+            UiVisualDraw[] visuals,
+            float4[] effectiveClips,
+            bool[] hasClips,
+            int visualCount,
+            EngineSurfaceSnapshot surface)
         {
-            _quads = quads;
-            _quadCount = quadCount;
-            _parameters = parameters;
+            _visuals = visuals;
+            _effectiveClips = effectiveClips;
+            _hasClips = hasClips;
+            _visualCount = visualCount;
+            _surface = surface;
         }
 
         public void Record(IRasterCommandContext commands)
         {
-            var viewport = new RenderViewport(0, 0, _parameters.ResolutionX, _parameters.ResolutionY);
+            var viewport = new RenderViewport(0, 0, _surface.Width, _surface.Height);
+            var fullScissor = new PixelRect(0, 0, _surface.Width, _surface.Height);
             commands.SetViewport(in viewport);
-            var metrics = new WindowMetrics((uint)_parameters.ResolutionX, (uint)_parameters.ResolutionY, 1);
             var constants = new UiPanel.Parameters
             {
-                Resolution = new float2(_parameters.ResolutionX, _parameters.ResolutionY),
+                Resolution = new float2(_surface.Width, _surface.Height),
             };
-            for (var index = 0; index < _quadCount; index++)
+            for (var index = 0; index < _visualCount; index++)
             {
-                var quad = _quads[index];
-                if (!quad.Clip.TryGetScissor(metrics, out var clip))
+                var clip = fullScissor;
+                if (_hasClips[index] && !TryToScissor(_effectiveClips[index], _surface, out clip))
                 {
                     continue;
                 }
 
-                var scissor = new PixelRect(clip.X, clip.Y, checked((int)clip.Width), checked((int)clip.Height));
-                commands.SetScissor(in scissor);
-                constants.Rect = new float4(quad.X, quad.Y, quad.Width, quad.Height);
-                constants.Color = new float4(quad.Red, quad.Green, quad.Blue, quad.Alpha);
+                commands.SetScissor(in clip);
+                var visual = _visuals[index];
+                constants.Rect = visual.Bounds;
+                constants.Color = visual.Color;
                 commands.PushConstants(MemoryMarshal.AsBytes(MemoryMarshal.CreateReadOnlySpan(ref constants, 1)));
                 commands.Draw(6);
             }
+        }
+
+        private static bool TryToScissor(float4 bounds, EngineSurfaceSnapshot surface, out PixelRect result)
+        {
+            var left = Math.Clamp((int)MathF.Floor(bounds.x), 0, surface.Width);
+            var top = Math.Clamp((int)MathF.Floor(bounds.y), 0, surface.Height);
+            var right = Math.Clamp((int)MathF.Ceiling(bounds.x + bounds.z), 0, surface.Width);
+            var bottom = Math.Clamp((int)MathF.Ceiling(bounds.y + bounds.w), 0, surface.Height);
+            result = new PixelRect(left, top, right - left, bottom - top);
+            return !result.IsEmpty;
         }
     }
 }
@@ -527,11 +554,8 @@ public sealed class VulkanWindowRenderService : IEngineRenderService
     private readonly IEngineUiDisplayListSource? _uiSource;
     private IRenderFrameSession? _session;
     private IRenderGraph? _graph;
-    private IGraphicsPipeline? _graphicsPipeline;
-    private IGraphicsPipeline? _uiPipeline;
     private WindowedRenderGraphFeature? _feature;
     private IRenderFeature[] _features = [];
-    private RenderView[] _views = [];
     private EngineSurfaceSnapshot _lastSurface;
     private bool _initialized;
     private bool _disposed;
@@ -572,8 +596,6 @@ public sealed class VulkanWindowRenderService : IEngineRenderService
 
         IRenderFrameSession? session = null;
         IRenderGraph? graph = null;
-        IGraphicsPipeline? graphicsPipeline = null;
-        IGraphicsPipeline? uiPipeline = null;
         try
         {
             _resources.Initialize(_platform);
@@ -582,7 +604,6 @@ public sealed class VulkanWindowRenderService : IEngineRenderService
             var fullscreenProgram = FullscreenUiGraphicsShaderProgram.CreateProgram(
                 LoadSpirv(fullscreenSelection.VertexName),
                 LoadSpirv(fullscreenSelection.FragmentName));
-            graphicsPipeline = session.CreateGraphicsPipeline(in fullscreenProgram);
 
             IGraphicsShaderProgram? uiProgram = null;
             if (_uiSource is not null)
@@ -591,27 +612,22 @@ public sealed class VulkanWindowRenderService : IEngineRenderService
                 uiProgram = UiPanelGraphicsShaderProgram.CreateProgram(
                     LoadSpirv(uiSelection.VertexName),
                     LoadSpirv(uiSelection.FragmentName));
-                uiPipeline = session.CreateGraphicsPipeline(in uiProgram);
             }
 
             graph = session.CreateRenderGraph();
-            var feature = new WindowedRenderGraphFeature(fullscreenProgram, uiProgram);
+            var feature = new WindowedRenderGraphFeature(session.Target, fullscreenProgram, uiProgram);
             var features = new IRenderFeature[] { feature };
-            var views = new RenderView[1];
             var lastSurface = _platform.Surface;
             _session = session;
             _graph = graph;
-            _graphicsPipeline = graphicsPipeline;
-            _uiPipeline = uiPipeline;
             _feature = feature;
             _features = features;
-            _views = views;
             _lastSurface = lastSurface;
             _initialized = true;
         }
         catch
         {
-            DisposeInitializationFailure(graph as IAsyncDisposable, uiPipeline, graphicsPipeline, _resources);
+            DisposeInitializationFailure(graph as IAsyncDisposable, _resources);
             throw;
         }
     }
@@ -631,11 +647,7 @@ public sealed class VulkanWindowRenderService : IEngineRenderService
 
         if (_lastSurface != frame.Surface)
         {
-            if (!_session.Resize(new WindowMetrics((uint)frame.Surface.Width, (uint)frame.Surface.Height, 1f)))
-            {
-                throw new InvalidOperationException("Vulkan swapchain resize failed.");
-            }
-
+            _session.ResizeTarget(new PixelExtent((uint)frame.Surface.Width, (uint)frame.Surface.Height));
             _lastSurface = frame.Surface;
         }
 
@@ -649,12 +661,7 @@ public sealed class VulkanWindowRenderService : IEngineRenderService
             _feature.Update(frame.Surface);
         }
 
-        _views[0] = new RenderView(
-            _session.SurfaceHandle,
-            new RenderViewport(0, 0, frame.Surface.Width, frame.Surface.Height),
-            new PixelRect(0, 0, frame.Surface.Width, frame.Surface.Height));
-        var graphFrame = new RenderGraphFrame(frame.FrameNumber, _views);
-        _graph.Build(in graphFrame, _features);
+        _graph.Build((ulong)frame.FrameNumber, _features);
         _graph.Execute();
     }
 
@@ -671,23 +678,16 @@ public sealed class VulkanWindowRenderService : IEngineRenderService
 
         _disposed = true;
         var graph = _graph;
-        var uiPipeline = _uiPipeline;
-        var graphicsPipeline = _graphicsPipeline;
         _graph = null;
-        _uiPipeline = null;
-        _graphicsPipeline = null;
         _feature = null;
         _features = [];
-        _views = [];
         _session = null;
         _initialized = false;
-        DisposeOwnedResources(graph as IAsyncDisposable, uiPipeline, graphicsPipeline, _resources);
+        DisposeOwnedResources(graph as IAsyncDisposable, _resources);
     }
 
     internal static void DisposeOwnedResources(
         IAsyncDisposable? graph,
-        IGraphicsPipeline? uiPipeline,
-        IGraphicsPipeline? graphicsPipeline,
         IWindowedResourceLifetime resources)
     {
         ArgumentNullException.ThrowIfNull(resources);
@@ -697,28 +697,12 @@ public sealed class VulkanWindowRenderService : IEngineRenderService
         }
         finally
         {
-            try
-            {
-                DisposeAsync(uiPipeline);
-            }
-            finally
-            {
-                try
-                {
-                    DisposeAsync(graphicsPipeline);
-                }
-                finally
-                {
-                    resources.Dispose();
-                }
-            }
+            resources.Dispose();
         }
     }
 
     private static void DisposeInitializationFailure(
         IAsyncDisposable? graph,
-        IGraphicsPipeline? uiPipeline,
-        IGraphicsPipeline? graphicsPipeline,
         IWindowedResourceLifetime resources)
     {
         try
@@ -727,21 +711,7 @@ public sealed class VulkanWindowRenderService : IEngineRenderService
         }
         finally
         {
-            try
-            {
-                DisposeAsync(uiPipeline);
-            }
-            finally
-            {
-                try
-                {
-                    DisposeAsync(graphicsPipeline);
-                }
-                finally
-                {
-                    resources.RollbackInitialization();
-                }
-            }
+            resources.RollbackInitialization();
         }
     }
 

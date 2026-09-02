@@ -65,7 +65,7 @@
 
 
   <ItemGroup>
-    <Using Include="DeltaEngine.InlineConstants">
+    <Using Include="Delta.Engine.InlineConstants">
       <Static>True</Static>
     </Using>
 

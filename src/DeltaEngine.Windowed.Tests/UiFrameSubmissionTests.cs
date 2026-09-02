@@ -20,14 +20,11 @@ public sealed class UiFrameSubmissionTests
     }
 
     [Fact]
-    public void CanonicalRenderViewRequiresValidSurfaceAndViewport()
+    public void CanonicalRenderTargetRequiresValidHandle()
     {
-        var view = new RenderView(
-            new RenderSurfaceHandle(1, 1),
-            new RenderViewport(0, 0, 320, 180),
-            new PixelRect(0, 0, 320, 180));
+        var target = new RenderTargetHandle(1, 1);
 
-        Assert.True(view.IsValid);
+        Assert.True(target.IsValid);
     }
 
     [Fact]
