@@ -10,11 +10,8 @@ neutral adapters. Editor-specific Roslyn/tooling belongs in DeltaEditor.
 - Read [docs/architecture-roadmap.md](docs/architecture-roadmap.md) for durable
   dependency direction; read other contract/migration docs only when that
   boundary is in scope.
-- [../EDITOR_UI_TODO.md](../EDITOR_UI_TODO.md) is authoritative for the editor
-  window/inspector milestone.
 - [../CONTRACTS.md](../CONTRACTS.md) is authoritative for cross-project
-  ownership; [../EDITOR_UI_TODO.md](../EDITOR_UI_TODO.md) tracks editor
-  composition order and acceptance.
+  ownership and editor composition boundaries.
 
 Headless integration stays independent of SDL/Vulkan. Renderer never polls
 input; Engine never parses shader source, XAML or font outlines.

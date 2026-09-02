@@ -9,8 +9,8 @@
 - Complete close/resize/disposal acceptance for the real editor application.
 - Move storage-specific reads/writes and spans to the ECS adapter; keep the
   copied world-change journal migration-only.
-Cross-project ownership is in [../CONTRACTS.md](../CONTRACTS.md); shared
-inspector gates are in [../EDITOR_UI_TODO.md](../EDITOR_UI_TODO.md).
+Cross-project ownership and shared inspector gates are in
+[../CONTRACTS.md](../CONTRACTS.md).
 
 ## Arch legacy isolation plan
 
