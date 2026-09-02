@@ -12,9 +12,9 @@ internal static class EnumNameFieldReader<T> where T : unmanaged, Enum
         List<EnumNameEntry<T>> entries = new(fields.Length);
         foreach (var field in fields)
         {
-            if (field.GetValue(null) is T value)
+            if (EnumNameEntryReader<T>.TryRead(field, out var entry))
             {
-                entries.Add(new(value, field.Name, field.IsDefined(typeof(ObsoleteAttribute), false)));
+                entries.Add(entry);
             }
         }
 

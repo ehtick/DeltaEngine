@@ -1,5 +1,6 @@
 using Arch.Core;
 using Arch.Core.Extensions;
+using Delta.Engine.ECS.Components;
 using System.Collections.Generic;
 using System.Diagnostics;
 
