@@ -68,7 +68,7 @@ internal sealed class NodeData(RootData root, PathData path)
 
         if (int.TryParse(fieldData.Text, out int value))
         {
-            value += maths.sign(delta);
+            value += Maths.Sign(delta);
         }
 
         fieldData.Text = value.ParseToString();

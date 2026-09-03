@@ -195,7 +195,7 @@ public sealed class Sdl3PlatformShell : IEnginePlatformShell
     }
 
     private void UpdateSurface(int width, int height)
-        => _surface = new EngineSurfaceSnapshot(maths.max(width, 0), maths.max(height, 0), IsResized: true);
+        => _surface = new EngineSurfaceSnapshot(Maths.Max(width, 0), Maths.Max(height, 0), IsResized: true);
 
     private void ThrowIfDisposed() => ObjectDisposedException.ThrowIf(_disposed, this);
 }
@@ -221,7 +221,7 @@ public sealed class Sdl3FrameClock : IEngineFrameClock
 
         var delta = elapsedTicks / 1_000_000_000f;
         _lastTicks = ticks;
-        return maths.min(delta, 0.25f);
+        return Maths.Min(delta, 0.25f);
     }
 }
 
@@ -342,7 +342,7 @@ internal sealed class WindowedRenderGraphFeature : IRenderFeature
             return;
         }
 
-        var capacity = maths.max(4, _visuals.Length);
+        var capacity = Maths.Max(4, _visuals.Length);
         while (capacity < required)
         {
             capacity = checked(capacity * 2);
@@ -406,11 +406,11 @@ internal sealed class WindowedRenderGraphFeature : IRenderFeature
 
     private static float4 Intersect(float4 left, float4 right)
     {
-        var x = maths.max(left.x, right.x);
-        var y = maths.max(left.y, right.y);
-        var r = maths.min(left.x + left.z, right.x + right.z);
-        var b = maths.min(left.y + left.w, right.y + right.w);
-        return new float4(x, y, maths.max(0, r - x), maths.max(0, b - y));
+        var x = Maths.Max(left.x, right.x);
+        var y = Maths.Max(left.y, right.y);
+        var r = Maths.Min(left.x + left.z, right.x + right.z);
+        var b = Maths.Min(left.y + left.w, right.y + right.w);
+        return new float4(x, y, Maths.Max(0, r - x), Maths.Max(0, b - y));
     }
 
     private static bool IsValidClip(float4 clip)
@@ -490,10 +490,10 @@ internal sealed class WindowedRenderGraphFeature : IRenderFeature
 
         private static bool TryToScissor(float4 bounds, EngineSurfaceSnapshot surface, out PixelRect result)
         {
-            var left = maths.clamp((int)maths.floor(bounds.x), 0, surface.Width);
-            var top = maths.clamp((int)maths.floor(bounds.y), 0, surface.Height);
-            var right = maths.clamp((int)maths.ceil(bounds.x + bounds.z), 0, surface.Width);
-            var bottom = maths.clamp((int)maths.ceil(bounds.y + bounds.w), 0, surface.Height);
+            var left = Maths.Clamp((int)Maths.Floor(bounds.x), 0, surface.Width);
+            var top = Maths.Clamp((int)Maths.Floor(bounds.y), 0, surface.Height);
+            var right = Maths.Clamp((int)Maths.Ceil(bounds.x + bounds.z), 0, surface.Width);
+            var bottom = Maths.Clamp((int)Maths.Ceil(bounds.y + bounds.w), 0, surface.Height);
             result = new PixelRect(left, top, right - left, bottom - top);
             return !result.IsEmpty;
         }

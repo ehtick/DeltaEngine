@@ -62,15 +62,15 @@ internal sealed partial class QuaternionNodeControl : InspectorNode
 
     public static quaternion ToQuaternion(float3 v)
     {
-        float pi = maths.radians(180f);
+        float pi = Maths.Radians(180f);
         v /= 360f;
         v *= pi;
-        float sx = maths.sin(v.x);
-        float cx = maths.cos(v.x);
-        float sy = maths.sin(v.y);
-        float cy = maths.cos(v.y);
-        float sz = maths.sin(v.z);
-        float cz = maths.cos(v.z);
+        float sx = Maths.Sin(v.x);
+        float cx = Maths.Cos(v.x);
+        float sy = Maths.Sin(v.y);
+        float cy = Maths.Cos(v.y);
+        float sz = Maths.Sin(v.z);
+        float cz = Maths.Cos(v.z);
         float cysz = cy * sz;
         float cycz = cy * cz;
         float sycz = sy * cz;
@@ -90,12 +90,12 @@ internal sealed partial class QuaternionNodeControl : InspectorNode
         float cosr_cosp = 1 - (2 * (q.x * q.x + qY2));
         float cosy_cosp = 1 - (2 * (qY2 + q.z * q.z));
         float sinp = 2 * (q.w * q.y - q.z * q.x);
-        float pi = maths.radians(180f);
+        float pi = Maths.Radians(180f);
         float toDegrees = 180f / pi;
         return new float3(
-            maths.atan2(sinr_cosp, cosr_cosp) * toDegrees,
-            (maths.abs(sinp) >= 1 ? (sinp < 0 ? -pi / 2 : pi / 2) : maths.asin(sinp)) * toDegrees,
-            maths.atan2(siny_cosp, cosy_cosp) * toDegrees);
+            Maths.Atan2(sinr_cosp, cosr_cosp) * toDegrees,
+            (Maths.Abs(sinp) >= 1 ? (sinp < 0 ? -pi / 2 : pi / 2) : Maths.Asin(sinp)) * toDegrees,
+            Maths.Atan2(siny_cosp, cosy_cosp) * toDegrees);
     }
 
 }
