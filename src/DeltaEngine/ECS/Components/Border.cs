@@ -1,6 +1,6 @@
 using Delta.Engine.Assets;
 using Delta.Engine.ECS.Attributes;
-using Delta.Maths;
+using Delta;
 using System;
 namespace Delta.Engine.ECS.Components;
 

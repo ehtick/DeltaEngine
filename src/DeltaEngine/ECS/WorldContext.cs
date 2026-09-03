@@ -1,6 +1,6 @@
 using Arch.Core;
 using Delta.Engine.ECS.Components;
-using Delta.Maths;
+using Delta;
 
 namespace Delta.Engine.ECS;
 

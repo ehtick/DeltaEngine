@@ -1,6 +1,6 @@
 using Delta.Engine.Assets;
 using Delta.Engine.Editor.Inspector.Internal;
-using Delta.Maths;
+using Delta;
 using System;
 using System.Collections.Generic;
 

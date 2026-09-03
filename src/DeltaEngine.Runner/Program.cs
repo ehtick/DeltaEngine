@@ -11,15 +11,15 @@ Entity child = world.Create(stackalloc[] { components.WorldTransform, components
 
 var rootTransform = new Transform
 {
-    position = new Delta.Maths.float3(2, 0, 0),
-    rotation = Delta.Maths.quaternion.identity,
-    scale = new Delta.Maths.float3(1),
+    position = new Delta.float3(2, 0, 0),
+    rotation = Delta.quaternion.identity,
+    scale = new Delta.float3(1),
 };
 var childTransform = new Transform
 {
-    position = new Delta.Maths.float3(0, 3, 0),
-    rotation = Delta.Maths.quaternion.identity,
-    scale = new Delta.Maths.float3(1),
+    position = new Delta.float3(0, 3, 0),
+    rotation = Delta.quaternion.identity,
+    scale = new Delta.float3(1),
 };
 
 _ = world.Set(root, components.Transform, rootTransform);

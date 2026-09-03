@@ -1,4 +1,4 @@
-using Delta.Maths;
+using Delta;
 using Silk.NET.Assimp;
 
 namespace Delta.Engine.Assets;

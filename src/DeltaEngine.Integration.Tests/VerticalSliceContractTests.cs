@@ -1,6 +1,6 @@
 using Delta.Editor.Scripting;
 using Delta.Engine.Integration;
-using Delta.Maths;
+using Delta;
 using System;
 using System.Collections.Generic;
 using System.IO;

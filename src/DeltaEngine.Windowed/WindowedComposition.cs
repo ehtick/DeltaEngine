@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.InteropServices;
 using Delta.Engine.Integration;
-using Delta.Maths;
+using Delta;
 using Delta.Render;
 using Delta.Render.FullscreenShaders;
 using Delta.Render.Platform.SDL3;

@@ -1,7 +1,7 @@
 using Delta.ECS;
 using Delta.Engine.ECS;
 using Delta.Engine.ECS.Components;
-using Delta.Maths;
+using Delta;
 using Xunit;
 
 namespace Delta.Engine.Integration.Tests;

@@ -5,7 +5,7 @@ using Avalonia.Media;
 using Delta.Engine.Runtime;
 using Delta.Engine.Editor.Inspector.Internal;
 using ExCSS;
-using Delta.Maths;
+using Delta;
 using System;
 
 namespace Delta.Engine.Editor;

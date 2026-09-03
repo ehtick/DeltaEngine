@@ -31,11 +31,11 @@ headless/compiler/contract checks. Empty mandatory domains stay tracked with
 
 ## Delta.Maths API gate
 
-First-party C# code uses the canonical managed spelling `Maths.*` through
-`using Delta.Maths;`. Because the published provider type is currently
-lowercase, a file-local `using Maths = Delta.Maths.maths;` alias is allowed.
-Do not use direct `System.Math`, `MathF, or `DeltaMaths.*` calls. Run the
-bounded gate before handing off math-related changes:
+First-party C# code uses the canonical managed spelling `Maths.*` with
+`using Delta;`. Do not use direct `System.Math`, `MathF`,
+`DeltaMaths.*`, the lowercase provider spelling, or the old
+`Delta.Maths` namespace. Run the bounded gate before handing off
+math-related changes:
 
 `bash
 ./eng/check-no-system-math.sh

@@ -18,9 +18,9 @@ fi
 # No provider files are allowlisted. Generated output is excluded only through
 # the obj/bin path exclusions below.
 if rg -n --glob '*.cs' --glob '!**/bin/**' --glob '!**/obj/**' \
-    'System\.Math(F)?\.|(^|[^[:alnum:]_])Math(F)?\.|(^|[^[:alnum:]_])DeltaMaths\.|(^|[^[:alnum:]_])maths\.|(^|[^[:alnum:]_])Maths\.(abs|asin|atan2|cos|sin|radians|fma|sign|max|min|clamp|floor|ceil|sqrt|acos|tan|round)\b|using Maths = Delta\.Maths\.maths|Delta\.Maths\.maths' \
+    'System\.Math(F)?\.|(^|[^[:alnum:]_])Math(F)?\.|(^|[^[:alnum:]_])DeltaMaths\.|(^|[^[:alnum:]_])maths\.|(^|[^[:alnum:]_])Maths\.(abs|asin|atan2|cos|sin|radians|fma|sign|max|min|clamp|floor|ceil|sqrt|acos|tan|round)\b|using Maths = Delta\.Maths\.maths|Delta\.Maths\.maths|using Delta\.Maths;|global::Delta\.Maths|Delta\.Maths\.' \
     "${existing_roots[@]}"; then
-    printf 'system-math: legacy math spelling found; use using Delta.Maths; with Maths.* calls\n' >&2
+    printf 'system-math: legacy math spelling found; use using Delta; with Maths.* calls\n' >&2
     exit 1
 fi
 

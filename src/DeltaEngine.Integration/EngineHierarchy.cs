@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Delta.Maths;
+using Delta;
 namespace Delta.Engine.Integration;
 
 public interface IEngineHierarchyReader

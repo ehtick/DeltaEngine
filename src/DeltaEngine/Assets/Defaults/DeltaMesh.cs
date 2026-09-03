@@ -1,5 +1,5 @@
 using Delta.Engine.Runtime;
-using Delta.Maths;
+using Delta;
 using System;
 using System.Runtime.InteropServices;
 namespace Delta.Engine.Assets.Defaults;

@@ -1,9 +1,9 @@
 using BenchmarkDotNet.Attributes;
-using Delta.Maths;
-using Matrix4x4 = Delta.Maths.float4x4;
-using Quaternion = Delta.Maths.quaternion;
-using Vector3 = Delta.Maths.float3;
-using Vector4 = Delta.Maths.float4;
+using Delta;
+using Matrix4x4 = Delta.float4x4;
+using Quaternion = Delta.quaternion;
+using Vector3 = Delta.float3;
+using Vector4 = Delta.float4;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 

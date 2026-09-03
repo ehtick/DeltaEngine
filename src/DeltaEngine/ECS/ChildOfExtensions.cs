@@ -1,7 +1,7 @@
 using Arch.Core;
 using Delta.Engine.ECS.Components;
 using System;
-using Delta.Maths;
+using Delta;
 
 using Delta.Engine.ECS;
 internal static class ChildOfExtensions
