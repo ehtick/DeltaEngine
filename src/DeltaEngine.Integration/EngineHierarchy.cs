@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Delta.Maths;
 
 namespace Delta.Engine.Integration;
 
@@ -256,7 +257,7 @@ public sealed class EngineHierarchy : IEngineHierarchyReader, IDisposable
 
     private static void CopyPrefix(List<EngineEntityId> source, Span<EngineEntityId> destination)
     {
-        var count = Math.Min(source.Count, destination.Length);
+        var count = maths.min(source.Count, destination.Length);
         for (var index = 0; index < count; index++)
         {
             destination[index] = source[index];

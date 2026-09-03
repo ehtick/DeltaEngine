@@ -195,7 +195,7 @@ public sealed class Sdl3PlatformShell : IEnginePlatformShell
     }
 
     private void UpdateSurface(int width, int height)
-        => _surface = new EngineSurfaceSnapshot(Math.Max(width, 0), Math.Max(height, 0), IsResized: true);
+        => _surface = new EngineSurfaceSnapshot(maths.max(width, 0), maths.max(height, 0), IsResized: true);
 
     private void ThrowIfDisposed() => ObjectDisposedException.ThrowIf(_disposed, this);
 }
@@ -213,9 +213,15 @@ public sealed class Sdl3FrameClock : IEngineFrameClock
             return 0;
         }
 
-        var delta = Math.Max(0, ticks - _lastTicks) / 1_000_000_000f;
+        var elapsedTicks = ticks - _lastTicks;
+        if (elapsedTicks < 0)
+        {
+            elapsedTicks = 0;
+        }
+
+        var delta = elapsedTicks / 1_000_000_000f;
         _lastTicks = ticks;
-        return Math.Min(delta, 0.25f);
+        return maths.min(delta, 0.25f);
     }
 }
 
@@ -336,7 +342,7 @@ internal sealed class WindowedRenderGraphFeature : IRenderFeature
             return;
         }
 
-        var capacity = Math.Max(4, _visuals.Length);
+        var capacity = maths.max(4, _visuals.Length);
         while (capacity < required)
         {
             capacity = checked(capacity * 2);
@@ -400,11 +406,11 @@ internal sealed class WindowedRenderGraphFeature : IRenderFeature
 
     private static float4 Intersect(float4 left, float4 right)
     {
-        var x = MathF.Max(left.x, right.x);
-        var y = MathF.Max(left.y, right.y);
-        var r = MathF.Min(left.x + left.z, right.x + right.z);
-        var b = MathF.Min(left.y + left.w, right.y + right.w);
-        return new float4(x, y, MathF.Max(0, r - x), MathF.Max(0, b - y));
+        var x = maths.max(left.x, right.x);
+        var y = maths.max(left.y, right.y);
+        var r = maths.min(left.x + left.z, right.x + right.z);
+        var b = maths.min(left.y + left.w, right.y + right.w);
+        return new float4(x, y, maths.max(0, r - x), maths.max(0, b - y));
     }
 
     private static bool IsValidClip(float4 clip)
@@ -484,10 +490,10 @@ internal sealed class WindowedRenderGraphFeature : IRenderFeature
 
         private static bool TryToScissor(float4 bounds, EngineSurfaceSnapshot surface, out PixelRect result)
         {
-            var left = Math.Clamp((int)MathF.Floor(bounds.x), 0, surface.Width);
-            var top = Math.Clamp((int)MathF.Floor(bounds.y), 0, surface.Height);
-            var right = Math.Clamp((int)MathF.Ceiling(bounds.x + bounds.z), 0, surface.Width);
-            var bottom = Math.Clamp((int)MathF.Ceiling(bounds.y + bounds.w), 0, surface.Height);
+            var left = maths.clamp((int)maths.floor(bounds.x), 0, surface.Width);
+            var top = maths.clamp((int)maths.floor(bounds.y), 0, surface.Height);
+            var right = maths.clamp((int)maths.ceil(bounds.x + bounds.z), 0, surface.Width);
+            var bottom = maths.clamp((int)maths.ceil(bounds.y + bounds.w), 0, surface.Height);
             result = new PixelRect(left, top, right - left, bottom - top);
             return !result.IsEmpty;
         }

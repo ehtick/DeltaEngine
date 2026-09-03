@@ -69,7 +69,7 @@ public class MatrixBench
         {
             for (var row = 0; row < 4; row++)
             {
-                var difference = MathF.Abs(expected.GetElement(column, row) - actual.GetElement(column, row));
+                var difference = maths.abs(expected.GetElement(column, row) - actual.GetElement(column, row));
                 if (difference > 1e-5f)
                 {
                     throw new InvalidOperationException($"{name} does not match DeltaMaths column-vector TRS at ({column}, {row}).");
@@ -500,9 +500,9 @@ public class MatrixBench
         modelMatrix.M23 = scale2.z * (yz - x.w);
         modelMatrix.M31 = scale2.x * (x.z - yw);
         modelMatrix.M32 = scale2.y * (x.w + yz);
-        modelMatrix.M11 = MathF.FusedMultiplyAdd(-scale2.x, yy + zz, scale.x);
-        modelMatrix.M22 = MathF.FusedMultiplyAdd(-scale2.y, x.x + zz, scale.y);
-        modelMatrix.M33 = MathF.FusedMultiplyAdd(-scale2.z, x.x + yy, scale.z);
+        modelMatrix.M11 = maths.fma(-scale2.x, yy + zz, scale.x);
+        modelMatrix.M22 = maths.fma(-scale2.y, x.x + zz, scale.y);
+        modelMatrix.M33 = maths.fma(-scale2.z, x.x + yy, scale.z);
         modelMatrix.M14 = translation.x;
         modelMatrix.M24 = translation.y;
         modelMatrix.M34 = translation.z;

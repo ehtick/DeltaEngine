@@ -29,6 +29,19 @@ samples/ contains runnable examples; probes/ contains bounded
 headless/compiler/contract checks. Empty mandatory domains stay tracked with
 .gitkeep.
 
+## Delta.Maths API gate
+
+First-party C# code uses `Delta.Maths.maths.*` for numeric operations instead
+of direct `System.Math` or `MathF` calls. Run the bounded gate before handing
+off math-related changes:
+
+``bash
+./eng/check-no-system-math.sh
+``
+
+The gate scans first-party C# roots and excludes only generated `obj`/`bin`
+output. No provider-file exceptions are currently allowed.
+
 Build the narrow producer first, then the solution:
 
 ```bash

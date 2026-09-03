@@ -1,6 +1,7 @@
 using Arch.Core;
 using Avalonia.Controls;
 using Delta.Engine.EditorLib.Scripting;
+using Delta.Maths;
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -67,7 +68,7 @@ internal sealed class NodeData(RootData root, PathData path)
 
         if (int.TryParse(fieldData.Text, out int value))
         {
-            value += MathF.Sign(delta);
+            value += maths.sign(delta);
         }
 
         fieldData.Text = value.ParseToString();
