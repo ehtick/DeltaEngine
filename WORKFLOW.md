@@ -29,17 +29,16 @@ samples/ contains runnable examples; probes/ contains bounded
 headless/compiler/contract checks. Empty mandatory domains stay tracked with
 .gitkeep.
 
-## Delta.Maths API gate
+## Delta runtime namespace gate
 
 First-party C# code uses the canonical managed spelling `Maths.*` with
-`using Delta;`. Do not use direct `System.Math`, `MathF`,
-`DeltaMaths.*`, the lowercase provider spelling, or the old
-`Delta.Maths` namespace. Run the bounded gate before handing off
+`using Delta;`. Do not use direct `System.Math`, `MathF,
+`DeltaMaths.*` or the lowercase provider spelling. Run the bounded gate before handing off
 math-related changes:
 
-`bash
+```bash
 ./eng/check-no-system-math.sh
-``
+```
 
 The gate scans first-party C# roots and excludes only generated `obj`/`bin`
 output. No provider-file exceptions are currently allowed.
