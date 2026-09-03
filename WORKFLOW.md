@@ -32,8 +32,8 @@ headless/compiler/contract checks. Empty mandatory domains stay tracked with
 ## Delta runtime namespace gate
 
 First-party C# code uses the canonical managed spelling `Maths.*` with
-`using Delta;`. Do not use direct `System.Math`, `MathF,
-`DeltaMaths.*` or the lowercase provider spelling. Run the bounded gate before handing off
+`using Delta;`. Do not use direct `System.Math`, `MathF`, `DeltaMaths.*`
+or the lowercase provider spelling. Run the bounded gate before handing off
 math-related changes:
 
 ```bash
