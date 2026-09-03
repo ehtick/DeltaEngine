@@ -32,13 +32,11 @@ internal static class Program
             return 0;
         }
         // The process boundary converts unexpected startup/runtime failures into a non-zero exit code.
-#pragma warning disable CA1031
         catch (Exception exception)
         {
             Console.Error.WriteLine(exception);
             return 1;
         }
-#pragma warning restore CA1031
     }
 
     private static int? ParseFrameLimit(string[] args)
