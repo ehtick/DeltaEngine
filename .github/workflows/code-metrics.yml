@@ -24,11 +24,6 @@ jobs:
         with:
           repository: Artromskiy/DeltaXAML
           path: DeltaXAML
-      - name: Checkout DeltaText
-        uses: actions/checkout@v5
-        with:
-          repository: Artromskiy/DeltaText
-          path: DeltaText
       - name: Checkout DeltaRender
         uses: actions/checkout@v5
         with:
@@ -50,8 +45,36 @@ jobs:
           dotnet-version: |
             8.x
             10.x
+      - name: Prepare pinned SixLabors.Fonts package
+        env:
+          FONTS_SHA: c68b27d683c701ca254d5cfc6487c699954f19ff
+        run: |
+          set -euo pipefail
+          fonts_dir="$RUNNER_TEMP/fonts"
+          feed_dir="$RUNNER_TEMP/nuget"
+          git clone --filter=blob:none --no-checkout https://github.com/Artromskiy/Fonts.git "$fonts_dir"
+          git -C "$fonts_dir" fetch --depth=1 origin "$FONTS_SHA"
+          git -C "$fonts_dir" checkout --detach "$FONTS_SHA"
+          git -C "$fonts_dir" submodule update --init --recursive
+          mkdir -p "$feed_dir"
+          dotnet restore "$fonts_dir/src/SixLabors.Fonts/SixLabors.Fonts.csproj" \
+            --configfile "$GITHUB_WORKSPACE/NuGet.Config" --no-cache
+          dotnet pack "$fonts_dir/src/SixLabors.Fonts/SixLabors.Fonts.csproj" \
+            --configuration Release --no-restore --output "$feed_dir" \
+            -p:PackageId=SixLabors.Fonts.Delta \
+            -p:PackageVersion=3.1.0-source.c68b27d
+          cat > "$RUNNER_TEMP/NuGet.Config" <<EOF
+          <?xml version="1.0" encoding="utf-8"?>
+          <configuration>
+            <packageSources>
+              <clear />
+              <add key="sixlabors-fonts" value="$feed_dir" />
+              <add key="nuget.org" value="https://api.nuget.org/v3/index.json" protocolVersion="3" />
+            </packageSources>
+          </configuration>
+          EOF
       - name: Restore
-        run: dotnet restore src/DeltaEngine.slnx
+        run: dotnet restore src/DeltaEngine.slnx --configfile "$RUNNER_TEMP/NuGet.Config" --no-cache --force-evaluate
       - name: Verify formatting
         continue-on-error: true
         run: |
